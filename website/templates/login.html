@@ -4,25 +4,46 @@
       <h3 text-align="center">Login</h3>
       <div class="form-group">
         <label for="email">Email Address</label>
-        <input
-          type="email"
-          class="form-control"
-          id="email"
-          name="email"
-          placeholder="Enter email"
-        />
+        {{ form.email(required=True, autofocus=True, class='form-control') }}
       </div>
+      {% for error in form.password.errors %}
+      <p class="help has-background-warning">
+        <div class="alert alert-danger alter-dismissable fade show" role="alert">
+          {{ error }}
+          <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </p>
+      {% endfor %}
       <div class="form-group">
         <label for="password">Password</label>
-        <input
-          type="password"
-          class="form-control"
-          id="password"
-          name="password"
-          placeholder="Enter password"
-        />
+        {{ form.password(required=True, autofocus=True, class='form-control') }}
       </div>
+      {% for error in form.password.errors %}
+      <p class="help has-background-warning">
+        <div class="alert alert-danger alter-dismissable fade show" role="alert">
+          {{ error }}
+          <button type="button" class="close" data-dismiss="alert">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+      </p>
+      {% endfor %}
       <br />
+      <div class="form-group">
       <button type="submit" class="btn btn-primary">Login</button>
+        <small class="text-muted ml-2">
+            <a href="{{ url_for('reset_request') }}">Forgot Password?</a>
+        </small>
+    </div>
+  
+      
     </form>
+    <div class="border-top pt-3">
+      <small class="text-muted">
+          Need An Account? <a class="ml-2" href="{{ url_for('sign_up') }}">Sign Up Now</a>
+      </small>
+  </div>
+   
     {% endblock %}

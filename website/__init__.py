@@ -4,7 +4,7 @@ from os import path
 from flask_login import LoginManager
 
 from .models import db
-DB_NAME = "database.db"
+DB_NAME = "database2.db"
 
 
 def create_app():
@@ -15,15 +15,18 @@ def create_app():
 
     from . import views
    
-    app.add_url_rule("/", view_func = views.home, methods = ['GET','POST'])
+    app.add_url_rule("/home", view_func = views.home, methods = ['GET','POST'])
     app.add_url_rule("/login", view_func = views.login, methods = ['GET','POST'])
     app.add_url_rule("/logout", view_func = views.logout)
     app.add_url_rule("/sign-up", view_func = views.sign_up, methods = ['GET','POST'])
     app.add_url_rule("/viewall", view_func = views.show_all)
+    app.add_url_rule("/", view_func = views.welcome)
+    app.add_url_rule("/set-profile", view_func = views.set_profile, methods=['GET', 'POST'])
+    app.add_url_rule("/reset-request", view_func = views.reset_request, methods=['GET', 'POST'])
     
     from .models import User, Note
-
     create_dabatase(app)
+    
 
     login_manager = LoginManager()
     login_manager.init_app(app)

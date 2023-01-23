@@ -1,11 +1,14 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from os import path
+import os
 from flask_login import LoginManager
+from flask_mail import Mail
+
 
 from .models import db
 DB_NAME = "database2.db"
 
+mail = Mail()
 
 def create_app():
     app = Flask(__name__)
@@ -22,7 +25,8 @@ def create_app():
     app.add_url_rule("/viewall", view_func = views.show_all)
     app.add_url_rule("/", view_func = views.welcome)
     app.add_url_rule("/set-profile", view_func = views.set_profile, methods=['GET', 'POST'])
-    app.add_url_rule("/reset-request", view_func = views.reset_request, methods=['GET', 'POST'])
+    app.add_url_rule("/reset-password", view_func = views.reset_request, methods=['GET', 'POST'])
+    app.add_url_rule("/reset-password/<token>", view_func = views.reset_token, methods=['GET', 'POST'])
     
     from .models import User, Note
     create_dabatase(app)
@@ -31,16 +35,26 @@ def create_app():
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = "login"
+    login_manager.login_message_category = 'info'
+    app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = "nericnikolina@gmail.com"
+    app.config['MAIL_PASSWORD'] = "vyjuvsuyjnvungwv"
+   
+    
+    mail.init_app(app)
 
+  
     @login_manager.user_loader
     def load_user(id):
-        return User.query.get(int(id))
+        return User.query.get(int(id)) 
   
     return app
 
 
 def create_dabatase(app):
-    if not path.exists('website/' + DB_NAME):
+    if not os.path.exists('website/' + DB_NAME):
         with app.app_context():
             db.create_all()
             print("Created database")

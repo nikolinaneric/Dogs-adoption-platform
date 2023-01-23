@@ -1,0 +1,33 @@
+{% extends "base.html" %} {% block title %}Password reset request {% endblock %} {% block
+    content %}
+    <br>
+    
+    <form method="POST">
+        {{ form.csrf_token }}
+        <h3 text-align="center">Password reset</h3>
+        <br>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          {{ form.email(required=True, autofocus=True, class='form-control') }}
+        </div>
+        {% for error in form.email.errors %}
+        <p class="help has-background-warning">
+          <div class="alert alert-danger alter-dismissable fade show" role="alert">
+            {{ error }}
+            <button type="button" class="close" data-dismiss="alert">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </p>
+        {% endfor %}
+        <br>
+        <button type="submit" class="btn btn-outline-info">
+          {{form.submit.label}}
+        </button>
+            
+           
+
+          
+            
+        
+        {% endblock %}

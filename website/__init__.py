@@ -3,31 +3,41 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_migrate import Migrate
 
 
 from .models import db
-DB_NAME = "database2.db"
+DB_NAME = "novabaza.db"
 
 mail = Mail()
-
+basedir = os.path.abspath(os.path.dirname(__file__))
+print(basedir)
 def create_app():
     app = Flask(__name__)
     app.config.from_object("settings")
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, DB_NAME)
     db.init_app(app)
+    migrate = Migrate(app, db)
 
     from . import views
-   
+    
     app.add_url_rule("/home", view_func = views.home, methods = ['GET','POST'])
     app.add_url_rule("/login", view_func = views.login, methods = ['GET','POST'])
     app.add_url_rule("/logout", view_func = views.logout)
     app.add_url_rule("/sign-up", view_func = views.sign_up, methods = ['GET','POST'])
-    app.add_url_rule("/viewall", view_func = views.show_all)
+    app.add_url_rule("/viewall", view_func = views.user_info, methods =['GET','POST'] )
     app.add_url_rule("/", view_func = views.welcome)
     app.add_url_rule("/set-profile", view_func = views.set_profile, methods=['GET', 'POST'])
     app.add_url_rule("/reset-password", view_func = views.reset_request, methods=['GET', 'POST'])
     app.add_url_rule("/reset-password/<token>", view_func = views.reset_token, methods=['GET', 'POST'])
-    
+    app.add_url_rule("/post/new", view_func = views.new_post, methods=['GET', 'POST'])
+    app.add_url_rule("/post/<int:post_id>", view_func=views.post)
+    app.add_url_rule("/post/<int:post_id>/update", view_func = views.update_post, methods=['GET', 'POST'])
+    app.add_url_rule("/questionnaire", view_func = views.user_info, methods=['GET', 'POST'])
+    app.add_url_rule("/post/<int:post_id>/delete", view_func=views.delete_post, methods=['POST', 'GET'])
+    app.add_url_rule("/matches", view_func=views.show_matches, methods=['POST', 'GET'])
+
+
     from .models import User, Note
     create_dabatase(app)
     

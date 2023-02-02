@@ -59,20 +59,6 @@
           </div>
       </p>
       {% endfor %}
-      <div class="form-group">
-        <label for="profile_type">Profile type</label>
-        {{ form.profile_type(required=True) }}
-      </div>
-      {% for error in form.profile_type.errors %}
-      <p class="help has-background-warning">
-        <div class="alert alert-danger alter-dismissable fade show" role="alert">
-          {{ error }}
-          <button type="button" class="close" data-dismiss="alert">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          </div>
-      </p>
-      {% endfor %}
       <br />
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>

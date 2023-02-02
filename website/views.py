@@ -1,28 +1,26 @@
 import secrets
 import os
 from PIL import Image
-from flask import render_template, request, flash, redirect, url_for, current_app
+from flask import render_template, request, flash, redirect, url_for, current_app, abort
 from flask_login import login_required, current_user, login_user, logout_user
 from .models import db
-from .models import User, Note
+from .models import User, Note, UserInfo
 from werkzeug.security import generate_password_hash, check_password_hash
-from .user_form import UserFormSignUp, UserFormLogIn, UserSetUp, RequestResetForm, ResetPasswordForm
+from .user_form import UserFormSignUp, UserFormLogIn, UserSetUp, RequestResetForm, ResetPasswordForm, PostForm
 from flask_mail import Message, Mail
 from . import mail
+import requests
+from sqlalchemy import select
 
    
 
 @login_required
 def home():
-    if request.method == 'POST':
-        note = request.form.get('note')
 
-        if len(note)<1:
-            flash('Note is too short', category = 'error')
-        else:
-            new_note = Note
+    posts = Note.query.all()
 
-    return render_template("home.html", user = current_user)
+    return render_template("home.html", user = current_user, posts = posts)
+    #return render_template("show_all.html", user = current_user, users = UserInfo.query.all())
 
 def login():
     if current_user.is_authenticated:
@@ -55,6 +53,8 @@ def logout():
     return redirect(url_for('login'))
 
 def sign_up():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = UserFormSignUp()
     if form.validate_on_submit():
         email = form.data['email']
@@ -97,6 +97,7 @@ def save_picture(form_picture):
 @login_required
 def set_profile():
     form = UserSetUp()
+    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     if form.validate_on_submit():
         if form.data['picture']:
             profile_pic = save_picture(form.picture.data)
@@ -113,7 +114,7 @@ def set_profile():
     elif request.method == 'GET':
         form.first_name.data = current_user.first_name
         form.email.data = current_user.email
-        image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+        
     return render_template('set_profile.html', user = current_user, form= form, image_file = image_file)
 
 def reset_request():
@@ -157,3 +158,110 @@ def reset_token(token):
     else:
         print(form.errors)
     return render_template('reset_password.html', form=form, user = current_user)
+
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Note(title=form.title.data, data=form.data.data, user_id = current_user.id)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post has been created!', 'success')
+        return redirect(url_for('home'))
+    return render_template('new_post.html', user = current_user, form = form, title ="Create a new post", legend = "New post")
+
+
+def post(post_id):
+    post = Note.query.get_or_404(post_id)
+    return render_template('post.html', title=post.title, post=post, user = current_user)
+
+@login_required
+def update_post(post_id):
+    post = Note.query.get_or_404(post_id)
+    print(f"{post.user_id} - {current_user.id}")
+    if post.user_id != current_user.id:
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.data = form.data.data
+        db.session.commit()
+        flash('Your post has been updated!', 'success')
+        return redirect(url_for('post', post_id = post.id, user = current_user))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.data.data = post.data
+    return render_template('new_post.html', title='Update Post',
+                           form=form, legend = "Update post", user = current_user)
+
+
+@login_required
+def delete_post(post_id):
+    post = Note.query.get_or_404(post_id)
+    if post.user_id != current_user.id:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash('Your post has been deleted!', 'success')
+    return redirect(url_for('home'))
+
+def user_info():
+    if request.method == 'POST':
+        
+        response = request.form
+        prefered_breed = response.getlist('q1')
+        prefers_mixed_breed = bool(response.get('q2'))
+        age_preference = response.getlist('q3')
+        size_preference = response.getlist('q4')
+        color_preference = response.getlist('q5')
+        spay_needed = bool(response.get('q6'))
+        coat_length_preference = response.get('q7')
+        dog_with_children = bool(response.get('q8'))
+        dog_with_dogs = bool(response.get('q9'))
+        dog_with_cats = bool(response.get('q10'))
+        dog_with_sm_animals = bool(response.get('q11'))
+        dog_with_big_animals = bool(response.get('q12'))
+        dog_in_house = bool(response.get('q13'))
+        yard = bool(response.get('q14'))
+        park = bool(response.get('q15'))
+        activity_level = response.get('q16')
+        special_need_dog = bool(response.get('q17'))
+        flash('You successfully submited your answers. Here are your matches!', 'success')
+        
+        
+        info = UserInfo.query.filter_by(user_id = current_user.id).first()
+        if info:
+            info.prefered_breed = prefered_breed
+            info.prefers_mixed_breed = prefers_mixed_breed 
+            info.age_preference = age_preference,
+            info.size_preference = size_preference 
+            info.color_preference = color_preference 
+            info.spay_needed = spay_needed 
+            info.coat_length_preference = coat_length_preference
+            info.dog_with_children = dog_with_children 
+            info.dog_with_dogs = dog_with_dogs 
+            info.dog_with_cats = dog_with_cats 
+            info.dog_with_sm_animals = dog_with_sm_animals 
+            info.dog_with_big_animals = dog_with_big_animals 
+            info.dog_in_house = dog_in_house 
+            info.yard = yard
+            info.park = park 
+            info.activity_level = activity_level
+            info.special_need_dog = special_need_dog 
+            info.user_id = current_user.id
+        
+            db.session.commit()
+        else:
+            info = UserInfo(prefered_breed = prefered_breed, prefers_mixed_breed = prefers_mixed_breed, age_preference = age_preference,
+            size_preference = size_preference, color_preference = color_preference, spay_needed = spay_needed, coat_length_preference = coat_length_preference,
+            dog_with_children = dog_with_children, dog_with_dogs = dog_with_dogs, dog_with_cats = dog_with_cats, dog_with_sm_animals = dog_with_sm_animals, 
+            dog_with_big_animals = dog_with_big_animals, dog_in_house = dog_in_house, yard = yard, park = park, 
+            activity_level = activity_level, special_need_dog = special_need_dog, user_id = current_user.id)
+            db.session.add(info)
+            db.session.commit()
+        return redirect(url_for('show_matches') )
+
+    return render_template('user_info.html', user = current_user)
+
+def show_matches():
+    return render_template('show_matches.html', user = current_user )

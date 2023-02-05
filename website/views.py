@@ -4,13 +4,12 @@ from PIL import Image
 from flask import render_template, request, flash, redirect, url_for, current_app, abort
 from flask_login import login_required, current_user, login_user, logout_user
 from .models import db
-from .models import User, Note, UserInfo
+from .models import User, Note, UserInfo, DogInfo
 from werkzeug.security import generate_password_hash, check_password_hash
 from .user_form import UserFormSignUp, UserFormLogIn, UserSetUp, RequestResetForm, ResetPasswordForm, PostForm
 from flask_mail import Message, Mail
-from . import mail
-import requests
-from sqlalchemy import select
+from . import mail, session, engine
+from sqlalchemy import insert, update, join, select
 
    
 
@@ -18,8 +17,12 @@ from sqlalchemy import select
 def home():
 
     posts = Note.query.all()
+    per_page = 10
+    current_page = int(request.args.get('page', 1))
+    total_pages = (len(posts) + per_page - 1) // per_page
+    posts= posts[(current_page - 1) * per_page:current_page * per_page]
 
-    return render_template("home.html", user = current_user, posts = posts)
+    return render_template("home.html", user = current_user, posts = posts, currentPage=current_page, totalPages=total_pages)
     #return render_template("show_all.html", user = current_user, users = UserInfo.query.all())
 
 def login():
@@ -86,7 +89,7 @@ def save_picture(form_picture):
 
     # smanjivanje velicine slike radi ustede memorije u bazi pomocu pillow paketa:
 
-    output_size = (150,150)
+    output_size = (900,450)
     i = Image.open(form_picture)
     i.thumbnail(output_size)
     i.save(picture_path)   # cuvanje slike na picture_pathu
@@ -163,13 +166,40 @@ def reset_token(token):
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Note(title=form.title.data, data=form.data.data, user_id = current_user.id)
+        photo = form.picture.data
+        image_name = save_picture(photo)
+        #image_file = url_for('static', filename='profile_pics/' + image_name)
+        post = Note(title=form.title.data, data=form.data.data, user_id = current_user.id, image_file = image_name)
         db.session.add(post)
         db.session.commit()
-        flash('Your post has been created!', 'success')
-        return redirect(url_for('home'))
-    return render_template('new_post.html', user = current_user, form = form, title ="Create a new post", legend = "New post")
+    
+        response = request.form
+        dog_data = {
+        "primary_breed" : response.get('a1'),
+        "mixed_breed" : bool(response.get('a2')),
+        "age" : response.get('a3'),
+        "size" : response.get('a4'),
+        "color" : response.get('a5'),
+        "spayed" : bool(response.get('a6')),
+        "coat_length" : response.get('a7'),
+        "dog_with_children" : bool(response.get('a8')),
+        "dog_with_dogs" : bool(response.get('a9')),
+        "dog_with_cats" : bool(response.get('a10')),
+        "dog_with_sm_animals" : bool(response.get('a11')),
+        "dog_with_big_animals" : bool(response.get('a12')),
+        "activity_level" : response.get('a13'),
+        "special_need_dog" : bool(response.get('a14')),
+        "note_id" : post.id
+        }
 
+        dog = DogInfo(**dog_data)
+        db.session.add(dog)
+        db.session.commit()
+
+        print(dog.primary_breed, dog.activity_level)
+
+        return redirect(url_for('home'))
+    return render_template('new_post.html', user = current_user, form = form, title ="Create a new post")
 
 def post(post_id):
     post = Note.query.get_or_404(post_id)
@@ -185,8 +215,39 @@ def update_post(post_id):
     if form.validate_on_submit():
         post.title = form.title.data
         post.data = form.data.data
+        db.session.add(post)
         db.session.commit()
         flash('Your post has been updated!', 'success')
+
+        response = request.form
+        dog_update_data = {
+        "primary_breed" : response.get('a1'),
+        "mixed_breed" : bool(response.get('a2')),
+        "age" : response.get('a3'),
+        "size" : response.get('a4'),
+        "color" : response.get('a5'),
+        "spayed" : bool(response.get('a6')),
+        "coat_length" : response.get('a7'),
+        "dog_with_children" : bool(response.get('a8')),
+        "dog_with_dogs" : bool(response.get('a9')),
+        "dog_with_cats" : bool(response.get('a10')),
+        "dog_with_sm_animals" : bool(response.get('a11')),
+        "dog_with_big_animals" : bool(response.get('a12')),
+        "activity_level" : response.get('a13'),
+        "special_need_dog" : bool(response.get('a14'))
+        }
+        dog_update_data = {k: v for k, v in dog_update_data.items() if v}
+        print(post.id)
+        doggo_info = DogInfo.query.filter_by(note_id=post.id)
+        #doggo_info = db.session.query(DogInfo).filter(DogInfo.note_id==post.id)
+        doggo_info.update(dog_update_data)
+        
+        db.session.commit()
+        dog = DogInfo.query.filter_by(note_id = post.id).first()
+        print(dog.primary_breed, dog.activity_level)
+
+
+
         return redirect(url_for('post', post_id = post.id, user = current_user))
     elif request.method == 'GET':
         form.title.data = post.title
@@ -206,11 +267,15 @@ def delete_post(post_id):
     return redirect(url_for('home'))
 
 def user_info():
+    if request.method == 'GET':
+        breeds = []
+        dogs = DogInfo.query.filter(DogInfo.primary_breed != ('unknown' or 'Unknown'))
+        for dog in dogs:
+            breeds.append(dog.primary_breed)
     if request.method == 'POST':
-        
         response = request.form
         prefered_breed = response.getlist('q1')
-        prefers_mixed_breed = bool(response.get('q2'))
+        prefers_mixed_breed = bool(response.get('q2')) 
         age_preference = response.getlist('q3')
         size_preference = response.getlist('q4')
         color_preference = response.getlist('q5')
@@ -259,9 +324,35 @@ def user_info():
             activity_level = activity_level, special_need_dog = special_need_dog, user_id = current_user.id)
             db.session.add(info)
             db.session.commit()
+        print(info.prefered_breed)
+
         return redirect(url_for('show_matches') )
 
-    return render_template('user_info.html', user = current_user)
+    return render_template('user_info.html', user = current_user, breeds = breeds)
 
 def show_matches():
-    return render_template('show_matches.html', user = current_user )
+ 
+    prefered_breeds = (session.query(UserInfo.prefered_breed).filter(UserInfo.user_id == current_user.id).all())[0][0]
+    print(prefered_breeds)
+    if 'all' in prefered_breeds:
+        result = db.session.query(Note, DogInfo).join(DogInfo, Note.id == DogInfo.note_id)\
+            .filter(DogInfo.mixed_breed == UserInfo.prefers_mixed_breed)\
+            .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
+            .filter(UserInfo.user_id == current_user.id)\
+            
+    else:
+        result = db.session.query(Note, DogInfo).join(DogInfo, Note.id == DogInfo.note_id)\
+            .filter(DogInfo.primary_breed.in_ (prefered_breeds))\
+            .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
+            .filter(DogInfo.mixed_breed == UserInfo.prefers_mixed_breed)\
+            .filter(UserInfo.user_id == current_user.id)
+            
+    #result = result.filter(DogInfo.mixed_breed == UserInfo.prefers_mixed_breed)
+    per_page = 10
+    current_page = int(request.args.get('page', 1))
+    #total_pages = (len(posts) + per_page - 1) // per_page
+    # posts= posts[(current_page - 1) * per_page:current_page * per_page]
+
+    return render_template('show_matches.html', user = current_user, posts = result, currentPage=current_page, totalPages=10 )
+
+

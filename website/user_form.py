@@ -48,4 +48,5 @@ class ResetPasswordForm(FlaskForm):
 class PostForm(FlaskForm):
     title = StringField('Name', validators=[DataRequired()])
     data = StringField('Description', validators=[DataRequired()])
+    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg','png','jpeg'])])
     submit = SubmitField('Post')

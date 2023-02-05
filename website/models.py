@@ -12,8 +12,11 @@ class Note(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(150))
     data = db.Column(db.String(10000))
+    image_file = db.Column(db.String(150), nullable=False)
     date_posted = db.Column(db.DateTime(timezone = True), default = func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    dog_info = db.relationship('DogInfo', backref = 'user', uselist = False)
+
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
@@ -26,6 +29,8 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(150), nullable=False, default='default.jpg')
     notes = db.relationship('Note')
     user_info = db.relationship('UserInfo', backref = 'user', uselist = False)
+    
+
 
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
@@ -55,7 +60,7 @@ class UserInfo(db.Model):
     color_preference = db.Column(db.PickleType())
     spay_needed = db.Column(db.Boolean)
     coat_length_preference = db.Column(db.String())
-    dog_with_children = db.Column(db.Boolean, nullable = True)
+    dog_with_children = db.Column(db.String, nullable = True)
     dog_with_dogs = db.Column(db.Boolean)
     dog_with_cats = db.Column(db.Boolean)
     dog_with_sm_animals = db.Column(db.Boolean)
@@ -67,6 +72,24 @@ class UserInfo(db.Model):
     special_need_dog = db.Column(db.Boolean)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    dog_info = db.relationship('DogInfo')
 
+class DogInfo(db.Model):
+    id = db.Column(db.Integer(), primary_key = True)
+    primary_breed = db.Column(db.String(150))
+    mixed_breed = db.Column(db.Boolean())
+    age = db.Column(db.String(150))
+    size = db.Column(db.String(150))
+    color = db.Column(db.String(150))
+    spayed = db.Column(db.Boolean)
+    coat_length = db.Column(db.String())
+    dog_with_children = db.Column(db.String, nullable = True)
+    dog_with_dogs = db.Column(db.String, nullable = True)
+    dog_with_cats = db.Column(db.String, nullable = True)
+    dog_with_sm_animals = db.Column(db.String, nullable = True)
+    dog_with_big_animals = db.Column(db.String, nullable = True)
+    activity_level = db.Column(db.String(150))
+    special_need_dog = db.Column(db.Boolean)
 
-
+    note_id = db.Column(db.Integer, db.ForeignKey('note.id'))
+    user_info_id = db.Column(db.Integer, db.ForeignKey('user_info.id'))

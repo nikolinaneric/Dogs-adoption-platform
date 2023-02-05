@@ -38,6 +38,7 @@
       }
     </script>  
     <style>
+      
         .questionnaire {
           width: 50%;
           margin: False auto;
@@ -77,11 +78,11 @@
         <div class="questionnaire">
             <form method="POST", action=""  onsubmit="return validateForm();">
             <div class="question">
-                <label for="q1">True. Do you have a prefered breed?</label>
+                <label for="q1">1. Do you have a prefered breed?</label>
                 <br>
-                <input type="checkbox" id="q1" name="q1" value="terrier">terrier &nbsp &nbsp 
-                <input type="checkbox" id="q1" name="q1" value="poodle">poodle &nbsp &nbsp 
-                <input type="checkbox" id="q1" name="q1" value="chihuahua">chihuahua &nbsp &nbsp   
+                {% for breed in breeds %}
+                <input type="checkbox" id="q1" name="q1" value="{{ breed }}"> {{ breed }} &nbsp &nbsp 
+                {% endfor %}   
                 <input type="checkbox" id="q1" name="q1" value="all">breed doesn't matter
             </div>
 

@@ -1,42 +1,239 @@
 {% extends "base.html" %} {% block title %}{{ title}}{% endblock %} 
 
 {% block content %}
+<script>
+  const input = document.querySelector('#input');
+  const submitBtn = document.querySelector('#a1');
+  
+  input.addEventListener('input', (event) => {
+    submitBtn.value = event.target.value;
+  });
 
+  // function validateForm() {
+  //   var submitfield = document.querySelectorAll('input[type="submit"][name="a1"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a2"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a3"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a4"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a5"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a6"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a7"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a8"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a9"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a10"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a11"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a12"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a13"]:checked');
+  //   var radioBtns = document.querySelectorAll('input[type="radio"][name="a14"]:checked');
+      
+
+
+  //   if (checkboxes.length === 0) {
+  //     alert("Please answer all the questions.");
+  //     return false;
+  //   }
+
+  //   if (radioBtns.length === 0) {
+  //     alert("Please answer all the questions.");
+  //     return false;
+  //   }
+  //   if (submitfield.length === 0) {
+  //     alert("Please answer all the questions.");
+  //     return false;
+  //   }
+  // return true;
+  // }
+</script>
+<style>
+  .questionnaire {
+          width: 100%;
+          margin: False auto;
+          padding: 20px;
+          border: 1px solid gray;
+          border-radius: 10px;
+          text-align: left;
+        }
+    
+        .question {
+          margin-top: 20px;
+        }
+    
+        label {
+          font-weight: bold;
+          margin-right: 10px;
+        }
+    
+        input[type="radio"],
+        input[type="checkbox"] {
+          margin-right: 10px;
+        }
+    
+        input[type="submit"] {
+          margin-top: 20px;
+          padding: 10px 20px;
+          background-color: lightblue;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+</style>
 <div class="content-section">
-    <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">{{ legend }}</legend>
-            <div class="form-group">
-                {{ form.title.label(class="form-control-label") }}
-                {% if form.title.errors %}
-                    {{ form.title(class="form-control form-control-lg is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.title.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.title(class="form-control form-control-lg") }}
-                {% endif %}
+  <form method="POST" action="" enctype="multipart/form-data" onsubmit="return validateForm();">    
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      <label for="picture">Upload your picture</label>
+      
+      {{ form.picture(autofocus=True, class="form-control") }} 
+      
+    
+    </div>
+  
+      
+      <fieldset class="form-group">
+          <legend class="border-bottom mb-4">{{ legend }}</legend>
+          <div class="form-group">
+              {{ form.title.label(class="form-control-label") }}
+              {% if form.title.errors %}
+                  {{ form.title(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in form.title.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ form.title(class="form-control form-control-lg") }}
+              {% endif %}
+          </div>
+          <div class="form-group">
+              {{ form.data.label(class="form-control-label") }}
+              {% if form.data.errors %}
+                  {{ form.data(class="form-control form-control-lg is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in form.data.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ form.data(class="form-control form-control-lg") }}
+              {% endif %}
+          </div>
+      </fieldset>
+      <div>
+        <h6 text-align = "center">Give us some details about your dogs in foster, so we can find a perfect human for them!</h6>
+        <div class="questionnaire">
+            <form method="POST", action=""  onsubmit="return validateForm();">
+            <div class="question">
+                <label for="a1">1. What is dog's primary breed? 'Unknown' is valid answer also. </label>
+                <br>
+                <input class="form-group" type="text" id="a1" name="a1" placeholder="Enter your answer"> 
             </div>
-            <div class="form-group">
-                {{ form.data.label(class="form-control-label") }}
-                {% if form.data.errors %}
-                    {{ form.data(class="form-control form-control-lg is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.data.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.data(class="form-control form-control-lg") }}
-                {% endif %}
+            <div class="question">
+                <label for="a2">2. Is dog in your foster a mixed-breed dog?</label>
+                <br>
+                <input type="radio" id="a2" name="a2" value=True >Yes &nbsp &nbsp 
+                <input type="radio" id="a2" name="a2" value=False>No 
             </div>
-        </fieldset>
-        <div class="form-group">
-            {{ form.submit(class="btn btn-outline-info") }}
-        </div>
-    </form>
+
+            <div class="question">
+                <label for="a3">3. What is the dog's age?</label>
+                <br>
+                <input type="radio" id="a3" name="a3" value="puppy">puppy &nbsp &nbsp 
+                <input type="radio" id="a3" name="a3" value="adult">adult &nbsp &nbsp  
+                <input type="radio" id="a3" name="a3" value="senior">senior &nbsp &nbsp
+                 
+            </div>
+
+            <div class="question">
+                <label for="a4">4. What is the dog's size?</label>
+                <br>
+                <input type="radio" id="a4" name="a4" value="small">small &nbsp &nbsp 
+                <input type="radio" id="a4" name="a4" value="medium">medium &nbsp &nbsp  
+                <input type="radio" id="a4" name="a4" value="large">large &nbsp &nbsp
+                 
+            </div>
+
+              <div class="question">
+                <label for="a5">5. What is the primary color of the dog's coat?</label>
+                <br>
+                <input type="radio" id="a5" name="a5" value="white">white &nbsp &nbsp 
+                <input type="radio" id="a5" name="a5" value="yellow">yellow &nbsp &nbsp
+                <input type="radio" id="a5" name="a5" value="brown">brown &nbsp &nbsp 
+                <input type="radio" id="a5" name="a5" value="black">black &nbsp &nbsp  
+            </div>
+
+            <div class="question">
+              <label for="a6">6. Is this dog neutered/spayed?</label>
+              <br>
+              <input type="radio" id="a6" name="a6" value=True>Yes &nbsp &nbsp 
+              <input type="radio" id="a6" name="a6" value=False>No &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="a7">7. What is the dog's coat lenght? </label>
+            <br>
+            <input type="radio" id="a7" name="a7" value="short">short-haired  &nbsp &nbsp 
+            <input type="radio" id="a7" name="a7" value="long">long-haired &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="a8">8. Is this dog known to be good with children? </label>
+            <br>
+            <input type="radio" id="a8" name="a8" value=True>Yes &nbsp &nbsp 
+            <input type="radio" id="a8" name="a8" value=False>No &nbsp &nbsp
+            <input type="radio" id="a8" name="a8" value="">Unknown &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="a9">9. Is this dog known to be good with other dogs? </label>
+            <br>
+            <input type="radio" id="a9" name="a9" value=True>Yes &nbsp &nbsp 
+            <input type="radio" id="a9" name="a9" value=False>No &nbsp &nbsp 
+            <input type="radio" id="a9" name="a9" value="">Unknown &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="a10">10. Is this dog known to be good with cats?</label>
+            <br>
+            <input type="radio" id="a10" name="a10" value=True>Yes &nbsp &nbsp 
+            <input type="radio" id="a10" name="a10" value=False>No &nbsp &nbsp
+            <input type="radio" id="a9" name="a9" value="">Unknown &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="a11">11. Is this dog known to be good with small animals such as a hamster, rabbit, etc? </label>
+            <br>
+            <input type="radio" id="a11" name="a11" value=True>Yes &nbsp &nbsp 
+            <input type="radio" id="a11" name="a11" value=False>No &nbsp &nbsp
+            <input type="radio" id="a9" name="a9" value="">Unknown &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="a12">Is this dog known to be good with big animals such as cows, pigs, etc? </label>
+            <br>
+            <input type="radio" id="a12" name="a12" value=True>Yes &nbsp &nbsp 
+            <input type="radio" id="a12" name="a12" value=False>No &nbsp &nbsp
+            <input type="radio" id="a9" name="a9" value="">Unknown &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="13">13. Which level of activity does this dog need to have? </label>
+            <br>
+            <input type="radio" id="a13" name="a13" value="low">Low &nbsp &nbsp 
+            <input type="radio" id="a13" name="a13" value="medium">Medium &nbsp &nbsp
+            <input type="radio" id="a13" name="a13" value="high">High &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="14">14. Is this dog a special-needs dog? </label>
+            <br>
+            <input type="radio" id="a14" name="a14" value=True>Yes &nbsp &nbsp 
+            <input type="radio" id="a14" name="a14" value=False>No &nbsp &nbsp
+          </div>
+      <div class="form-group">
+          {{ form.submit(class="btn btn-outline-info") }}
+      </div>
+  </form>
 </div>
 {% endblock %}
+  
+      
+            

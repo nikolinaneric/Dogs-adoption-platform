@@ -4,6 +4,12 @@ import os
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+
+
+
 
 
 from .models import db
@@ -12,12 +18,16 @@ DB_NAME = "novabaza.db"
 mail = Mail()
 basedir = os.path.abspath(os.path.dirname(__file__))
 print(basedir)
+engine = create_engine('sqlite:///' + os.path.join(basedir, DB_NAME))
+Session = sessionmaker(bind=engine)
+session = Session()
 def create_app():
     app = Flask(__name__)
     app.config.from_object("settings")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, DB_NAME)
     db.init_app(app)
-    migrate = Migrate(app, db)
+    
+   
 
     from . import views
     
@@ -36,6 +46,7 @@ def create_app():
     app.add_url_rule("/questionnaire", view_func = views.user_info, methods=['GET', 'POST'])
     app.add_url_rule("/post/<int:post_id>/delete", view_func=views.delete_post, methods=['POST', 'GET'])
     app.add_url_rule("/matches", view_func=views.show_matches, methods=['POST', 'GET'])
+    
 
 
     from .models import User, Note

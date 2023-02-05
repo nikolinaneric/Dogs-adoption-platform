@@ -1,11 +1,39 @@
 {% extends "base.html" %} {% block title %}Post{% endblock %} {% block content
     %}
-    <h1 text-align = "center">{{ title }}</h1>
-    <ul class="list-group list-group-flush" id="notes">
+    <style>
+      .post {
+        width: 80%;
+        margin: 30px auto;
+        text-align: center;
+      }
+
+      .post img {
+        width: auto;
+        height: 100;
+      margin-bottom: 20px;
+      }
+
+      .post-title {
+        font-size: 32px;
+        margin-bottom: 20px;
+      }
+
+      .post-content {
+        font-size: 16px;
+        line-height: 1.5;
+        color: #333;
+        margin-bottom: 20px;
+      }
+    </style>
+    <div class="post">
+      <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="post image">
+      <h2 class="post-title">{{ title }}</h1>
+      <ul class="list-group list-group-flush post-content" id="notes">
       <li class="list-group-item">
         {{ post.data }}
       </li>
-    </ul>
+      </ul>
+    </div>
     {% if post.user_id == user.id %}
     <div>
       <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>

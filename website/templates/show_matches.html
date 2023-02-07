@@ -68,15 +68,41 @@
         }
   
       </style>
-      <h1 text-align = "center">Psi za udomljavanje</h1>
-      
-        {% for post in posts %}
-        <div class="dog-card">
-          <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
-          <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
-          <p>{{ post[0].data }} </p>
-        </div>
-        {% endfor %}
+       
+       <br>
+       <br>
+      <h4 text-align = "center">Your perfect matches waiting to be adopted!</h1>
+        {% if warning %}
+        <br>
+        <br>
+        
+        <br>
+        <h6 text-align = "center">{{warning}}</h6>
+        <a href="{{ url_for('user_info')}}">Fill out the questionnaire again.</a>
+        {% else %}
+        <h6 text-align = "center">Do you want to change some of the preferences you gave to us?
+        <a href="{{ url_for('user_info')}}">Fill out the questionnaire again.</a></h6>
+        {% endif %}
+        <br>
+        <br>
+        {% if posts%}
+          {% for post in posts %}
+          <div class="dog-card">
+            <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
+            <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
+            <p>{{ post[0].data }} </p>
+          </div>
+          {% endfor %}
+        {% else %}
+          <h6 text-align = "center">Our random choices</h6>
+          {% for post in alternative_posts %}
+          <div class="dog-card">
+            <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
+            <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
+            <p>{{ post[0].data }} </p>
+          </div>
+          {% endfor %} 
+        {% endif %}
         <div class="pagination" >
           <button class="prev">Previous</button>
           <span class="page-number">{{ current_page }} / {{ total_pages }}</span>

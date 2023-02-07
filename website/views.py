@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .user_form import UserFormSignUp, UserFormLogIn, UserSetUp, RequestResetForm, ResetPasswordForm, PostForm
 from flask_mail import Message, Mail
 from . import mail, session, engine
-from sqlalchemy import insert, update, join, select
+from sqlalchemy import insert, update, join, select, and_, case, text, or_, func
 
    
 
@@ -175,28 +175,28 @@ def new_post():
     
         response = request.form
         dog_data = {
-        "primary_breed" : response.get('a1'),
-        "mixed_breed" : bool(response.get('a2')),
+        "primary_breed" : (response.get('a1')).lower(),
+        "mixed_breed" : bool(int(response.get('a2'))),
         "age" : response.get('a3'),
         "size" : response.get('a4'),
         "color" : response.get('a5'),
-        "spayed" : bool(response.get('a6')),
+        "spayed" : bool(int(response.get('a6'))) ,
         "coat_length" : response.get('a7'),
-        "dog_with_children" : bool(response.get('a8')),
-        "dog_with_dogs" : bool(response.get('a9')),
-        "dog_with_cats" : bool(response.get('a10')),
-        "dog_with_sm_animals" : bool(response.get('a11')),
-        "dog_with_big_animals" : bool(response.get('a12')),
+        "dog_with_children" : bool(int(response.get('a8'))) if response.get('a8') else 'unknown',
+        "dog_with_dogs" : bool(int(response.get('a9'))) if response.get('a9') else 'unknown',
+        "dog_with_cats" : bool(int(response.get('a10'))) if response.get('a10') else 'unknown',
+        "dog_with_sm_animals" : bool(int(response.get('a11'))) if response.get('a11') else 'unknown',
+        "dog_with_big_animals" : bool(int(response.get('a12'))) if response.get('a12') else 'unknown',
         "activity_level" : response.get('a13'),
-        "special_need_dog" : bool(response.get('a14')),
-        "note_id" : post.id
+        "special_need_dog" : bool(int(response.get('a14'))),
+        "note_id": post.id
         }
 
         dog = DogInfo(**dog_data)
         db.session.add(dog)
         db.session.commit()
 
-        print(dog.primary_breed, dog.activity_level)
+        print(dog.primary_breed, dog.activity_level, dog.dog_with_cats, 'cats')
 
         return redirect(url_for('home'))
     return render_template('new_post.html', user = current_user, form = form, title ="Create a new post")
@@ -221,30 +221,39 @@ def update_post(post_id):
 
         response = request.form
         dog_update_data = {
-        "primary_breed" : response.get('a1'),
-        "mixed_breed" : bool(response.get('a2')),
+        "primary_breed" : (response.get('a1')).lower(),
+        "mixed_breed" : bool(int(response.get('a2'))) if response.get('a2') else '',
         "age" : response.get('a3'),
         "size" : response.get('a4'),
         "color" : response.get('a5'),
-        "spayed" : bool(response.get('a6')),
+        "spayed" : bool(int(response.get('a6'))) if response.get('a6') else '',
         "coat_length" : response.get('a7'),
-        "dog_with_children" : bool(response.get('a8')),
-        "dog_with_dogs" : bool(response.get('a9')),
-        "dog_with_cats" : bool(response.get('a10')),
-        "dog_with_sm_animals" : bool(response.get('a11')),
-        "dog_with_big_animals" : bool(response.get('a12')),
+        "dog_with_children" : bool(int(response.get('a8'))) if response.get('a8') else '',
+        "dog_with_dogs" : bool(int(response.get('a9'))) if response.get('a9') else '',
+        "dog_with_cats" : bool(int(response.get('a10'))) if response.get('a10') else '',
+        "dog_with_sm_animals" : bool(int(response.get('a11'))) if response.get('a11') else '',
+        "dog_with_big_animals" : bool(int(response.get('a12'))) if response.get('a12') else '',
         "activity_level" : response.get('a13'),
-        "special_need_dog" : bool(response.get('a14'))
+        "special_need_dog" : bool(int(response.get('a14')))if response.get('a14') else '',
+        "note_id": post.id
         }
         dog_update_data = {k: v for k, v in dog_update_data.items() if v}
         print(post.id)
+
+
+        # sql = text("UPDATE dog_info SET dog_with_cats = :dog_with_cats WHERE note_id = :note_id")
+
+        # conn = engine.connect()
+        # conn.execute(sql, dog_with_cats = bool(int(response.get('a10'))) if response.get('a10') else '', note_id=post.id)
+
         doggo_info = DogInfo.query.filter_by(note_id=post.id)
-        #doggo_info = db.session.query(DogInfo).filter(DogInfo.note_id==post.id)
-        doggo_info.update(dog_update_data)
-        
+        doggo_info = db.session.query(DogInfo).filter(DogInfo.note_id==post.id)
+        print(doggo_info.update(dog_update_data),'update')
+        print(doggo_info.first().dog_with_cats, 'macke',)
         db.session.commit()
+        print(doggo_info.first().dog_with_cats, 'macke')
         dog = DogInfo.query.filter_by(note_id = post.id).first()
-        print(dog.primary_breed, dog.activity_level)
+        print(dog.primary_breed, dog.activity_level, dog.dog_with_cats,dog.dog_with_sm_animals, "small an")
 
 
 
@@ -268,29 +277,32 @@ def delete_post(post_id):
 
 def user_info():
     if request.method == 'GET':
-        breeds = []
-        dogs = DogInfo.query.filter(DogInfo.primary_breed != ('unknown' or 'Unknown'))
-        for dog in dogs:
-            breeds.append(dog.primary_breed)
+        breeds = set()
+        for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != ('unknown' or 'Unknown')).distinct():
+            breeds.add((dog.primary_breed).lower())
+
+    print(breeds)
+
+    
     if request.method == 'POST':
         response = request.form
         prefered_breed = response.getlist('q1')
-        prefers_mixed_breed = bool(response.get('q2')) 
-        age_preference = response.getlist('q3')
+        prefers_mixed_breed = bool(int(response.get('q2')) )
+        age_preference = response.getlist('q3') 
         size_preference = response.getlist('q4')
         color_preference = response.getlist('q5')
-        spay_needed = bool(response.get('q6'))
+        spay_needed = bool(int(response.get('q6')))
         coat_length_preference = response.get('q7')
-        dog_with_children = bool(response.get('q8'))
-        dog_with_dogs = bool(response.get('q9'))
-        dog_with_cats = bool(response.get('q10'))
-        dog_with_sm_animals = bool(response.get('q11'))
-        dog_with_big_animals = bool(response.get('q12'))
-        dog_in_house = bool(response.get('q13'))
-        yard = bool(response.get('q14'))
-        park = bool(response.get('q15'))
+        dog_with_children = bool(int(response.get('q8')))
+        dog_with_dogs = bool(int(response.get('q9')))
+        dog_with_cats = bool(int(response.get('q10')))
+        dog_with_sm_animals = bool(int(response.get('q11')))
+        dog_with_big_animals = bool(int(response.get('q12')))
+        dog_in_house = bool(int(response.get('q13')))
+        yard = bool(int(response.get('q14')))
+        park = bool(int(response.get('q15')))
         activity_level = response.get('q16')
-        special_need_dog = bool(response.get('q17'))
+        special_need_dog = bool(int(response.get('q17')))
         flash('You successfully submited your answers. Here are your matches!', 'success')
         
         
@@ -330,29 +342,63 @@ def user_info():
 
     return render_template('user_info.html', user = current_user, breeds = breeds)
 
+@login_required
 def show_matches():
+    #with session:
  
-    prefered_breeds = (session.query(UserInfo.prefered_breed).filter(UserInfo.user_id == current_user.id).all())[0][0]
-    print(prefered_breeds)
-    if 'all' in prefered_breeds:
-        result = db.session.query(Note, DogInfo).join(DogInfo, Note.id == DogInfo.note_id)\
-            .filter(DogInfo.mixed_breed == UserInfo.prefers_mixed_breed)\
-            .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
-            .filter(UserInfo.user_id == current_user.id)\
+        prefered_breeds = (session.query(UserInfo.prefered_breed).filter(UserInfo.user_id == current_user.id).all())[0][0]
+        age_preference = (session.query(UserInfo.age_preference).filter(UserInfo.user_id == current_user.id).all())[0][0][0]
+        size_preference = (session.query(UserInfo.size_preference).filter(UserInfo.user_id == current_user.id).all())[0][0]
+        color_preference = (session.query(UserInfo.color_preference).filter(UserInfo.user_id == current_user.id).all())[0][0]
+        coat_length_preference = (session.query(UserInfo.coat_length_preference).filter(UserInfo.user_id == current_user.id).all())[0]
+     
+        # if 'all' in prefered_breeds:
+        #     result = db.session.query(Note, DogInfo, UserInfo).join(DogInfo, Note.id == DogInfo.note_id)\
+        #         .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
+        #         .filter(UserInfo.user_id == current_user.id)\
+        #         .filter(DogInfo.mixed_breed == UserInfo.prefers_mixed_breed)\
+
+        #     for res in result:
+        #         print(res)
+        # else:
+            # result = db.session.query(Note, DogInfo, UserInfo).join(DogInfo, Note.id == DogInfo.note_id)\
+            #     .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
+            #     .filter(DogInfo.primary_breed.in_ (prefered_breeds))\
+            #     .filter(UserInfo.user_id == current_user.id)\
+            #     .filter(DogInfo.mixed_breed == UserInfo.prefers_mixed_breed) if 'all' not in age_preference else pass\
+            #     .filter(DogInfo.age.in_ (age_preference)) if 'all' not in age_preference else pass
+
+        result = db.session.query(Note, DogInfo, UserInfo).join(DogInfo, Note.id == DogInfo.note_id)\
+                .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
+                .filter( UserInfo.user_id == current_user.id)\
+                .filter(case([('all' not in age_preference, DogInfo.age.in_(age_preference)),], else_= True))\
+                .filter(case([('all' not in prefered_breeds, DogInfo.primary_breed.in_(prefered_breeds)),], else_= True))\
+                .filter(case([(UserInfo.prefers_mixed_breed == False, DogInfo.mixed_breed == UserInfo.prefers_mixed_breed),], else_= True))\
+                .filter(case([('all' not in size_preference, DogInfo.size.in_(size_preference)),], else_= True))\
+                .filter(case([('all' not in color_preference, DogInfo.color.in_(color_preference)),], else_= True))\
+                .filter(case([('all' not in coat_length_preference, DogInfo.coat_length.in_(coat_length_preference)),], else_= True))\
+                .filter(case([(UserInfo.dog_with_children == True, UserInfo.dog_with_children == DogInfo.dog_with_children),], else_= True))\
+                .filter(case([(UserInfo.dog_with_dogs == True, UserInfo.dog_with_dogs == DogInfo.dog_with_dogs),], else_= True))\
+                .filter(case([(UserInfo.dog_with_cats == True, UserInfo.dog_with_cats == DogInfo.dog_with_cats),], else_= True))\
+                .filter(case([(UserInfo.dog_with_sm_animals == True, UserInfo.dog_with_sm_animals == DogInfo.dog_with_sm_animals),], else_= True))\
+                .filter(case([(UserInfo.dog_with_big_animals == True, UserInfo.dog_with_big_animals == DogInfo.dog_with_big_animals),], else_= True))\
+                .filter(case([(UserInfo.special_need_dog == False, UserInfo.special_need_dog == DogInfo.special_need_dog),], else_= True))\
+                .filter(case([(UserInfo.spay_needed == True, UserInfo.spay_needed == DogInfo.spayed),], else_= True))\
+                .filter(case([(UserInfo.dog_in_house == False,and_(DogInfo.age != "puppy", DogInfo.size != 'small')),], else_= True))\
+                .filter(case([(or_(UserInfo.yard == True , UserInfo.park == True), DogInfo.activity_level == UserInfo.activity_level),\
+                   (and_(UserInfo.yard == False , UserInfo.park == False), DogInfo.activity_level != "high" if UserInfo.activity_level == 'high'\
+                    else DogInfo.activity_level == UserInfo.activity_level), ], else_= True))\
+                            # posljednji ne radi kako treba
+                  
+
+        for res in result:
+            print(res)
             
-    else:
-        result = db.session.query(Note, DogInfo).join(DogInfo, Note.id == DogInfo.note_id)\
-            .filter(DogInfo.primary_breed.in_ (prefered_breeds))\
-            .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
-            .filter(DogInfo.mixed_breed == UserInfo.prefers_mixed_breed)\
-            .filter(UserInfo.user_id == current_user.id)
-            
-    #result = result.filter(DogInfo.mixed_breed == UserInfo.prefers_mixed_breed)
-    per_page = 10
-    current_page = int(request.args.get('page', 1))
+        per_page = 10
+        current_page = int(request.args.get('page', 1))
     #total_pages = (len(posts) + per_page - 1) // per_page
     # posts= posts[(current_page - 1) * per_page:current_page * per_page]
 
-    return render_template('show_matches.html', user = current_user, posts = result, currentPage=current_page, totalPages=10 )
+        return render_template('show_matches.html', user = current_user, posts = result, currentPage=current_page, totalPages=10 )
 
 

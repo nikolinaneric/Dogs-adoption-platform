@@ -280,10 +280,9 @@ def user_info():
         breeds = set()
         for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != ('unknown' or 'Unknown')).distinct():
             breeds.add((dog.primary_breed).lower())
-
-    print(breeds)
-
-    
+        info = UserInfo.query.filter_by(user_id = current_user.id).first()
+        if info:
+            return redirect(url_for('show_matches'))
     if request.method == 'POST':
         response = request.form
         prefered_breed = response.getlist('q1')
@@ -344,29 +343,14 @@ def user_info():
 
 @login_required
 def show_matches():
-    #with session:
+    with session:
  
         prefered_breeds = (session.query(UserInfo.prefered_breed).filter(UserInfo.user_id == current_user.id).all())[0][0]
         age_preference = (session.query(UserInfo.age_preference).filter(UserInfo.user_id == current_user.id).all())[0][0][0]
         size_preference = (session.query(UserInfo.size_preference).filter(UserInfo.user_id == current_user.id).all())[0][0]
         color_preference = (session.query(UserInfo.color_preference).filter(UserInfo.user_id == current_user.id).all())[0][0]
         coat_length_preference = (session.query(UserInfo.coat_length_preference).filter(UserInfo.user_id == current_user.id).all())[0]
-     
-        # if 'all' in prefered_breeds:
-        #     result = db.session.query(Note, DogInfo, UserInfo).join(DogInfo, Note.id == DogInfo.note_id)\
-        #         .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
-        #         .filter(UserInfo.user_id == current_user.id)\
-        #         .filter(DogInfo.mixed_breed == UserInfo.prefers_mixed_breed)\
 
-        #     for res in result:
-        #         print(res)
-        # else:
-            # result = db.session.query(Note, DogInfo, UserInfo).join(DogInfo, Note.id == DogInfo.note_id)\
-            #     .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
-            #     .filter(DogInfo.primary_breed.in_ (prefered_breeds))\
-            #     .filter(UserInfo.user_id == current_user.id)\
-            #     .filter(DogInfo.mixed_breed == UserInfo.prefers_mixed_breed) if 'all' not in age_preference else pass\
-            #     .filter(DogInfo.age.in_ (age_preference)) if 'all' not in age_preference else pass
 
         result = db.session.query(Note, DogInfo, UserInfo).join(DogInfo, Note.id == DogInfo.note_id)\
                 .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
@@ -386,19 +370,28 @@ def show_matches():
                 .filter(case([(UserInfo.spay_needed == True, UserInfo.spay_needed == DogInfo.spayed),], else_= True))\
                 .filter(case([(UserInfo.dog_in_house == False,and_(DogInfo.age != "puppy", DogInfo.size != 'small')),], else_= True))\
                 .filter(case([(or_(UserInfo.yard == True , UserInfo.park == True), DogInfo.activity_level == UserInfo.activity_level),\
-                   (and_(UserInfo.yard == False , UserInfo.park == False), DogInfo.activity_level != "high" if UserInfo.activity_level == 'high'\
-                    else DogInfo.activity_level == UserInfo.activity_level), ], else_= True))\
-                            # posljednji ne radi kako treba
-                  
-
+                   (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level == 'high'), DogInfo.activity_level != 'high'),\
+                    (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level != 'high'), UserInfo.activity_level == DogInfo.activity_level),], else_= True))\
+                
+        if not result:
+            flash('Oops, it seems there aren\'t matches for your preferences...', category='error')
+            warning = "Check if there are preferences that can be modified or take a look at some of the our random choices."
+        else:
+            result, warning = result.filter(case([(and_(UserInfo.dog_in_house == False, UserInfo.yard == False), False)], else_=True)).all(), None
+            if result == []:
+                warning = "If you would not keep a dog in the house and if there is no yard, then where would the dog live?\
+                Please check your answers."
+            flash('Oops, it seems there aren\'t matches for your preferences...', category='error')
         for res in result:
             print(res)
-            
+        alternative_results = db.session.query(Note, DogInfo, UserInfo).join(DogInfo, Note.id == DogInfo.note_id)\
+                .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
+                .filter( UserInfo.user_id == current_user.id).order_by(func.random()).limit(8).all()
         per_page = 10
         current_page = int(request.args.get('page', 1))
     #total_pages = (len(posts) + per_page - 1) // per_page
     # posts= posts[(current_page - 1) * per_page:current_page * per_page]
 
-        return render_template('show_matches.html', user = current_user, posts = result, currentPage=current_page, totalPages=10 )
+        return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result, currentPage=current_page, totalPages=10 )
 
 

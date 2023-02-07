@@ -78,7 +78,8 @@ class UserInfo(db.Model):
         return f"User preferes mixed breed('{self.prefers_mixed_breed},preffers{self.prefered_breed}, {self.age_preference[0]}'\
             ,{self.size_preference}, {self.color_preference}, {self.coat_length_preference},children: {self.dog_with_children}\
                 dogs:{self.dog_in_house}, cats:{self.dog_with_cats}, sm animals:{self.dog_with_sm_animals}, big anm: {self.dog_with_big_animals}\
-                    special_need: {self.special_need_dog}, spayed: {self.spay_needed}, activity: {self.activity_level})"
+                    special_need: {self.special_need_dog}, spayed: {self.spay_needed}, activity: {self.activity_level}\
+                        park:{self.park}, yard: {self.yard})"
 class DogInfo(db.Model):
     id = db.Column(db.Integer(), primary_key = True)
     primary_breed = db.Column(db.String(150))

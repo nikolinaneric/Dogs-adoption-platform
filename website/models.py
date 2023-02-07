@@ -60,7 +60,7 @@ class UserInfo(db.Model):
     color_preference = db.Column(db.PickleType())
     spay_needed = db.Column(db.Boolean)
     coat_length_preference = db.Column(db.String())
-    dog_with_children = db.Column(db.String, nullable = True)
+    dog_with_children = db.Column(db.Boolean)
     dog_with_dogs = db.Column(db.Boolean)
     dog_with_cats = db.Column(db.Boolean)
     dog_with_sm_animals = db.Column(db.Boolean)
@@ -73,7 +73,12 @@ class UserInfo(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     dog_info = db.relationship('DogInfo')
-
+    
+    def __repr__(self):
+        return f"User preferes mixed breed('{self.prefers_mixed_breed},preffers{self.prefered_breed}, {self.age_preference[0]}'\
+            ,{self.size_preference}, {self.color_preference}, {self.coat_length_preference},children: {self.dog_with_children}\
+                dogs:{self.dog_in_house}, cats:{self.dog_with_cats}, sm animals:{self.dog_with_sm_animals}, big anm: {self.dog_with_big_animals}\
+                    special_need: {self.special_need_dog}, spayed: {self.spay_needed}, activity: {self.activity_level})"
 class DogInfo(db.Model):
     id = db.Column(db.Integer(), primary_key = True)
     primary_breed = db.Column(db.String(150))
@@ -82,14 +87,19 @@ class DogInfo(db.Model):
     size = db.Column(db.String(150))
     color = db.Column(db.String(150))
     spayed = db.Column(db.Boolean)
-    coat_length = db.Column(db.String())
-    dog_with_children = db.Column(db.String, nullable = True)
-    dog_with_dogs = db.Column(db.String, nullable = True)
-    dog_with_cats = db.Column(db.String, nullable = True)
-    dog_with_sm_animals = db.Column(db.String, nullable = True)
-    dog_with_big_animals = db.Column(db.String, nullable = True)
+    coat_length = db.Column(db.String(150))
+    dog_with_children = db.Column(db.Boolean())
+    dog_with_dogs = db.Column(db.Boolean)
+    dog_with_cats = db.Column(db.Boolean)
+    dog_with_sm_animals = db.Column(db.Boolean)
+    dog_with_big_animals = db.Column(db.Boolean)
     activity_level = db.Column(db.String(150))
     special_need_dog = db.Column(db.Boolean)
 
     note_id = db.Column(db.Integer, db.ForeignKey('note.id'))
     user_info_id = db.Column(db.Integer, db.ForeignKey('user_info.id'))
+
+    def __repr__(self):
+        return f"Dog is mixed breed('{self.mixed_breed}, {self.primary_breed}, {self.age},{self.size},\
+            {self.color},{self.coat_length},children: {self.dog_with_children}, dogs: {self.dog_with_dogs},cats:{self.dog_with_cats},sm animals:{self.dog_with_sm_animals}', big anm : {self.dog_with_big_animals}\
+                , special_need: {self.special_need_dog}, spayed: {self.spayed}, activity: {self.activity_level})"

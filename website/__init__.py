@@ -18,7 +18,7 @@ DB_NAME = "novabaza.db"
 mail = Mail()
 basedir = os.path.abspath(os.path.dirname(__file__))
 print(basedir)
-engine = create_engine('sqlite:///' + os.path.join(basedir, DB_NAME))
+engine = create_engine('sqlite:///' + os.path.join(basedir, DB_NAME), connect_args={'check_same_thread': False})
 Session = sessionmaker(bind=engine)
 session = Session()
 def create_app():

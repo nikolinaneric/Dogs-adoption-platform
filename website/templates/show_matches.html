@@ -74,7 +74,7 @@
         <div class="dog-card">
           <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
           <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
-          <p>{{ post.data }} </p>
+          <p>{{ post[0].data }} </p>
         </div>
         {% endfor %}
         <div class="pagination" >

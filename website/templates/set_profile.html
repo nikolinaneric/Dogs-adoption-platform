@@ -1,18 +1,52 @@
 {% extends "base.html" %} {% block title %}Set up your profile{% endblock %} 
 
 {% block content %}
-<div class="content-section">
+<style>
+  
+  .colored-strip {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50px;
+        width: 100%;
+        background-color: #ebcb6e;
+        padding: 35px;
+        color:#f2f2f2;
+  }
+
+      
+  .link {
+    color: #f2f2f2;
+    display: inline-block;
+    padding: 0px
+  }
+
+  .link:hover {
+    color: #f47b1e;
+    }
+</style>
+
+<div class ="colored-strip">
+  <h4 text-align = "center">Edit Account Info</h4>
+  <h7 text-align = "center"><a href="\questionnaire" class="link">Would you also like to fill the adoption preferences form?</a></h7>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="content-section" style="margin-top: 1%;">
     <div class="media">
-        <img class="rounded-circle account-img" src="{{ image_file }}">
+        <img class="rounded-circle account-img" style="width: 150px; height: 150px; object-fit: cover;" src="{{ image_file }}">
       <div class="media-body">
-        <h4 class="account-heading">{{ current_user.first_name }}</h4>
+        <h5 class="account-heading text-muted" style="margin-top: 120px; margin-left: 20px;">{{ current_user.first_name }}</h4>
       </div>
     </div>
     <form method="POST" action="" enctype="multipart/form-data">
         {{ form.csrf_token }}
 
         <fieldset class="form-group">
-          <legend class="border-bottom mb-4">Edit Account Info</legend>
+          <legend class="border-bottom mb-4"></legend>
         <div class="form-group">
           <label for="email">Email Address</label>
           {{ form.email(autofocus=True, class='form-control') }}

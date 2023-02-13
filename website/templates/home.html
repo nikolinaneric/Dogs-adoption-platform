@@ -1,33 +1,12 @@
-{% extends "base.html" %} {% block title %}Psi za udomljavanje{% endblock %} {% block content
+{% extends "base.html" %} {% block title %}Dogs{% endblock %} {% block content
     %}
 
-    <script>
-      const prevBtn = document.querySelector('.prev');
-      const nextBtn = document.querySelector('.next');
-      const pageNumber = document.querySelector('.page-number');
-
-      let currentPage = parseInt(pageNumber.textContent.split('/')[0].trim());
-      let totalPages = parseInt(pageNumber.textContent.split('/')[1].trim());
-
-      prevBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-          window.location.href = `?page=${currentPage - 1}`;
-        }
-      });
-
-      nextBtn.addEventListener('click', () => {
-        if (currentPage < totalPages) {
-          window.location.href = `?page=${currentPage + 1}`;
-        }
-      });
-
-
-    </script>
     <style>
       .dog-card {
         display: inline-block;
         width: 20%;
-        margin: 1%;
+        margin: 2%;
+        margin-top: 5%;
         text-align: center;
         vertical-align: top;
         flex-direction: column;
@@ -57,6 +36,10 @@
       font-size: 12px;
       }
 
+      .dog-card small {
+      font-size: 12px;
+      }
+
       .pagination {
         display: flex;
         justify-content: center;
@@ -67,22 +50,58 @@
         margin: 0 10px;
       }
 
+      .colored-strip {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50px;
+        width: 100%;
+        background-color: #ebcb6e;
+        padding: 35px;
+        color:#f2f2f2;
+      }
+      .link {
+        color: #f2f2f2;
+        display: inline-block;
+        padding: 0px
+      }
+
+      .link:hover {
+        color: #f47b1e;
+      }
     </style>
-    <h1 text-align = "center">Psi za udomljavanje</h1>
-    
-      {% for post in posts %}
+    <div class ="colored-strip" >
+      <h4 text-align = "center">Dogs for adoption</h4>
+      <h7 text-align = "center">Would you like to find a dog that would probably be the best fit for you?
+      <a class="link" href="{{ url_for('user_info')}}">Fill out the questionnaire and try our dope connection sistem.</a></h7>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    {% for post in posts %}
       <div class="dog-card">
         <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog" />
         <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
         <p>{{ post.data }} </p>
+        <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
       </div>
       {% endfor %}
-      <div class="pagination" >
-        <button class="prev">Previous</button>
-        <span class="page-number">{{ current_page }} / {{ total_pages }}</span>
-        <button class="next">Next</button>
+      <div class="pagination">
+        {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+          {% if page_num %}
+            {% if posts.page == page_num %}
+              <a class="btn btn-info mb-4" style="margin: 4px;" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+            {% else %}
+              <a class="btn btn-outline-info mb-4" href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+            {% endif %}
+          {% else %}
+            ...
+          {% endif %}
+        {% endfor %}
+        
       </div>
-      
       
     
     {% endblock %}

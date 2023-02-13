@@ -1,8 +1,10 @@
 {% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
     %}
+    <br>
     <form method="POST">
       {{ form.csrf_token }}
       <h3 text-align="center">Login</h3>
+      <br>
       <div class="form-group">
         <label for="email">Email Address</label>
         {{ form.email(required=True, autofocus=True, class='form-control') }}
@@ -46,5 +48,6 @@
           Need An Account? <a class="ml-2" href="{{ url_for('sign_up') }}">Sign Up Now</a>
       </small>
   </div>
+  <br>
    
     {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}{{ title}}{% endblock %} 
+{% extends "base.html" %} {% block title %}Update post{% endblock %} 
 
 {% block content %}
 <script>
@@ -9,45 +9,16 @@
     submitBtn.value = event.target.value;
   });
 
-  function validateForm() {
-    var submitfield = document.querySelectorAll('input[type="text"][name="a1"]');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a2"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a3"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a4"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a5"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a6"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a7"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a8"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a9"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a10"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a11"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a12"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a13"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a14"]:checked');
-      
-
-
-    if (radioBtns.length === 0) {
-      alert("Please answer all the questions.");
-      return false;
-    }
-    if (submitfield.length === 0) {
-      alert("Please answer all the questions.");
-      return false;
-    }
-    return true;
-  }
 </script>
 <style>
   .questionnaire {
           width: 100%;
-          
+          margin: False auto;
           padding: 20px;
           border: 0.1px solid rgb(190, 188, 188);
           border-radius: 10px;
           text-align: left;
-          margin-bottom: 5%;
-          
+          margin-bottom: 50px;
         }
     
         .question {
@@ -87,12 +58,12 @@
           background-color: #ebcb6e; /* or any other color of your choice */
           text-align: left;
           padding: 35px;
-          color:#f2f2f2
+          z-index: -1
         
         }
 </style>
 <div class ="colored-strip">
-  <h4 text-align = "center">Adding a dog for adoption</h4>
+  <h4 text-align = "center">Updating dog info </h4>
   <h7 text-align = "center">Please try to provide accurate information to make adopting more successful.
 </div>
 <br>
@@ -102,11 +73,11 @@
 <br>
 <br>
 <div class="content-section">
-  <form method="POST" action="" enctype="multipart/form-data" onsubmit="return validateForm();">    
+  <form method="POST" action="" enctype="multipart/form-data" >    
     {{ form.hidden_tag() }}
     <div class="form-group">
-      <label for="picture">Upload your picture</label>
-      {{ form.picture( required = True, autofocus=True, class="form-control") }} 
+      <label for="picture">Upload a new picture</label>
+      {{ form.picture( autofocus=True, class="form-control") }} 
     </div>
       <fieldset class="form-group">
         <legend class="border-bottom mb-4"></legend>
@@ -140,7 +111,7 @@
       </fieldset>
       <legend class="border-bottom mb-4"></legend>
       <div>
-        <h6 text-align = "center">Give us some details about your dogs in foster, so we can find a perfect human for them!</h6>
+        <h6 text-align = "center">You can answer just the questions which answer you want to change.</h6>
         <div class="questionnaire" >
             <form method="POST" action=""  onsubmit="return validateForm();">
             <div class="question">
@@ -254,7 +225,6 @@
       </div>
   </form>
 </div>
-<br>
 {% endblock %}
   
       

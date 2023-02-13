@@ -1,44 +1,58 @@
 {% extends "base.html" %} {% block title %}Post{% endblock %} {% block content
     %}
-    <style>
-      .post {
-        width: 80%;
-        margin: 30px auto;
-        text-align: center;
-      }
+  <style>
+  
+    .post-card{
+    text-align: center;
+    margin: 20px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 8px;
+    border-color:#e7e7e4;
+    background-color: #f4f4f1;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
 
-      .post img {
-        width: auto;
-        height: 100;
-      margin-bottom: 20px;
-      }
+    padding: 20px;
+    }
 
-      .post-title {
-        font-size: 32px;
-        margin-bottom: 20px;
-      }
+    .post-card h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    
+    }
 
-      .post-content {
-        font-size: 16px;
-        line-height: 1.5;
-        color: #333;
-        margin-bottom: 20px;
-      }
-    </style>
-    <div class="post">
-      <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="post image">
-      <h2 class="post-title">{{ title }}</h1>
-      <ul class="list-group list-group-flush post-content" id="notes">
-      <li class="list-group-item">
-        {{ post.data }}
-      </li>
-      </ul>
-    </div>
+    .post-card img {
+    width: 300px;
+    border-radius: 8px;
+    border-color:gray;
+    margin-bottom: 20px;
+    }
+
+    .post-card p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    }
+
+</style>
+
+<div class="post-card">
+    <h1>Meet {{ post.title }}!</h1>
+    <img src="https://photos.petfinder.com/photos/pets/59782194/1/?bust=1624753614&width=300&-pn.jpg" class="post img"alt="Betty">
+    <p>info</p>
+    <legend class="border-bottom mb-4"></legend>
+    <p>{{post.data}}</p>
+</div>
     {% if post.user_id == user.id %}
     <div>
       <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
       <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">
           Delete</button>
+    </div>
+    {% else %}
+    <div style="margin-left: 25px">
+      <p>Thinking about adopting? {{post.title}}</p>
+      <a class="btn btn-danger" href="{{ url_for('update_post', post_id=post.id) }}">Contact the foster parent</a>
     </div>
     {% endif %}
 <!-- Modal -->
@@ -54,7 +68,7 @@
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
-        <input class="btn btn-danger" type="submit" value="Delete">
+        <input class="btn btn-danger btn-sm m-1" type="submit" value="Delete">
       </form>
     </div>
   </div>

@@ -1,9 +1,11 @@
 {% extends "base.html" %} {% block title %}Sign Up{% endblock %} {% block
     content %}
+    <br>
     <form method="POST">
       {{ form.csrf_token }}
 
       <h3 text-align="center">Sign Up</h3>
+      <br>
       <div class="form-group">
         <label for="email">Email Address</label>
         {{ form.email(required=True, autofocus=True, class='form-control') }}
@@ -62,5 +64,6 @@
       <br />
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <br>
     
     {% endblock %}

@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from sqlalchemy.sql import func
 from itsdangerous import TimedSerializer as Serializer
 from flask import current_app
+from sqlalchemy.ext.mutable import MutableList
 
 
 
@@ -17,7 +18,6 @@ class Note(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     dog_info = db.relationship('DogInfo', backref = 'user', uselist = False)
 
-
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
 
@@ -27,8 +27,9 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
     image_file = db.Column(db.String(150), nullable=False, default='default.jpg')
-    notes = db.relationship('Note')
-    user_info = db.relationship('UserInfo', backref = 'user', uselist = False)
+    notes = db.relationship('Note', backref ='author', lazy = True)
+    user_info = db.relationship('UserInfo', backref = 'info', uselist = False)
+    
     
 
 
@@ -53,11 +54,11 @@ class User(db.Model, UserMixin):
 
 class UserInfo(db.Model):
     id = db.Column(db.Integer(), primary_key = True)
-    prefered_breed = db.Column(db.PickleType())
+    prefered_breed = db.Column(db.JSON)
     prefers_mixed_breed = db.Column(db.Boolean(150))
-    age_preference = db.Column(db.PickleType())
-    size_preference = db.Column(db.PickleType())
-    color_preference = db.Column(db.PickleType())
+    age_preference = db.Column(db.JSON)
+    size_preference = db.Column(db.JSON)
+    color_preference = db.Column(db.JSON)
     spay_needed = db.Column(db.Boolean)
     coat_length_preference = db.Column(db.String())
     dog_with_children = db.Column(db.Boolean)
@@ -75,7 +76,7 @@ class UserInfo(db.Model):
     dog_info = db.relationship('DogInfo')
     
     def __repr__(self):
-        return f"User preferes mixed breed('{self.prefers_mixed_breed},preffers{self.prefered_breed}, {self.age_preference[0]}'\
+        return f"User preferes mixed breed('{self.prefers_mixed_breed},preffers{self.prefered_breed}, {self.age_preference}'\
             ,{self.size_preference}, {self.color_preference}, {self.coat_length_preference},children: {self.dog_with_children}\
                 dogs:{self.dog_in_house}, cats:{self.dog_with_cats}, sm animals:{self.dog_with_sm_animals}, big anm: {self.dog_with_big_animals}\
                     special_need: {self.special_need_dog}, spayed: {self.spay_needed}, activity: {self.activity_level}\

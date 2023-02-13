@@ -4,9 +4,14 @@
     <title>Welcome</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <style>
+      html, body {
+      margin: 0;
+      height: 100%;
+      }
+
       body {
         background: linear-gradient(to right, #ce7516, #f1e022);
-        background-size: cover;
+        background-size: absolute;
         background-repeat: no-repeat;
         font-family: Arial, sans-serif;
         color: white;
@@ -14,6 +19,7 @@
       }
 
       .img-container {
+        margin-top:200px;
         width: 300px;
         height: 300px;
         overflow: hidden;
@@ -27,7 +33,34 @@
         height: 100%;
         object-fit: cover;
         object-position: center;
+        opacity: 0.7;
       }
+
+      
+      .btn-outline-info {
+        color: #ffffff;
+        border-color: #ffffff;
+      }
+      .btn-outline-info:hover {
+        border-color: #f47b1e;
+        background-color: #f47b1e;
+        color: white;
+      }
+
+      #pop-up {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50%;
+        height: 300px;
+        z-index: 1;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+      
+
+      }
+</style>
     </style>
   </head>
   <body>
@@ -35,15 +68,42 @@
       <div class="row">
         <div class="col-md-6 mx-auto">
           <div class="img-container">
-              <img src="cukic.jpg" alt="">
+              <img src="{{ url_for('static', filename='profile_pics/' + 'cuko.jpg') }}" alt="">
           </div>
-          <h1 class="text-light">Welcome to our social network!</h1>
-          <p class="text-light">Connect with friends and share your thoughts.</p>
+          <h1 class="text-light">We are here to match dogs and people</h1>
+          <p class="text-light">and to make a dope connection!</p>
           <div class="text-center">
-            <a href="/sign-up" class="btn btn-primary btn-lg m-2">Sign Up</a>
+          <button id ="pop-up-button" class="btn btn-primary btn-lg m-2">Sign In</button>
+          <div id="pop-up" style="display:none";>
+            <iframe src="/login" width="100%" height="300" style=" border-style: solid;border-radius: 8px"></iframe>
+            <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">Close</button>
+          </div>
           </div>
         </div>
       </div>
+
+      <script>
+        document.getElementById("pop-up-button").addEventListener("click", function() {
+          document.getElementById("pop-up").style.display = "block";
+        });
+      </script>
+
+      <div class="col-md-6">
+        <h2 class="text-light">Want to adopt a dog or to put a dog for adoption?</h2>
+        <br>
+        <p class="text-light">We understand how hard it is to pick a dog in a shelter when you would rather bring all of them home with you, or how hard it is to give fostering dogs and wonder if they will be a good fit with the adopters.</p>
+        <p class="text-light"> In a view of enhancing that, we came up with the solution of connecting dogs and people based on their traits and preferences. Let's try our luck today and make some lives better!
+        </p>
+        <div class="text-center">
+          <a href="/home" class="btn btn-outline-info btn-outline-info m-2">View our dogs</a>
+        </div> 
+      </div>
+      <footer style="position: fixed;
+      bottom: 10px;
+      right: 10px;
+      padding: 10px;">
+        <small>&copy; 2023, Nikolina Nerić</small>
+      </footer>
     </div>
   </body>
 </html>

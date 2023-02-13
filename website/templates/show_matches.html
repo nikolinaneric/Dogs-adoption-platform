@@ -1,33 +1,11 @@
-{% extends "base.html" %} {% block title %}Post{% endblock %}
+{% extends "base.html" %} {% block title %}Perfect matches{% endblock %}
     {% block content %}
-
-    <script>
-        const prevBtn = document.querySelector('.prev');
-        const nextBtn = document.querySelector('.next');
-        const pageNumber = document.querySelector('.page-number');
-  
-        let currentPage = parseInt(pageNumber.textContent.split('/')[0].trim());
-        let totalPages = parseInt(pageNumber.textContent.split('/')[1].trim());
-  
-        prevBtn.addEventListener('click', () => {
-          if (currentPage > 1) {
-            window.location.href = `?page=${currentPage - 1}`;
-          }
-        });
-  
-        nextBtn.addEventListener('click', () => {
-          if (currentPage < totalPages) {
-            window.location.href = `?page=${currentPage + 1}`;
-          }
-        });
-  
-  
-      </script>
       <style>
         .dog-card {
           display: inline-block;
           width: 20%;
-          margin: 1%;
+          margin: 2%;
+          margin-top: 5%;
           text-align: center;
           vertical-align: top;
           flex-direction: column;
@@ -60,55 +38,87 @@
         .pagination {
           display: flex;
           justify-content: center;
-          margin-top: 20px;
+          margin-top: auto;
+          margin-bottom: 20px;
         }
   
         .page-number {
           margin: 0 10px;
         }
-  
-      </style>
-       
-       <br>
-       <br>
-      <h4 text-align = "center">Your perfect matches waiting to be adopted!</h1>
-        {% if warning %}
-        <br>
-        <br>
         
-        <br>
-        <h6 text-align = "center">{{warning}}</h6>
-        <a href="{{ url_for('user_info')}}">Fill out the questionnaire again.</a>
-        {% else %}
-        <h6 text-align = "center">Do you want to change some of the preferences you gave to us?
-        <a href="{{ url_for('user_info')}}">Fill out the questionnaire again.</a></h6>
-        {% endif %}
-        <br>
-        <br>
-        {% if posts%}
-          {% for post in posts %}
-          <div class="dog-card">
-            <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
-            <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
-            <p>{{ post[0].data }} </p>
+        .colored-strip {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 50px;
+          width: 100%;
+          background-color: #ebcb6e;
+          padding: 35px;
+          color:#f2f2f2;
+      }
+
+      .link {
+        color: #f2f2f2;
+        display: inline-block;
+        padding: 0px
+      }
+
+      .link:hover {
+        color: #f47b1e;
+      }
+        
+      </style> 
+        <div class="colored-strip">
+          {% if warning %}
+            <h4 text-align = "center">Your perfect matches still waiting to be found!</h1>
+            <h6 text-align = "center" style="display: inline-block;">{{warning}}</h6>
+            <a href="{{ url_for('edit_user_info')}}" class="link">Fill out the questionnaire again.</a>
           </div>
-          {% endfor %}
-        {% else %}
-          <h6 text-align = "center">Our random choices</h6>
-          {% for post in alternative_posts %}
-          <div class="dog-card">
-            <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
-            <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
-            <p>{{ post[0].data }} </p>
+          <br>
+          <br>
+          <br>
+          <br>
+          <div style="margin-top: 6%;">
+            {% for post in alternative_posts %}
+              <div class="dog-card">
+                <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
+                <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
+                <p>{{ post[0].data }} </p>
+                <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
+              </div>
+            {% endfor %} 
           </div>
-          {% endfor %} 
-        {% endif %}
-        <div class="pagination" >
-          <button class="prev">Previous</button>
-          <span class="page-number">{{ current_page }} / {{ total_pages }}</span>
-          <button class="next">Next</button>
-        </div>
-        
-        
-      
+          {% else %}
+          <div class="colored-strip">
+            <h4 text-align = "center">Your perfect matches waiting to be adopted!</h1>
+            <h6 text-align = "center">Do you want to change some of the preferences you gave to us?
+            <a href="{{ url_for('edit_user_info')}}">Fill out the questionnaire again.</a></h6>
+          </div>
+            <br>
+            <br>
+          <div style="margin-top: 6%;">
+            {% for post in posts %}
+              <div class="dog-card">
+                <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
+                <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
+                <p>{{ post[0].data }} </p>
+                <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
+              </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+      <div class="pagination">
+            {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+              {% if page_num %}
+                {% if posts.page == page_num %}
+                  <a class="btn btn-info mb-4" style="margin: 4px"; href="{{ url_for('show_matches', user_id = author.id, page=page_num) }}">{{ page_num }}</a>
+                {% else %}
+                  <a class="btn btn-outline-info mb-4" href="{{ url_for('show_matches', user_id = author.id, page=page_num) }}">{{ page_num }}</a>
+                {% endif %}
+              {% else %}
+                ...
+              {% endif %}
+            {% endfor %}
+            
+      </div>
       {% endblock %}

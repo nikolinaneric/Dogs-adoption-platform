@@ -35,7 +35,7 @@ def create_app():
     app.add_url_rule("/login", view_func = views.login, methods = ['GET','POST'])
     app.add_url_rule("/logout", view_func = views.logout)
     app.add_url_rule("/sign-up", view_func = views.sign_up, methods = ['GET','POST'])
-    app.add_url_rule("/viewall", view_func = views.user_info, methods =['GET','POST'] )
+    app.add_url_rule("/questionnaire", view_func = views.user_info, methods =['GET','POST'] )
     app.add_url_rule("/", view_func = views.welcome)
     app.add_url_rule("/set-profile", view_func = views.set_profile, methods=['GET', 'POST'])
     app.add_url_rule("/reset-password", view_func = views.reset_request, methods=['GET', 'POST'])
@@ -43,13 +43,13 @@ def create_app():
     app.add_url_rule("/post/new", view_func = views.new_post, methods=['GET', 'POST'])
     app.add_url_rule("/post/<int:post_id>", view_func=views.post)
     app.add_url_rule("/post/<int:post_id>/update", view_func = views.update_post, methods=['GET', 'POST'])
-    app.add_url_rule("/questionnaire", view_func = views.user_info, methods=['GET', 'POST'])
     app.add_url_rule("/post/<int:post_id>/delete", view_func=views.delete_post, methods=['POST', 'GET'])
     app.add_url_rule("/matches", view_func=views.show_matches, methods=['POST', 'GET'])
-    
+    app.add_url_rule("/edit", view_func=views.edit_user_info, methods=['POST', 'GET'])
+    app.add_url_rule("/profile/<int:user_id>", view_func=views.user)
+    app.add_url_rule("/profile", view_func=views.my_profile)
 
-
-    from .models import User, Note
+    from .models import User
     create_dabatase(app)
     
 

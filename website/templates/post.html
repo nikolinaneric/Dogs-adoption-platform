@@ -34,11 +34,23 @@
     margin-bottom: 20px;
     }
 
+    #pop-up {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50%;
+        height: 300px;
+        z-index: 1;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
 </style>
 
 <div class="post-card">
     <h1>Meet {{ post.title }}!</h1>
-    <img src="https://photos.petfinder.com/photos/pets/59782194/1/?bust=1624753614&width=300&-pn.jpg" class="post img"alt="Betty">
+    <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" class="post img"alt="dog">
     <p>info</p>
     <legend class="border-bottom mb-4"></legend>
     <p>{{post.data}}</p>
@@ -51,9 +63,21 @@
     </div>
     {% else %}
     <div style="margin-left: 25px">
-      <p>Thinking about adopting? {{post.title}}</p>
+      <p>Thinking about adopting {{post.title}}?</p>
       <a class="btn btn-danger" href="{{ url_for('update_post', post_id=post.id) }}">Contact the foster parent</a>
+      <button id ="pop-up-button" class="btn btn-secondary" style="position:absolute; right:15%">Check the fit</button>
     </div>
+    <div id="pop-up" style="display:none";>
+      <iframe src="{{ url_for('comparison', post_id=post.id) }}" width="100%" height="300" style=" border-style:hidden ;border-radius: 8px"></iframe>
+      <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">Close</button>
+    </div>
+    <br>
+
+    <script>
+      document.getElementById("pop-up-button").addEventListener("click", function() {
+        document.getElementById("pop-up").style.display = "block";
+      });
+    </script>
     {% endif %}
 <!-- Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">

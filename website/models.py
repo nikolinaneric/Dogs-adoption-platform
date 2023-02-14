@@ -73,7 +73,6 @@ class UserInfo(db.Model):
     special_need_dog = db.Column(db.Boolean)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    dog_info = db.relationship('DogInfo')
     
     def __repr__(self):
         return f"User preferes mixed breed('{self.prefers_mixed_breed},preffers{self.prefered_breed}, {self.age_preference}'\
@@ -99,7 +98,7 @@ class DogInfo(db.Model):
     special_need_dog = db.Column(db.Boolean)
 
     note_id = db.Column(db.Integer, db.ForeignKey('note.id'))
-    user_info_id = db.Column(db.Integer, db.ForeignKey('user_info.id'))
+    
 
     def __repr__(self):
         return f"Dog is mixed breed('{self.mixed_breed}, {self.primary_breed}, {self.age},{self.size},\

@@ -30,13 +30,13 @@ def create_app():
    
 
     from . import views
-    
+    comparison = views.post
+    app.add_url_rule("/", view_func = views.welcome)
     app.add_url_rule("/home", view_func = views.home, methods = ['GET','POST'])
     app.add_url_rule("/login", view_func = views.login, methods = ['GET','POST'])
     app.add_url_rule("/logout", view_func = views.logout)
     app.add_url_rule("/sign-up", view_func = views.sign_up, methods = ['GET','POST'])
     app.add_url_rule("/questionnaire", view_func = views.user_info, methods =['GET','POST'] )
-    app.add_url_rule("/", view_func = views.welcome)
     app.add_url_rule("/set-profile", view_func = views.set_profile, methods=['GET', 'POST'])
     app.add_url_rule("/reset-password", view_func = views.reset_request, methods=['GET', 'POST'])
     app.add_url_rule("/reset-password/<token>", view_func = views.reset_token, methods=['GET', 'POST'])
@@ -48,6 +48,7 @@ def create_app():
     app.add_url_rule("/edit", view_func=views.edit_user_info, methods=['POST', 'GET'])
     app.add_url_rule("/profile/<int:user_id>", view_func=views.user)
     app.add_url_rule("/profile", view_func=views.my_profile)
+    app.add_url_rule("/comparison/<int:post_id>", view_func=views.comparison)
 
     from .models import User
     create_dabatase(app)

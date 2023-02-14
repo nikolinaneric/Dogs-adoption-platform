@@ -12,8 +12,6 @@ from . import mail, session, engine
 from sqlalchemy import insert, update, join, select, and_, case, text, or_, func, sql
 
    
-
-
 def home(page = 1):
 
     page = request.args.get('page', 1, type=int)
@@ -71,9 +69,6 @@ def sign_up():
 
     return render_template("sign_up.html", user = current_user, form = form)
 
-def show_all():
-   return render_template('show_all.html', user = current_user, users = User.query.all())
-
 def welcome():
     return render_template('welcome.html')
 
@@ -116,6 +111,7 @@ def set_profile():
         
     return render_template('set_profile.html', user = current_user, form= form, image_file = image_file)
 
+
 def reset_request():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -128,6 +124,7 @@ def reset_request():
    
     return render_template('reset_request.html', form = form, user = current_user)
 
+
 def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message('Password Reset Request',
@@ -139,6 +136,7 @@ If you did not make this request then simply ignore this email and no changes wi
 '''
     mail.send(msg)
     #external = True znaci da se salje apsolutno url kao npr https://example.com/my-page, a ne relativni -/mypage
+
 
 def reset_token(token):
     if current_user.is_authenticated:
@@ -200,6 +198,53 @@ def new_post():
 def post(post_id):
     post = Note.query.get_or_404(post_id)
     return render_template('post.html', post=post, user = current_user)
+
+def comparison(post_id):
+    dog = DogInfo.query.filter(DogInfo.note_id == post_id).first()
+    if current_user.is_authenticated: 
+        user = UserInfo.query.filter_by(user_id = current_user.id).first()
+        if not user:
+            return redirect(url_for('user_info'))
+    else:
+        return redirect(url_for('login'))
+    d_compatibility = ['children' if dog.dog_with_children else '', 'dogs' if dog.dog_with_dogs else '', 'cats' if dog.dog_with_cats else '',\
+            'small animals' if dog.dog_with_sm_animals else '', 'big animals' if dog.dog_with_big_animals else '']
+    d_compatibility = d_compatibility if any(c != "" for c in d_compatibility) else False
+    u_needs= ['children' if user.dog_with_children else '', 'dogs' if user.dog_with_dogs else '', 'cats' if user.dog_with_cats else '',\
+            'small animals' if user.dog_with_sm_animals else '', 'big animals' if user.dog_with_big_animals else '']
+    u_needs = u_needs if any(n != "" for n in u_needs) else False
+
+    comparison = {
+        "d_mixed_breed" : dog.mixed_breed,
+        "u_mixed_breed" : user.prefers_mixed_breed,
+        "d_primary_breed" : dog.primary_breed,
+        "u_prefered_breed" : user.prefered_breed['prefered_breed'][:],
+        "d_size" : dog.size,
+        "u_prefered_size" : user.size_preference['size_preference'][:],
+        "d_age" : dog.age,
+        "u_prefered_age" : user.age_preference['age_preference'][:],
+        "d_color" : dog.color,
+        "u_prefered_color" : user.color_preference['color_preference'][:],
+        "d_coat_length" : dog.coat_length,
+        "u_prefered_coat_length" : user.coat_length_preference,
+        "d_spayed" : dog.spayed,
+        "u_spay_needed" : user.spay_needed,
+        "d_compatibility": d_compatibility,
+        "u_needs": u_needs,
+        "d_special_need" : dog.special_need_dog,
+        "u_special_need" : user.special_need_dog,
+        "d_activity" : dog.activity_level,
+        "u_activity" : user.activity_level,
+        
+        
+        
+    
+    }
+    comparison = {k: v for k, v in comparison.items() if v}
+    print(comparison)
+    return render_template('comparison.html', comparison = comparison)
+    
+   
 
 @login_required
 def update_post(post_id):
@@ -266,6 +311,9 @@ def delete_post(post_id):
     db.session.commit()
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('home'))
+
+
+
 @login_required
 def user_info():
     if request.method == 'GET':
@@ -312,6 +360,7 @@ def user_info():
 
     return render_template('user_info.html', user = current_user, breeds = breeds, posts = posts)
 
+@login_required
 def edit_user_info():
     info = UserInfo.query.filter_by(user_id = current_user.id).first()
     if request.method == 'GET':
@@ -425,6 +474,7 @@ def show_matches(page = 1):
 
         return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result )
 
+@login_required
 def my_profile(page=1):
     posts = Note.query.filter_by(user_id = current_user.id).order_by(Note.date_posted.desc()).paginate(page=page, per_page=10)
     page = request.args.get('page', 1, type=int)
@@ -436,4 +486,6 @@ def user(user_id, page = 1):
     page = request.args.get('page', 1, type=int)
     posts = Note.query.filter_by(user_id = user_id).order_by(Note.date_posted.desc()).paginate(page=page, per_page=10)
     return render_template('user.html', posts = posts, user = current_user, author = author)
+
+
 

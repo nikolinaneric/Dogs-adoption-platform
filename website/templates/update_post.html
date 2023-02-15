@@ -96,6 +96,34 @@
           </div>
           <legend class="border-bottom mb-4"></legend>
           <div class="form-group">
+            {{ form.gender.label(class="form-control-label") }}
+            {% if form.gender.errors %}
+                {{ form.gender(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.gender.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.gender(class="form-control form-control-lg") }}
+            {% endif %}
+          </div>
+          <legend class="border-bottom mb-4"></legend>
+          <div class="form-group">
+            {{ form.city.label(class="form-control-label") }}
+            {% if form.city.errors %}
+                {{ form.city(class="form-control form-control-lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.city.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.city(class="form-control form-control-lg") }}
+            {% endif %}
+        </div>
+        <legend class="border-bottom mb-4"></legend>
+          <div class="form-group">
               {{ form.data.label(class="form-control-label") }}
               {% if form.data.errors %}
                   {{ form.data(class="form-control form-control-lg is-invalid") }}
@@ -221,7 +249,7 @@
             <input type="radio" id="a14" name="a14" value=1>Yes &nbsp &nbsp 
             <input type="radio" id="a14" name="a14" value=0>No &nbsp &nbsp
           </div>
-          <input type="submit" value="Post">
+          <input type="submit" value="Update">
       </div>
   </form>
 </div>

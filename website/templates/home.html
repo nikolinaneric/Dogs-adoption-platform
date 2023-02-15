@@ -3,19 +3,18 @@
 
     <style>
       .dog-card {
-        display: inline-block;
-        width: 20%;
-        margin: 2%;
-        margin-top: 5%;
-        text-align: center;
-        vertical-align: top;
-        flex-direction: column;
-        align-items: center;
-        height: 250px;
-        background-color: #f2f2f2;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+          display: inline-block;
+          width: 220px;
+          margin-top: 80px;
+          text-align: center;
+          vertical-align: top;
+          flex-direction: column;
+          align-items: center;
+          height: 250px;
+          background-color: #f2f2f2;
+          border-radius: 10px;
+          padding: 20px;
+          box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
       
       }
 
@@ -43,7 +42,9 @@
       .pagination {
         display: flex;
         justify-content: center;
-        margin-top: 20px;
+        position:fixed;
+        bottom: 0;
+        left: 50%
       }
 
       .page-number {
@@ -69,25 +70,73 @@
       .link:hover {
         color: #f47b1e;
       }
+
+    
     </style>
     <div class ="colored-strip" >
       <h4 text-align = "center">Dogs for adoption</h4>
       <h7 text-align = "center">Would you like to find a dog that would probably be the best fit for you?
       <a class="link" href="{{ url_for('user_info')}}">Fill out the questionnaire and try our dope connection sistem.</a></h7>
     </div>
+    <div>
+      {% for city in cities%}
+      <input type="checkbox" name="city" id="city" value="{{ city }}">
+      <label for="city">{{city}}</label>
+      {% endfor %}
+      <button type="submit">Filter by city</button>
+    </div>
     <br>
     <br>
     <br>
     <br>
-    <br>
-    {% for post in posts %}
-      <div class="dog-card">
-        <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog" />
-        <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
-        <p>{{ post.data }} </p>
-        <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
+    <div class="row">
+      {% for post in posts %}
+      <div class="col-lg-3" style="align-items: center;">
+        <div class="dog-card">
+          <div style="position: relative;">
+            <style> input {
+              display: none;
+            }
+        
+            /* changes the color when selected */
+            input:checked ~ label {
+              color: rgb(210, 57, 57);
+              opacity: 1
+            }
+        
+        
+        
+            /* for styling purpose only */
+            label {
+              font-size: 3.5em;
+              opacity: 0.3;
+              border-style: solid 5px;
+              border-color: white;
+            }
+            </style>
+            <form action="" method="POST" id="liked">
+              <input type="checkbox" name="saved[]" id="{{ post.id }}" style="position: absolute; bottom: -50px; right: -5px;" value="{{ post.id }}">
+              <label for="{{ post.id }}" style="position: absolute; bottom: -50px; right: -5px;">&#9829;</label>
+            </form>
+          </div>
+          <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog" />
+          <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
+          <p text-align="center"> {{ post.city }}, {{ post.gender }} </p>
+          <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
+        </div>
       </div>
       {% endfor %}
+    </div>
+
+      <script>
+        let checkboxes = document.querySelectorAll('input[type=checkbox][name="saved[]"]');
+        checkboxes.forEach(function(checkbox) {
+          checkbox.addEventListener('change', function() {
+            document.getElementById('liked').submit();
+          });
+        });
+      </script>
+
       <div class="pagination">
         {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
           {% if page_num %}
@@ -102,6 +151,9 @@
         {% endfor %}
         
       </div>
-      
+      <br>
+      <br>
+      <br>
+      <br>
     
     {% endblock %}

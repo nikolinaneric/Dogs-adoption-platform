@@ -50,20 +50,20 @@
 </tr></td> 
         </tr>
         <tr class="border-bottom mb-4">
-            <td class="left-column">preferre {% for breed in comparison['u_prefered_breed']%} {{ breed }} {% endfor %} breed/s, 
-                {% for age in comparison['u_prefered_age']%} {{ age }} {% endfor %} and 
-                {% for size in comparison['u_prefered_size']%} {{ size }} {% endfor %} dogs, with 
-                {% for color in comparison['u_prefered_color']%} {{ color }} {% endfor %} color and 
+            <td class="left-column">prefer {% for breed in comparison['u_prefered_breed']%} {{ breed }} {% endfor %} breed/s, 
+                {% for age in comparison['u_prefered_age']%} {{ age }} {% endfor %} age/s and 
+                {% for size in comparison['u_prefered_size']%} {{ size }} {% endfor %} size dogs, with 
+                {% for color in comparison['u_prefered_color']%} {{ color }} {% endfor %} color/s and 
                 {{ comparison['u_prefered_coat_length'] }} coat length
             </td>
-            <td class="right-column">{{ comparison['d_primary_breed'] }}, {{ comparison['d_age'] }}, {{ comparison['d_size'] }},
+            <td class="right-column">breed {{ comparison['d_primary_breed'] }}, {{ comparison['d_age'] }}, {{ comparison['d_size'] }},
                 {{ comparison['d_color'] }} and {{ comparison['d_coat_length'] }} hair  </td> 
         </tr> 
         <tr class="border-bottom mb-4">
           <td class="left-column">{% if comparison['u_spay_needed'] %}
                                     need already spayed/neutered dog
                                   {% else %}
-                                  can take care of spaying/neutering.
+                                  can take care of spaying/neutering
                                   <p> (Note that this is an obligatory procedure as soon as the dog is mature enough!)</p>
                                   {% endif %} </td>
           <td class="right-column">{% if comparison['d_spayed'] %}
@@ -75,14 +75,14 @@
         <tr class="border-bottom mb-4">
           <td class="left-column">  {% if comparison['u_needs'] %}
                                       your dog would be around 
-                                      {% for being in comparison['u_needs']%} {{ being }}, {% endfor %}, 
+                                      {% for being in comparison['u_needs']%} {{ being }}, {% endfor %}
                                     {% else %}
                                       don't need dog to be adapted to children or other animals
                                     {%endif%} 
           </td>
           <td class="right-column"> {% if comparison['d_compatibility'] %}
             is known to be good with 
-            {% for being in comparison['d_compatibility']%} {{ being }}, {% endfor %} 
+            {% for being in comparison['d_compatibility']%} {{ being }} {% endfor %} 
           {% else %}
             isn't adapted to be around other animals or children or it is unknown
           {%endif%} 

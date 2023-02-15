@@ -4,7 +4,7 @@ from PIL import Image
 from flask import render_template, request, flash, redirect, url_for, current_app, abort
 from flask_login import login_required, current_user, login_user, logout_user
 from .models import db
-from .models import User, Note, UserInfo, DogInfo
+from .models import User, Post, UserInfo, DogInfo
 from werkzeug.security import generate_password_hash, check_password_hash
 from .user_form import UserFormSignUp, UserFormLogIn, UserSetUp, RequestResetForm, ResetPasswordForm, PostForm
 from flask_mail import Message, Mail
@@ -13,10 +13,22 @@ from sqlalchemy import insert, update, join, select, and_, case, text, or_, func
 
    
 def home(page = 1):
-
     page = request.args.get('page', 1, type=int)
-    posts = Note.query.order_by(Note.date_posted.desc()).paginate(page=page, per_page=10)
-    return render_template("home.html", user = current_user, posts = posts)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+    if request.method == 'POST':
+        if current_user.is_authenticated:
+            user_info = UserInfo.query.filter_by(user_id = current_user.id).first()
+            if not user_info: 
+                flash('You must fill the adoption preferences questionnaire first','error')
+
+            saved_posts =  request.form.getlist('saved[]')
+            print(saved_posts)
+        else:
+            flash('You must be signed in for this action','error')
+        
+
+    cities = []
+    return render_template("home.html", user = current_user, posts = posts, cities = cities)
     
 
 def login():
@@ -162,8 +174,10 @@ def new_post():
     if form.validate_on_submit():
         photo = form.picture.data
         image_name = save_picture(photo)
+        city = form.city.data
+        gender = form.gender.data
         #image_file = url_for('static', filename='profile_pics/' + image_name)
-        post = Note(title=form.title.data, data=form.data.data, user_id = current_user.id, image_file = image_name)
+        post = Post(title=form.title.data, data=form.data.data, user_id = current_user.id, image_file = image_name, city = city, gender = gender)
         db.session.add(post)
         db.session.commit()
     
@@ -183,7 +197,7 @@ def new_post():
         "dog_with_big_animals" : bool(int(response.get('a12'))) if response.get('a12') else '',
         "activity_level" : response.get('a13'),
         "special_need_dog" : bool(int(response.get('a14'))) if response.get('a12') else '',
-        "note_id": post.id
+        "post_id": post.id
         }
 
         dog = DogInfo(**dog_data)
@@ -196,11 +210,11 @@ def new_post():
     return render_template('new_post.html', user = current_user, form = form)
 
 def post(post_id):
-    post = Note.query.get_or_404(post_id)
+    post = Post.query.get_or_404(post_id)
     return render_template('post.html', post=post, user = current_user)
 
 def comparison(post_id):
-    dog = DogInfo.query.filter(DogInfo.note_id == post_id).first()
+    dog = DogInfo.query.filter(DogInfo.post_id == post_id).first()
     if current_user.is_authenticated: 
         user = UserInfo.query.filter_by(user_id = current_user.id).first()
         if not user:
@@ -248,13 +262,15 @@ def comparison(post_id):
 
 @login_required
 def update_post(post_id):
-    post = Note.query.get_or_404(post_id)
+    post = Post.query.get_or_404(post_id)
     if post.user_id != current_user.id:
         abort(403)
     form = PostForm()
     if form.validate_on_submit():
         post.title = form.title.data
         post.data = form.data.data
+        post.gender = form.gender.data
+        post.city = form.city.data
         db.session.add(post)
         db.session.commit()
         flash('Your post has been updated!', 'success')
@@ -275,21 +291,21 @@ def update_post(post_id):
         "dog_with_big_animals" : bool(int(response.get('a12'))) if response.get('a12') else '',
         "activity_level" : response.get('a13'),
         "special_need_dog" : bool(int(response.get('a14')))if response.get('a14') else '',
-        "note_id": post.id
+        "post_id": post.id
         }
         dog_update_data = {k: v for k, v in dog_update_data.items() if v}
         print(post.id)
 
 
-        # sql = text("UPDATE dog_info SET dog_with_cats = :dog_with_cats WHERE note_id = :note_id")
+        # sql = text("UPDATE dog_info SET dog_with_cats = :dog_with_cats WHEpost_id post_id")
 
         # conn = engine.connect()
-        # conn.execute(sql, dog_with_cats = bool(int(response.get('a10'))) if response.get('a10') else '', note_id=post.id) 
-        update = db.session.query(DogInfo).filter_by(note_id=post.id).update(dog_update_data)
+        # conn.execute(sql, dog_with_cats = bool(int(response.get('a10'))) if response.get('a10') else 'post_id=post.id) 
+        update = db.session.query(DogInfo).filter(DogInfo.post_id==post.id).update(dog_update_data)
         #session.execute(update)
         db.session.commit()
         # print(doggo_info.first().dog_with_cats, 'macke')
-        # dog = DogInfo.query.filter_by(note_id = post.id).first()
+        # dog = DogInfo.query.filter_post_id = post.id).first()
         # print(dog.primary_breed, dog.activity_level, dog.dog_with_cats,dog.dog_with_sm_animals, "small an")
 
 
@@ -298,13 +314,15 @@ def update_post(post_id):
     elif request.method == 'GET':
         form.title.data = post.title
         form.data.data = post.data
+        form.city.data = post.city
+        form.gender.data = post.gender
     return render_template('update_post.html',
                            form=form, user = current_user)
 
 
 @login_required
 def delete_post(post_id):
-    post = Note.query.get_or_404(post_id)
+    post = Post.query.get_or_404(post_id)
     if post.user_id != current_user.id:
         abort(403)
     db.session.delete(post)
@@ -317,7 +335,7 @@ def delete_post(post_id):
 @login_required
 def user_info():
     if request.method == 'GET':
-        posts = Note.query.order_by(Note.date_posted.asc()).limit(8).all()
+        posts = Post.query.order_by(Post.date_posted.asc()).limit(8).all()
         breeds = set()
         for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != ('unknown' or 'Unknown')).distinct():
             breeds.add((dog.primary_breed).lower())
@@ -366,7 +384,7 @@ def edit_user_info():
     if request.method == 'GET':
         if not info:
             abort(403)
-        posts = Note.query.order_by(Note.date_posted.asc()).limit(8).all()
+        posts = Post.query.order_by(Post.date_posted.asc()).limit(8).all()
         breeds = set()
         for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != ('unknown' or 'Unknown')).distinct():
             breeds.add((dog.primary_breed).lower())
@@ -433,7 +451,7 @@ def show_matches(page = 1):
         print(age_preference)
         size_preference = (session.query(UserInfo.size_preference).filter(UserInfo.user_id == current_user.id).all())[0][0]['size_preference']
         color_preference = (session.query(UserInfo.color_preference).filter(UserInfo.user_id == current_user.id).all())[0][0]['color_preference']
-        result = db.session.query(Note, DogInfo, UserInfo).join(DogInfo, Note.id == DogInfo.note_id)\
+        result = db.session.query(Post, DogInfo, UserInfo).join(DogInfo, Post.id == DogInfo.post_id)\
                 .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
                 .filter( UserInfo.user_id == current_user.id)\
                 .filter(case(('all' not in age_preference, DogInfo.age.in_(age_preference)), else_= True))\
@@ -453,30 +471,36 @@ def show_matches(page = 1):
                 .filter(case((or_(UserInfo.yard == True , UserInfo.park == True), DogInfo.activity_level == UserInfo.activity_level),\
                    (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level == 'high'), DogInfo.activity_level != 'high'),\
                 (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level != 'high'), UserInfo.activity_level == DogInfo.activity_level), else_= True))\
-                .filter(Note.user_id != current_user.id)\
-                .order_by(Note.date_posted.desc()).paginate(page=page, per_page=10)
+                .filter(Post.user_id != current_user.id)\
+                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
         warning = None
         if not result.items:
             flash('Oops, it seems there aren\'t matches for your preferences...', category='error')
             warning = "Check if there are preferences that can be modified or take a look at some of the our random choices."
         else:   
            #result, warning = result.filter(case((and_(UserInfo.dog_in_house == False, UserInfo.yard == False), False), else_=True))\
-                #.order_by(Note.date_posted.desc()).paginate(page=page, per_page=10), None
+                #.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10), None
             if not result.items:
                 warning = "If you would not keep a dog in the house and if there is no yard, then where would the dog live?\
                 Please check your answers."
                 flash('Oops, it seems there aren\'t matches for your preferences...', category='error')
     
-        alternative_results = db.session.query(Note, DogInfo, UserInfo).join(DogInfo, Note.id == DogInfo.note_id)\
+        alternative_results = db.session.query(Post, DogInfo, UserInfo).join(DogInfo, Post.id == DogInfo.post_id)\
                 .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
-                .order_by(Note.date_posted.desc())\
+                .order_by(Post.date_posted.desc())\
                 .filter( UserInfo.user_id == current_user.id).order_by(func.random()).limit(8)
+        
+        response = request.form
+        saved = {"saved":response.getlist('saved')}
+        user_info.saved_dogs = saved
+        db.session.commit()
+        print(user_info.saved_dogs['saved'])
 
         return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result )
 
 @login_required
 def my_profile(page=1):
-    posts = Note.query.filter_by(user_id = current_user.id).order_by(Note.date_posted.desc()).paginate(page=page, per_page=10)
+    posts = Post.query.filter_by(user_id = current_user.id).order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
     page = request.args.get('page', 1, type=int)
     author = User.query.filter_by(id = current_user.id).first()
     return render_template('user.html', posts = posts, user = current_user, author = author)
@@ -484,7 +508,7 @@ def my_profile(page=1):
 def user(user_id, page = 1):
     author = User.query.filter_by(id = user_id).first()
     page = request.args.get('page', 1, type=int)
-    posts = Note.query.filter_by(user_id = user_id).order_by(Note.date_posted.desc()).paginate(page=page, per_page=10)
+    posts = Post.query.filter_by(user_id = user_id).order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
     return render_template('user.html', posts = posts, user = current_user, author = author)
 
 

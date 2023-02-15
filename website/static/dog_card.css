@@ -1,0 +1,19 @@
+input {
+    display: none;
+}
+
+  /* changes the color when selected */
+input:checked ~ label {
+    color: rgb(210, 57, 57);
+    opacity: 1
+}
+
+
+
+  /* for styling purpose only */
+label {
+    font-size: 3.5em;
+    opacity: 0.3;
+    border-style: solid 5px;
+    border-color: white;
+}

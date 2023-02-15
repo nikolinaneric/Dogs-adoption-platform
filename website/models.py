@@ -9,9 +9,11 @@ from sqlalchemy.ext.mutable import MutableList
 
 db = SQLAlchemy()
 
-class Note(db.Model):
+class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(150))
+    gender = db.Column(db.String(150))
+    city = db.Column(db.String(150))
     data = db.Column(db.String(10000))
     image_file = db.Column(db.String(150), nullable=False)
     date_posted = db.Column(db.DateTime(timezone = True), default = func.now())
@@ -27,9 +29,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
     image_file = db.Column(db.String(150), nullable=False, default='default.jpg')
-    notes = db.relationship('Note', backref ='author', lazy = True)
+    posts = db.relationship('Post', backref ='author', lazy = True)
     user_info = db.relationship('UserInfo', backref = 'info', uselist = False)
-    
     
 
 
@@ -71,6 +72,7 @@ class UserInfo(db.Model):
     park = db.Column(db.Boolean)
     activity_level = db.Column(db.String(150))
     special_need_dog = db.Column(db.Boolean)
+    saved_dogs = db.Column(db.JSON)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
@@ -97,7 +99,7 @@ class DogInfo(db.Model):
     activity_level = db.Column(db.String(150))
     special_need_dog = db.Column(db.Boolean)
 
-    note_id = db.Column(db.Integer, db.ForeignKey('note.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
     
 
     def __repr__(self):

@@ -1,300 +1,315 @@
 {% extends "base.html" %} {% block title %}Questionnaire{% endblock %} {% block content
-    %}
-    
-    <script>
-      function validateForm() {
-        var checkboxes = document.querySelectorAll('input[type="checkbox"][name="q1"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q2"]:checked');
-        var checkboxes = document.querySelectorAll('input[type="checkbox"][name="q3"]:checked');
-        var checkboxes = document.querySelectorAll('input[type="checkbox"][name="q4"]:checked');
-        var checkboxes = document.querySelectorAll('input[type="checkbox"][name="q5"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q6"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q7"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q8"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q9"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q10"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q11"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q12"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q13"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q14"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q15"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q16"]:checked');
-        var radioBtns = document.querySelectorAll('input[type="radio"][name="q17"]:checked');
-
-
-
-
-        if (checkboxes.length === 0) {
-          alert("Please answer all the questions.");
-          return false;
-        }
-
-        if (radioBtns.length === 0) {
-          alert("Please answer all the questions.");
-          return false;
-        }
-
-        return true;  
-      }
-    </script>  
-    <style>
-
-        .container {
-          display: flex;
-          margin-top: 80px;
-        }
-
-        .left-side {
-          width: 100%;
-          
-          
-        }
-
-        .right-side {
-          
-          width: 100%;
-          margin-left: 10%;
-        }
-
-        .questionnaire {
-          width: 100%;
-          padding: 20px;
-          border: 1px solid rgb(179, 177, 177);
-          border-radius: 10px;
-          text-align: left;
-          margin-bottom: 5%;
-          
-        }
-    
-        .question {
-          margin-top: 20px;
-        }
-    
-        label {
-          font-weight: bold;
-          margin-right: 10px;
-        }
-    
-        input[type="radio"],
-        input[type="checkbox"] {
-          margin-right: 10px;
-        }
-    
-        input[type="submit"] {
-          margin-top: 20px;
-          padding: 10px 20px;
-          background-color: lightblue;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-        }
-
-        .colored-strip {
-          position: absolute;
-          left: 0;
-          right: 0;
-          top: 50px;
-          width: 100%;
-          background-color: #ebcb6e;
-          padding: 35px;
-          color:#f2f2f2
-        }
-
-        .dog-card {
-          display: inline-block;
-          width: 40%;
-          margin: 2%;
-          margin-bottom: 20%;
-          margin-left: 6%;
-          text-align: center;
-          vertical-align: top;
-          flex-direction: column;
-          align-items: center;
-          height: 250px;
-          background-color: #f2f2f2;
-          border-radius: 10px;
-          padding: 20px;
-          box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-      
-          }
-        .dog-card img {
-          width: 100%;
-          height: 150px;
-          object-fit: cover;
-          border-radius: 10px;
-          margin-bottom: 20px;
-        }
-
-        .dog-card h2 {
-          font-size: 15px;
-          margin-bottom: 10px;
-        }
-
-        .dog-card p {
-        font-size: 12px;
-        }
-
-        .dog-card small {
-        font-size: 12px;
-        }
-        
-
-      </style>
-      <div class ="colored-strip">
-        <h4 text-align = "center">Adoption preferences</h4>
-        <h7 text-align = "center">Would you like to find a dog that would probably be the best fit for you?
-        Give us some info about you so we can make a perfect match with our dogs.</h7>
-      </div>
+  %}
   
-      <div class="container">
-        <div class="questionnaire class=left-side" >
-            <form method="POST"  action=""  onsubmit="return validateForm();">
-              <div class="question">
-                  <label for="q1">1. Do you have a preferred breed?</label>
-                  <br>
-                  {% for breed in breeds %}
-                  <input type="checkbox" id="q1" name="q1" value="{{ breed }}"> {{ breed }} &nbsp &nbsp 
-                  {% endfor %}   
-                  <input type="checkbox" id="q1" name="q1" value="all">no preference
-              </div>
+  <script>
+    function validateForm() {
+      var checkboxes = document.querySelectorAll('input[type="checkbox"][name="q1"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q2"]:checked');
+      var checkboxes = document.querySelectorAll('input[type="checkbox"][name="q3"]:checked');
+      var checkboxes = document.querySelectorAll('input[type="checkbox"][name="q4"]:checked');
+      var checkboxes = document.querySelectorAll('input[type="checkbox"][name="q5"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q6"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q7"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q8"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q9"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q10"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q11"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q12"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q13"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q14"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q15"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q16"]:checked');
+      var radioBtns = document.querySelectorAll('input[type="radio"][name="q17"]:checked');
 
-              <div class="question">
-                  <label for="q2">2. Are you okay with a mixed-breed dog?</label>
-                  <br>
-                  <input type="radio" id="q2" name="q2" value=1 >Yes &nbsp &nbsp 
-                  <input type="radio" id="q2" name="q2" value=0>No 
-              </div>
 
-              <div class="question">
-                  <label for="q3">3. Do you have an age preference?</label>
-                  <br>
-                  <input type="checkbox" id="q3" name="q3" value="puppy">puppy &nbsp &nbsp 
-                  <input type="checkbox" id="q3" name="q3" value="adult">adult &nbsp &nbsp  
-                  <input type="checkbox" id="q3" name="q3" value="senior">senior &nbsp &nbsp
-                  <input type="checkbox" id="q3" name="q3" value="all">no preference &nbsp &nbsp 
-              </div>
 
-              <div class="question">
-                  <label for="q4">4. Do you have a size preference?</label>
-                  <br>
-                  <input type="checkbox" id="q4" name="q4" value="small">small &nbsp &nbsp 
-                  <input type="checkbox" id="q4" name="q4" value="medium">medium &nbsp &nbsp  
-                  <input type="checkbox" id="q4" name="q4" value="large">large &nbsp &nbsp
-                  <input type="checkbox" id="q4" name="q4" value="all">no preference &nbsp &nbsp  
-              </div>
 
-              <div class="question">
-                <label for="q5">5. Do you have a color preference?</label>
+      if (checkboxes.length === 0) {
+        alert("Please answer all the questions.");
+        return false;
+      }
+
+      if (radioBtns.length === 0) {
+        alert("Please answer all the questions.");
+        return false;
+      }
+
+      return true;  
+    }
+  </script>  
+  <style>
+
+    @media only screen and (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .dog-card {
+        width: 80%;
+        margin: 2%;
+      }
+    }
+
+      .container {
+        display: flex;
+        margin-top: 100px;
+        margin-bottom: 40px;
+      }
+
+      .left-side {
+        width: 100%;
+        
+        
+      }
+
+      .right-side {
+        
+        width: 100%;
+        
+      }
+
+      .questionnaire {
+        width: 100%;
+        padding: 20px;
+        border: 1px solid rgb(179, 177, 177);
+        border-radius: 10px;
+        text-align: left;
+        margin-bottom: 5%;
+        
+      }
+  
+      .question {
+        margin-top: 20px;
+      }
+  
+      label {
+        font-weight: bold;
+        margin-right: 10px;
+      }
+  
+      input[type="radio"],
+      input[type="checkbox"] {
+        margin-right: 10px;
+      }
+  
+      input[type="submit"] {
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: lightblue;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .colored-strip {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50px;
+        width: 100%;
+        background-color: #ebcb6e;
+        padding: 35px;
+        color:#f2f2f2
+      }
+
+      .dog-card {
+        display: inline-block;
+        width: 40%;
+        margin: 2%;
+        margin-bottom: 100px;
+        margin-left: 6%;
+        text-align: center;
+        vertical-align: top;
+        flex-direction: column;
+        align-items: center;
+        height: 250px;
+        background-color: #f2f2f2;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    
+        }
+      .dog-card img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+
+      .dog-card h2 {
+        font-size: 15px;
+        margin-bottom: 10px;
+      }
+
+      .dog-card p {
+      font-size: 12px;
+      }
+
+      .dog-card small {
+      font-size: 12px;
+      }
+      
+
+    </style>
+    <div class ="colored-strip">
+      <h4 text-align = "center">Adoption preferences</h4>
+      <h7 text-align = "center">Would you like to find a dog that would probably be the best fit for you?
+      Give us some info about you so we can make a perfect match with our dogs.</h7>
+    </div>
+
+    <div class="container">
+      <div class="questionnaire class=left-side" >
+          <form method="POST"  action=""  onsubmit="return validateForm();">
+            <div class="question">
+                <label for="q1">1. Do you have a preferred breed?</label>
                 <br>
-                <input type="checkbox" id="q5" name="q5" value="white">white &nbsp &nbsp 
-                <input type="checkbox" id="q5" name="q5" value="yellow">yellow &nbsp &nbsp
-                <input type="checkbox" id="q5" name="q5" value="brown">brown &nbsp &nbsp 
-                <input type="checkbox" id="q5" name="q5" value="black">black &nbsp &nbsp 
-                <input type="checkbox" id="q5" name="q5" value="all">no preference &nbsp &nbsp  
-              </div>
+                {% for breed in breeds %}
+                <input type="checkbox" id="q1" name="q1" value="{{ breed }}"> {{ breed }} &nbsp &nbsp 
+                {% endfor %}   
+                <input type="checkbox" id="q1" name="q1" value="all">no preference
+            </div>
 
-              <div class="question">
-                <label for="q6">6. Do you need already spayed/neutered dog or are you willing to take care of it on your own expense?</label>
+            <div class="question">
+                <label for="q2">2. Are you okay with a mixed-breed dog?</label>
                 <br>
-                <input type="radio" id="q6" name="q6" value=1>I need spayed/neutered &nbsp &nbsp 
-                <input type="radio" id="q6" name="q6" value=0>I can take care of it &nbsp &nbsp
+                <input type="radio" id="q2" name="q2" value=1 >Yes &nbsp &nbsp 
+                <input type="radio" id="q2" name="q2" value=0>No 
             </div>
 
             <div class="question">
-              <label for="q7">7. Do you have a coat lenght preference? </label>
-              <br>
-              <input type="radio" id="q7" name="q7" value="short">short-haired  &nbsp &nbsp 
-              <input type="radio" id="q7" name="q7" value="long">long-haired &nbsp &nbsp
-              <input type="radio" id="q7" name="q7" value="all">no preference &nbsp &nbsp
+                <label for="q3">3. Do you have an age preference?</label>
+                <br>
+                <input type="checkbox" id="q3" name="q3" value="puppy">puppy &nbsp &nbsp 
+                <input type="checkbox" id="q3" name="q3" value="adult">adult &nbsp &nbsp  
+                <input type="checkbox" id="q3" name="q3" value="senior">senior &nbsp &nbsp
+                <input type="checkbox" id="q3" name="q3" value="all">no preference &nbsp &nbsp 
             </div>
 
             <div class="question">
-              <label for="q8">8. Would your dog be around children? </label>
-              <br>
-              <input type="radio" id="q8" name="q8" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q8" name="q8" value=0>No &nbsp &nbsp
+                <label for="q4">4. Do you have a size preference?</label>
+                <br>
+                <input type="checkbox" id="q4" name="q4" value="small">small &nbsp &nbsp 
+                <input type="checkbox" id="q4" name="q4" value="medium">medium &nbsp &nbsp  
+                <input type="checkbox" id="q4" name="q4" value="large">large &nbsp &nbsp
+                <input type="checkbox" id="q4" name="q4" value="all">no preference &nbsp &nbsp  
             </div>
 
             <div class="question">
-              <label for="q9">9. Do you already own a dog? </label>
+              <label for="q5">5. Do you have a color preference?</label>
               <br>
-              <input type="radio" id="q9" name="q9" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q9" name="q9" value=0>No &nbsp &nbsp
+              <input type="checkbox" id="q5" name="q5" value="white">white &nbsp &nbsp 
+              <input type="checkbox" id="q5" name="q5" value="yellow">yellow &nbsp &nbsp
+              <input type="checkbox" id="q5" name="q5" value="brown">brown &nbsp &nbsp 
+              <input type="checkbox" id="q5" name="q5" value="black">black &nbsp &nbsp 
+              <input type="checkbox" id="q5" name="q5" value="all">no preference &nbsp &nbsp  
             </div>
 
             <div class="question">
-              <label for="q10">10. Do you own a cat? </label>
+              <label for="q6">6. Do you need already spayed/neutered dog or are you willing to take care of it on your own expense?</label>
               <br>
-              <input type="radio" id="q10" name="q10" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q10" name="q10" value=0>No &nbsp &nbsp
-            </div>
-
-            <div class="question">
-              <label for="q11">11. Do you own other small animals such as a hamster, rabbit, etc? </label>
-              <br>
-              <input type="radio" id="q11" name="q11" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q11" name="q11" value=0>No &nbsp &nbsp
-            </div>
-
-            <div class="question">
-              <label for="q12">12. Do you own big animals such as cows, pigs, etc? </label>
-              <br>
-              <input type="radio" id="q12" name="q12" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q12" name="q12" value=0>No &nbsp &nbsp
-            </div>
-
-            <div class="question">
-              <label for="q13">13. Would you keep your dog inside house if needed? </label>
-              <br>
-              <input type="radio" id="q13" name="q13" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q13" name="q13" value=0>No &nbsp &nbsp
-            </div>
-
-            <div class="question">
-              <label for="14">14. Do you have a yard? </label>
-              <br>
-              <input type="radio" id="q14" name="q14" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q14" name="q14" value=0>No &nbsp &nbsp
-            </div>
-
-            <div class="question">
-              <label for="15">15. Do you have a park nearby? </label>
-              <br>
-              <input type="radio" id="q15" name="q15" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q15" name="q15" value=0>No &nbsp &nbsp
-            </div>
-
-            <div class="question">
-              <label for="16">16. Which level of activity can you provide to your dog? </label>
-              <br>
-              <input type="radio" id="q16" name="q16" value="low">Low &nbsp &nbsp 
-              <input type="radio" id="q16" name="q16" value="medium">Medium &nbsp &nbsp
-              <input type="radio" id="q16" name="q16" value="high">High &nbsp &nbsp
-            </div>
-
-            <div class="question">
-              <label for="17">17. Are you open to adopting a special-needs dog? </label>
-              <br>
-              <input type="radio" id="q17" name="q17" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q17" name="q17" value=0>No &nbsp &nbsp
-            </div>
-              <input type="submit" value="Submit">
-            </form>
-        </div>
-        <div class="right-side">
-          <h6 text-align = "center" style="margin-left: 6%;">Maybe you would want to check out some of the dogs waiting for adoption the longest.</h6>
-          <br>
-          {% for post in posts %}
-          <div class="dog-card">
-            <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog" />
-            <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
-            <p>{{ post.data }} </p>
-            <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}</small>
-            <br>
-            <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
+              <input type="radio" id="q6" name="q6" value=1>I need spayed/neutered &nbsp &nbsp 
+              <input type="radio" id="q6" name="q6" value=0>I can take care of it &nbsp &nbsp
           </div>
-        {% endfor %}
-        </div>
+
+          <div class="question">
+            <label for="q7">7. Do you have a coat lenght preference? </label>
+            <br>
+            <input type="radio" id="q7" name="q7" value="short">short-haired  &nbsp &nbsp 
+            <input type="radio" id="q7" name="q7" value="long">long-haired &nbsp &nbsp
+            <input type="radio" id="q7" name="q7" value="all">no preference &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="q8">8. Would your dog be around children? </label>
+            <br>
+            <input type="radio" id="q8" name="q8" value=1>Yes &nbsp &nbsp 
+            <input type="radio" id="q8" name="q8" value=0>No &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="q9">9. Do you already own a dog? </label>
+            <br>
+            <input type="radio" id="q9" name="q9" value=1>Yes &nbsp &nbsp 
+            <input type="radio" id="q9" name="q9" value=0>No &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="q10">10. Do you own a cat? </label>
+            <br>
+            <input type="radio" id="q10" name="q10" value=1>Yes &nbsp &nbsp 
+            <input type="radio" id="q10" name="q10" value=0>No &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="q11">11. Do you own other small animals such as a hamster, rabbit, etc? </label>
+            <br>
+            <input type="radio" id="q11" name="q11" value=1>Yes &nbsp &nbsp 
+            <input type="radio" id="q11" name="q11" value=0>No &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="q12">12. Do you own big animals such as cows, pigs, etc? </label>
+            <br>
+            <input type="radio" id="q12" name="q12" value=1>Yes &nbsp &nbsp 
+            <input type="radio" id="q12" name="q12" value=0>No &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="q13">13. Would you keep your dog inside house if needed? </label>
+            <br>
+            <input type="radio" id="q13" name="q13" value=1>Yes &nbsp &nbsp 
+            <input type="radio" id="q13" name="q13" value=0>No &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="14">14. Do you have a yard? </label>
+            <br>
+            <input type="radio" id="q14" name="q14" value=1>Yes &nbsp &nbsp 
+            <input type="radio" id="q14" name="q14" value=0>No &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="15">15. Do you have a park nearby? </label>
+            <br>
+            <input type="radio" id="q15" name="q15" value=1>Yes &nbsp &nbsp 
+            <input type="radio" id="q15" name="q15" value=0>No &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="16">16. Which level of activity can you provide to your dog? </label>
+            <br>
+            <input type="radio" id="q16" name="q16" value="low">Low &nbsp &nbsp 
+            <input type="radio" id="q16" name="q16" value="medium">Medium &nbsp &nbsp
+            <input type="radio" id="q16" name="q16" value="high">High &nbsp &nbsp
+          </div>
+
+          <div class="question">
+            <label for="17">17. Are you open to adopting a special-needs dog? </label>
+            <br>
+            <input type="radio" id="q17" name="q17" value=1>Yes &nbsp &nbsp 
+            <input type="radio" id="q17" name="q17" value=0>No &nbsp &nbsp
+          </div>
+            <input type="submit" value="Submit">
+          </form>
       </div>
-   
-    {% endblock %}
+      <br>
+      <div class="right-side">
+        <h6 text-align = "center" style="margin-left: 30px;">Maybe you would also want to check out some of the dogs waiting for adoption the longest.</h6>
+        <br>
+        {% for post in posts %}
+        <div class="dog-card">
+          <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog" />
+          <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
+          <p>{{ post.city }}, {{ post.gender }} </p>
+          <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}</small>
+          <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+    <br>
+    <br>
+ 
+  {% endblock %}

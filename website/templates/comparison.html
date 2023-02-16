@@ -26,7 +26,7 @@
   
 
     </style>
-    <title>Welcome</title>
+    <title>Comparison</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
   </head>
   <body>
@@ -56,7 +56,7 @@
                 {% for color in comparison['u_prefered_color']%} {{ color }} {% endfor %} color/s and 
                 {{ comparison['u_prefered_coat_length'] }} coat length
             </td>
-            <td class="right-column">breed {{ comparison['d_primary_breed'] }}, {{ comparison['d_age'] }}, {{ comparison['d_size'] }},
+            <td class="right-column">primary breed {{ comparison['d_primary_breed'] }}, {{ comparison['d_age'] }}, {{ comparison['d_size']}} size,
                 {{ comparison['d_color'] }} and {{ comparison['d_coat_length'] }} hair  </td> 
         </tr> 
         <tr class="border-bottom mb-4">
@@ -75,7 +75,7 @@
         <tr class="border-bottom mb-4">
           <td class="left-column">  {% if comparison['u_needs'] %}
                                       your dog would be around 
-                                      {% for being in comparison['u_needs']%} {{ being }}, {% endfor %}
+                                      {% for being in comparison['u_needs']%} {{ being }} {% endfor %}
                                     {% else %}
                                       don't need dog to be adapted to children or other animals
                                     {%endif%} 
@@ -97,13 +97,28 @@
           <td class="right-column">   {% if comparison['d_special_need'] %}
                                         is special-needs dog
                                       {% else %}
-                                        is special-needs dog 
+                                        is not a special-needs dog 
                                       {%endif%} 
         </tr>
-        <tr >
-          <td class="left-column">  could provide a {{ comparison['u_activity'] }} level of activity
+        <tr class="border mb-4">
+          <td class="left-column">  could provide a {{ comparison['u_activity'] }} level of activity{% if comparison['u_yard'] %}, have a yard {%else %}, don't have a yard{% endif %}{% if comparison['u_park'] %}, have a park nearby {%else %}, don't have a park nearby {% endif %}
+
           </td>
           <td class="right-column"> needs a {{ comparison['d_activity'] }} level of activity
+          </td>
+        </tr>
+        <tr class="border-bottom mb-4">
+          <td class="left-column">   {% if comparison['u_dog_in_house'] %}
+                                        would keep a dog in a house if needed
+                                     {% else %}
+                                        wouldn't keep a dog in a house 
+                                     {%endif%}
+          </td>
+          <td class="right-column"> {%if  comparison['age'] == "puppy"  or  comparison['size'] == "small" %}
+                                      needs to live inside
+                                    {% else %}
+                                      doesn't need to live inside
+                                    {% endif %}
         </tr>
       </table>
       <br>

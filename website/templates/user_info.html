@@ -288,15 +288,15 @@
           <div class="question">
             <label for="17">17. Are you open to adopting a special-needs dog? </label>
             <br>
-            <input type="radio" id="q17" name="q17" value=1>Yes &nbsp &nbsp 
-            <input type="radio" id="q17" name="q17" value=0>No &nbsp &nbsp
+            <input type="radio" id="remember-checkbox" name="q17" value=1>Yes &nbsp &nbsp 
+            <input type="radio" id="remember-checkbox" name="q17" value=0>No &nbsp &nbsp
           </div>
             <input type="submit" value="Submit">
           </form>
       </div>
       <br>
       <div class="right-side">
-        <h6 text-align = "center" style="margin-left: 30px;">Maybe you would also want to check out some of the dogs waiting for adoption the longest.</h6>
+        <h6 text-align = "center" style="text-align: center; font-size: 14px;">Maybe you would also want to check out some of the dogs waiting for adoption the longest.</h6>
         <br>
         {% for post in posts %}
         <div class="dog-card">
@@ -311,5 +311,39 @@
     </div>
     <br>
     <br>
+
+    <script>
+       const rememberCheckbox = document.querySelectorAll('input[type="checkbox"]');
+      rememberCheckbox.addEventListener('change', () => {
+        // If the checkbox is checked, store a value of 'true' in localStorage
+        // Otherwise, remove the 'remembered' value from localStorage
+        if (rememberCheckbox.checked) {
+          localStorage.setItem('remembered', 'true');
+        } else {
+          localStorage.removeItem('remembered');
+        }
+      });
+
+      const radioButtons = document.querySelectorAll('input[type="radio"]');
+
+      // Add a change event listener to each radio button
+      radioButtons.forEach((button) => {
+        button.addEventListener('change', () => {
+          // Store the value of the selected radio button in localStorage
+          localStorage.setItem('selectedOption', button.value);
+        });
+      });
+
+      // When the page loads, check if there's a stored value in localStorage
+      // If so, set the selected radio button accordingly
+      const selectedOption = localStorage.getItem('selectedOption');
+      if (selectedOption) {
+        radioButtons.forEach((button) => {
+          if (button.value === selectedOption) {
+            button.checked = true;
+          }
+        });
+      }
+    </script>
  
   {% endblock %}

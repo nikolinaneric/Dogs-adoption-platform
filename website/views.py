@@ -15,20 +15,29 @@ from sqlalchemy import insert, update, join, select, and_, case, text, or_, func
 def home(page = 1):
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
-    if request.method == 'POST':
-        if current_user.is_authenticated:
-            user_info = UserInfo.query.filter_by(user_id = current_user.id).first()
-            if not user_info: 
-                flash('You must fill the adoption preferences questionnaire first','error')
+    # if request.method == 'POST':
+    #     if current_user.is_authenticated:
+    #         user_info = UserInfo.query.filter_by(user_id = current_user.id).first()
+    #         if not user_info: 
+    #             flash('You must fill the adoption preferences questionnaire first','error')
 
-            saved_posts =  request.form.getlist('saved[]')
-            print(saved_posts)
-        else:
-            flash('You must be signed in for this action','error')
+    #         saved_posts =  request.form.getlist('saved[]')
+    #         print(saved_posts)
+    #     else:
+    #         flash('You must be signed in for this action','error')
         
 
-    cities = []
-    return render_template("home.html", user = current_user, posts = posts, cities = cities)
+    cities = set()
+    for post in session.query(Post.city).distinct():
+        cities.add(post.city)
+    print(cities)
+    
+    chosen_cities=[]
+    if request.method=="POST":
+        chosen_cities = request.form.getlist('city')
+        
+        posts = Post.query.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True)).order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+    return render_template("home.html", user = current_user, posts = posts, cities = cities, chosen_cities = chosen_cities)
     
 
 def login():
@@ -59,25 +68,29 @@ def login():
 @login_required    
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('welcome'))
 
 def sign_up():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
+    
     form = UserFormSignUp()
     if form.validate_on_submit():
-        email = form.data['email']
+        email = (form.data['email']).lower()
         first_name = form.data['first_name']
         password1 = form.data['password1']
         password2 = form.data['password2']
         image_file = 'default.jpg'
-    
-        new_user = User(email = email, first_name = first_name, password = generate_password_hash(password1, method = 'sha256'), image_file = image_file)
-        db.session.add(new_user)
-        db.session.commit()
-        login_user(new_user, remember=True)
-        flash('Account created!', category='success')
-        return redirect(url_for('set_profile'))
+        email_exists = User.query.filter_by(email = email).first()
+        if email_exists:
+            flash('The email address you\'re trying to add has been registered with the account already.','error')
+        else:
+            new_user = User(email = email, first_name = first_name, password = generate_password_hash(password1, method = 'sha256'), image_file = image_file)
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user, remember=True)
+            flash('Account created!', category='success')
+            return redirect(url_for('set_profile'))
 
     return render_template("sign_up.html", user = current_user, form = form)
 
@@ -115,7 +128,7 @@ def set_profile():
         current_user.first_name = form.data['first_name']
         db.session.commit()
         flash('Your account has been updated!', 'success')
-        return redirect(url_for('set_profile'))
+        return redirect(url_for('my_profile'))
 
     elif request.method == 'GET':
         form.first_name.data = current_user.first_name
@@ -143,9 +156,9 @@ def send_reset_email(user):
                   sender='noreply@demo.com',
                   recipients=[user.email])
     msg.body = f'''To reset your password, visit the following link:
-{url_for('reset_token', token=token, _external=True)}  
-If you did not make this request then simply ignore this email and no changes will be made.
-'''
+    {url_for('reset_token', token=token, _external=True)}  
+    If you did not make this request then simply ignore this email and no changes will be made.
+    '''
     mail.send(msg)
     #external = True znaci da se salje apsolutno url kao npr https://example.com/my-page, a ne relativni -/mypage
 
@@ -249,17 +262,39 @@ def comparison(post_id):
         "u_special_need" : user.special_need_dog,
         "d_activity" : dog.activity_level,
         "u_activity" : user.activity_level,
-        
-        
-        
-    
+        "u_dog_in_house" : user.dog_in_house,
+        "u_yard": user.yard,
+        "u_park": user.park
+
     }
     comparison = {k: v for k, v in comparison.items() if v}
     print(comparison)
     return render_template('comparison.html', comparison = comparison)
     
-   
+@login_required
+def dog_info(post_id):
+    dog = DogInfo.query.filter(DogInfo.post_id == post_id).first()
+    d_compatibility = ['children' if dog.dog_with_children else '', 'dogs' if dog.dog_with_dogs else '', 'cats' if dog.dog_with_cats else '',\
+            'small animals' if dog.dog_with_sm_animals else '', 'big animals' if dog.dog_with_big_animals else '']
+    d_compatibility = d_compatibility if any(c != "" for c in d_compatibility) else False
+    
 
+    dog_info = {
+        "d_mixed_breed" : dog.mixed_breed,
+        "d_primary_breed" : dog.primary_breed,
+        "d_size" : dog.size,
+        "d_age" : dog.age,
+        "d_color" : dog.color,
+        "d_coat_length" : dog.coat_length,
+        "d_spayed" : dog.spayed,
+        "d_compatibility": d_compatibility,
+        "d_special_need" : dog.special_need_dog,
+        "d_activity" : dog.activity_level,
+    }
+        
+    return render_template('dog_info.html', dog_info = dog_info)
+    
+    
 @login_required
 def update_post(post_id):
     post = Post.query.get_or_404(post_id)
@@ -451,6 +486,7 @@ def show_matches(page = 1):
         print(age_preference)
         size_preference = (session.query(UserInfo.size_preference).filter(UserInfo.user_id == current_user.id).all())[0][0]['size_preference']
         color_preference = (session.query(UserInfo.color_preference).filter(UserInfo.user_id == current_user.id).all())[0][0]['color_preference']
+        
         result = db.session.query(Post, DogInfo, UserInfo).join(DogInfo, Post.id == DogInfo.post_id)\
                 .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
                 .filter( UserInfo.user_id == current_user.id)\
@@ -468,19 +504,32 @@ def show_matches(page = 1):
                 .filter(case((UserInfo.special_need_dog == False, UserInfo.special_need_dog == DogInfo.special_need_dog), else_= True))\
                 .filter(case((UserInfo.spay_needed == True, UserInfo.spay_needed == DogInfo.spayed), else_= True))\
                 .filter(case((UserInfo.dog_in_house == False,and_(DogInfo.age != "puppy", DogInfo.size != 'small')), else_= True))\
-                .filter(case((or_(UserInfo.yard == True , UserInfo.park == True), DogInfo.activity_level == UserInfo.activity_level),\
-                   (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level == 'high'), DogInfo.activity_level != 'high'),\
-                (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level != 'high'), UserInfo.activity_level == DogInfo.activity_level), else_= True))\
                 .filter(Post.user_id != current_user.id)\
-                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+                .filter(case(
+        (and_(UserInfo.yard == True , UserInfo.park == True, UserInfo.activity_level == 'high'), UserInfo.activity_level.in_(['low','medium','high'])),
+        (and_(or_(UserInfo.yard == True , UserInfo.park == True),UserInfo.activity_level == 'high'),DogInfo.activity_level.in_(['low','medium','high'])),
+        (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level == 'high'), DogInfo.activity_level != 'high'),
+        (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level != 'high'), UserInfo.activity_level == DogInfo.activity_level), else_= True
+    )
+)
+        
+        
+        print(result)
+        city_query = result.with_entities(Post.city).distinct()
+        cities = set()
+        for post in city_query:
+           cities.add(post.city)      
+
         warning = None
-        if not result.items:
+        result1 = result.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+        if not result1.items:
             flash('Oops, it seems there aren\'t matches for your preferences...', category='error')
             warning = "Check if there are preferences that can be modified or take a look at some of the our random choices."
         else:   
-           #result, warning = result.filter(case((and_(UserInfo.dog_in_house == False, UserInfo.yard == False), False), else_=True))\
-                #.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10), None
-            if not result.items:
+            result1, warning = result.filter(case((and_(UserInfo.dog_in_house == False, UserInfo.yard == False), False), else_=True))\
+            .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10), None
+        
+            if not result1.items:
                 warning = "If you would not keep a dog in the house and if there is no yard, then where would the dog live?\
                 Please check your answers."
                 flash('Oops, it seems there aren\'t matches for your preferences...', category='error')
@@ -488,15 +537,24 @@ def show_matches(page = 1):
         alternative_results = db.session.query(Post, DogInfo, UserInfo).join(DogInfo, Post.id == DogInfo.post_id)\
                 .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
                 .order_by(Post.date_posted.desc())\
-                .filter( UserInfo.user_id == current_user.id).order_by(func.random()).limit(8)
+                .filter(Post.user_id != current_user.id).order_by(func.random()).limit(8)
         
-        response = request.form
-        saved = {"saved":response.getlist('saved')}
-        user_info.saved_dogs = saved
-        db.session.commit()
-        print(user_info.saved_dogs['saved'])
+        # response = request.form
+        # saved = {"saved":response.getlist('saved')}
+        # user_info.saved_dogs = saved
+        # db.session.commit()
+        # print(user_info.saved_dogs['saved'])
 
-        return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result )
+        
+        
+        if request.method=="POST":
+            chosen_cities = request.form.getlist('city')
+            result1 = result.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True)).order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+
+           
+            
+
+        return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result1, cities = cities )
 
 @login_required
 def my_profile(page=1):

@@ -71,54 +71,64 @@
         color: #f47b1e;
       }
 
-    
+
+      .button-like {
+        border: 2px hidden dark-gray;
+        background-color: transparent;
+        text-decoration: none;
+        padding: 1rem;
+        position: relative;
+        vertical-align: middle;
+        text-align: center;
+        display: inline-block;
+       
+        color: dark-gray;
+        transition: all ease 0.4s;
+
+        }
+
+          
+        
+
+
     </style>
     <div class ="colored-strip" >
       <h4 text-align = "center">Dogs for adoption</h4>
       <h7 text-align = "center">Would you like to find a dog that would probably be the best fit for you?
       <a class="link" href="{{ url_for('user_info')}}">Fill out the questionnaire and try our dope connection sistem.</a></h7>
     </div>
-    <div>
-      {% for city in cities%}
-      <input type="checkbox" name="city" id="city" value="{{ city }}">
-      <label for="city">{{city}}</label>
-      {% endfor %}
-      <button type="submit">Filter by city</button>
+    
+    
+    <div style="margin-top: 185px;">
+      
+      <form action="" method="POST">
+        
+        {% for city in cities%}
+            <input type="checkbox" id="remember-checkbox" name="city" value="{{ city }}" {% if city in chosen_cities %}checked{% endif %}> 
+            <label style="display: inline block;" for="city">{{city}}</label> &nbsp
+        {% endfor %}
+        
+        <div class="col-lg-3" style="margin-left: -15px;">
+          <button class="btn btn-secondary btn-sm" type="submit">Filter by city</button>
+          <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="city" value="all">Clear the filter</button>
+        </div>
+      </form>
+  
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <div class="row">
+ 
+
+    <div class="row text-center">
       {% for post in posts %}
-      <div class="col-lg-3" style="align-items: center;">
+      <div class="col-lg-3">
         <div class="dog-card">
-          <div style="position: relative;">
-            <style> input {
-              display: none;
-            }
-        
-            /* changes the color when selected */
-            input:checked ~ label {
-              color: rgb(210, 57, 57);
-              opacity: 1
-            }
-        
-        
-        
-            /* for styling purpose only */
-            label {
-              font-size: 3.5em;
-              opacity: 0.3;
-              border-style: solid 5px;
-              border-color: white;
-            }
-            </style>
+          <!--  <div style="position: relative;">
+          
             <form action="" method="POST" id="liked">
-              <input type="checkbox" name="saved[]" id="{{ post.id }}" style="position: absolute; bottom: -50px; right: -5px;" value="{{ post.id }}">
-              <label for="{{ post.id }}" style="position: absolute; bottom: -50px; right: -5px;">&#9829;</label>
-            </form>
-          </div>
+              <button class="button button-like">
+                <i class="fa fa-heart"></i>
+              </button>
+            </form> 
+          </div> -->  
           <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog" />
           <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
           <p text-align="center"> {{ post.city }}, {{ post.gender }} </p>
@@ -127,6 +137,8 @@
       </div>
       {% endfor %}
     </div>
+
+    
 
       <script>
         let checkboxes = document.querySelectorAll('input[type=checkbox][name="saved[]"]');
@@ -155,5 +167,31 @@
       <br>
       <br>
       <br>
+
+  <script>
+        // Get the checkbox element and add an event listener to it
+    const rememberCheckbox = document.getElementById('remember-checkbox');
+    rememberCheckbox.addEventListener('change', () => {
+      // If the checkbox is checked, store a value of 'true' in localStorage
+      // Otherwise, remove the 'remembered' value from localStorage
+      if (rememberCheckbox.checked) {
+        localStorage.setItem('remembered', 'true');
+      } else {
+        localStorage.removeItem('remembered');
+      }
+    });
+
+    // When the page loads, check if there's a 'remembered' value in localStorage
+    // If so, set the checkbox to checked
+    if (localStorage.getItem('remembered') === 'true') {
+      rememberCheckbox.checked = true;
+    }
+
+    function clearRememberedCheckboxes() {
+      localStorage.removeItem('remembered');
+        // Reload the page to update the checkbox state
+      location.reload();
+    };
+  </script>
     
     {% endblock %}

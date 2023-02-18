@@ -1,15 +1,18 @@
 import secrets
 import os
 from PIL import Image
-from flask import render_template, request, flash, redirect, url_for, current_app, abort
+from flask import render_template, request, flash, redirect, url_for, current_app, abort, jsonify, make_response
 from flask_login import login_required, current_user, login_user, logout_user
 from .models import db
 from .models import User, Post, UserInfo, DogInfo
 from werkzeug.security import generate_password_hash, check_password_hash
 from .user_form import UserFormSignUp, UserFormLogIn, UserSetUp, RequestResetForm, ResetPasswordForm, PostForm
-from flask_mail import Message, Mail
-from . import mail, session, engine
-from sqlalchemy import insert, update, join, select, and_, case, text, or_, func, sql
+from flask_mail import Message
+from . import mail, session
+from sqlalchemy import  update,and_, case, or_, func
+import jwt
+import datetime
+import logging
 
    
 def home(page = 1):
@@ -30,14 +33,25 @@ def home(page = 1):
     cities = set()
     for post in session.query(Post.city).distinct():
         cities.add(post.city)
-    print(cities)
-    
+    genders = ['male','female']
     chosen_cities=[]
-    if request.method=="POST":
+    if request.method == "POST":
         chosen_cities = request.form.getlist('city')
+        chosen_gender = (request.form.get('gender')).lower() if request.form.get('gender') else False
         
-        posts = Post.query.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True)).order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
-    return render_template("home.html", user = current_user, posts = posts, cities = cities, chosen_cities = chosen_cities)
+        if chosen_cities and chosen_gender:
+            posts = Post.query.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
+                    .filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
+                    .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+        elif chosen_cities:
+            posts = Post.query.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
+                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+        elif chosen_gender:
+            posts = Post.query.filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
+                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+        
+    
+    return render_template("home.html", user = current_user, posts = posts, cities = cities, genders = genders, chosen_cities = chosen_cities)
     
 
 def login():
@@ -50,19 +64,20 @@ def login():
 
         user = User.query.filter_by(email=email).first()
         if user:
-            if check_password_hash(user.password, password):
-                flash('Logged in successfully!', category = 'success') 
-                login_user(user, remember = True) 
-                next_page = request.args.get('next')  # ako je neulogovan korisnik pokusao pristupiti nekoj stranici ona postaje next nakon logina
-                return redirect(next_page) if next_page else redirect(url_for('home'))
-                
+            if user.is_verified:
+                if check_password_hash(user.password, password):
+                    flash('Logged in successfully!', category = 'success') 
+                    login_user(user, remember = True) 
+                    next_page = request.args.get('next')  # ako je neulogovan korisnik pokusao pristupiti nekoj stranici ona postaje next nakon logina
+                    return redirect(next_page) if next_page else redirect(url_for('home'))
+                    
+                else:
+                    flash('Incorrect password, try again', category = 'error')
             else:
-                flash('Incorrect password, try again', category = 'error')
+                flash('Email is not verified.', category = 'error')
         else:
-            flash('Email does not exist.', category = 'error')
-         
-    else:
-        print(form.errors)
+            flash('Account does not exist.', category = 'error')
+  
     return render_template("login.html", user = current_user, form = form)
 
 @login_required    
@@ -81,37 +96,63 @@ def sign_up():
         password1 = form.data['password1']
         password2 = form.data['password2']
         image_file = 'default.jpg'
+
         email_exists = User.query.filter_by(email = email).first()
         if email_exists:
             flash('The email address you\'re trying to add has been registered with the account already.','error')
         else:
-            new_user = User(email = email, first_name = first_name, password = generate_password_hash(password1, method = 'sha256'), image_file = image_file)
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user, remember=True)
-            flash('Account created!', category='success')
-            return redirect(url_for('set_profile'))
-
+            if email:
+                secret_key = 'mysecretkey'
+                verification_token = jwt.encode({'email': email, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, secret_key, algorithm='HS256')
+                verification_url = url_for('verify_email', token=verification_token, _external=True)
+                msg = Message('Email Verification', sender = "dogs.people.connect@gmail.com" , recipients=[email])
+                msg.body = f'''To verify your account, please visit the following link: {verification_url}   
+                    If you did not make this request then simply ignore this email and no changes will be made.
+                '''
+                mail.send(msg)
+                flash('Verification email sent! Please check your inbox.','info')
+                try:
+                    new_user = User(email = email, first_name = first_name, password = generate_password_hash(password1, method = 'sha256'), image_file = image_file)
+                    db.session.add(new_user)
+                    db.session.commit()
+                    flash('Account created!', category='success')
+                except:
+                    flash('Check your inbox for the verification mail')
+            return redirect(url_for('login'))
+        
     return render_template("sign_up.html", user = current_user, form = form)
+
+def verify_email(token):
+    secret_key = 'mysecretkey'
+    try:
+        email = jwt.decode(token, secret_key, algorithms=['HS256'])['email']
+    except:
+        return None
+    if email:
+        user = User.query.filter_by(email = email).first()
+        user.is_verified = True
+        db.session.commit()
+    return redirect(url_for('login'))
 
 def welcome():
     return render_template('welcome.html')
 
 def save_picture(form_picture):
+    picture_name = ""
     random_hex = secrets.token_hex(8)  # za naziv slike u bazi kako ne bi doslo do overrajdovanja
-    _, f_ext = os.path.splitext(form_picture.filename)  # f_ext je ekstenzija fajla slike iz forme (npr jpg ili png)
-    picture_name = random_hex + f_ext
-    picture_path = os.path.join(current_app.root_path,'static/profile_pics/', picture_name)  # napravljen path za cuvanje slike
+    if form_picture:
+        _, f_ext = os.path.splitext(form_picture.filename)  # f_ext je ekstenzija fajla slike iz forme (npr jpg ili png)
+        picture_name = random_hex + f_ext
+        picture_path = os.path.join(current_app.root_path,'static/profile_pics/', picture_name)  # napravljen path za cuvanje slike
 
     # smanjivanje velicine slike radi ustede memorije u bazi pomocu pillow paketa:
 
-    output_size = (900,450)
-    i = Image.open(form_picture)
-    i.thumbnail(output_size)
-    i.save(picture_path)   # cuvanje slike na picture_pathu
+        output_size = (900,450)
+        i = Image.open(form_picture)
+        i.thumbnail(output_size)
+        i.save(picture_path)   # cuvanje slike na picture_pathu
 
     return picture_name
-
 
 @login_required
 def set_profile():
@@ -201,18 +242,19 @@ def new_post():
         "age" : response.get('a3'),
         "size" : response.get('a4'),
         "color" : response.get('a5'),
-        "spayed" : bool(int(response.get('a6'))) if response.get('a8') else '',
+        "spayed" : bool(int(response.get('a6'))),
         "coat_length" : response.get('a7'),
-        "dog_with_children" : bool(int(response.get('a8'))) if response.get('a8') else '',
-        "dog_with_dogs" : bool(int(response.get('a9'))) if response.get('a9') else '',
-        "dog_with_cats" : bool(int(response.get('a10'))) if response.get('a10') else '',
-        "dog_with_sm_animals" : bool(int(response.get('a11'))) if response.get('a11') else '',
-        "dog_with_big_animals" : bool(int(response.get('a12'))) if response.get('a12') else '',
+        "dog_with_children" : bool(int(response.get('a8'))),
+        "dog_with_dogs" : bool(int(response.get('a9'))),
+        "dog_with_cats" : bool(int(response.get('a10'))),
+        "dog_with_sm_animals" : bool(int(response.get('a11'))), 
+        "dog_with_big_animals" : bool(int(response.get('a12'))), 
         "activity_level" : response.get('a13'),
-        "special_need_dog" : bool(int(response.get('a14'))) if response.get('a12') else '',
+        "special_need_dog" : bool(int(response.get('a14'))),
         "post_id": post.id
         }
 
+        print(dog_data)
         dog = DogInfo(**dog_data)
         db.session.add(dog)
         db.session.commit()
@@ -231,7 +273,7 @@ def comparison(post_id):
     if current_user.is_authenticated: 
         user = UserInfo.query.filter_by(user_id = current_user.id).first()
         if not user:
-            return redirect(url_for('user_info'))
+            return redirect(url_for('user_info'))       
     else:
         return redirect(url_for('login'))
     d_compatibility = ['children' if dog.dog_with_children else '', 'dogs' if dog.dog_with_dogs else '', 'cats' if dog.dog_with_cats else '',\
@@ -270,6 +312,26 @@ def comparison(post_id):
     comparison = {k: v for k, v in comparison.items() if v}
     print(comparison)
     return render_template('comparison.html', comparison = comparison)
+
+@login_required
+def email_form(post_id):
+    post = Post.query.filter(Post.id == post_id).first()
+    if request.method == 'POST':
+        author = current_user.email
+        recipient = request.form.get('recipient')
+        message = request.form.get('message')
+        subject = request.form.get('subject')
+
+        msg = Message(subject,
+                    sender = 'dopeconnect@admin.com',
+                    recipients= [recipient],
+                    reply_to = author)
+        msg.html = f" <p> {message} </p> <h4> This message was sent to you via <a href= {url_for('welcome', _external=True)}> dope connect <a/> app.</h4>"
+        mail.send(msg)
+        flash('Your email has been sent!','success')
+
+        
+    return render_template('email_form.html', user = current_user, post = post)
     
 @login_required
 def dog_info(post_id):
@@ -300,12 +362,14 @@ def update_post(post_id):
     post = Post.query.get_or_404(post_id)
     if post.user_id != current_user.id:
         abort(403)
-    form = PostForm()
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.data = form.data.data
-        post.gender = form.gender.data
-        post.city = form.city.data
+    form1 = PostForm()
+    if form1.validate_on_submit():
+        post.title = form1.title.data
+        post.data = form1.data.data
+        post.gender = form1.gender.data
+        post.city = form1.city.data
+        photo = form1.picture.data 
+        post.image_name = save_picture(photo)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been updated!', 'success')
@@ -319,17 +383,18 @@ def update_post(post_id):
         "color" : response.get('a5'),
         "spayed" : bool(int(response.get('a6'))) if response.get('a6') else '',
         "coat_length" : response.get('a7'),
-        "dog_with_children" : bool(int(response.get('a8'))) if response.get('a8') else '',
-        "dog_with_dogs" : bool(int(response.get('a9'))) if response.get('a9') else '',
-        "dog_with_cats" : bool(int(response.get('a10'))) if response.get('a10') else '',
-        "dog_with_sm_animals" : bool(int(response.get('a11'))) if response.get('a11') else '',
-        "dog_with_big_animals" : bool(int(response.get('a12'))) if response.get('a12') else '',
+        "dog_with_children" :int(response.get('a8')) ,
+        "dog_with_dogs" : int(response.get('a9')) ,
+        "dog_with_cats" : bool(int(response.get('a10'))) ,
+        "dog_with_sm_animals" : bool(int(response.get('a11'))) if response.get('a11') is not None else '',
+        "dog_with_big_animals" : bool(int(response.get('a12'))) if response.get('a12') is not None else '',
         "activity_level" : response.get('a13'),
         "special_need_dog" : bool(int(response.get('a14')))if response.get('a14') else '',
         "post_id": post.id
         }
         dog_update_data = {k: v for k, v in dog_update_data.items() if v}
         print(post.id)
+        print("DOG UPDATE",dog_update_data)
 
 
         # sql = text("UPDATE dog_info SET dog_with_cats = :dog_with_cats WHEpost_id post_id")
@@ -347,12 +412,14 @@ def update_post(post_id):
 
         return redirect(url_for('post', post_id = post.id, user = current_user))
     elif request.method == 'GET':
-        form.title.data = post.title
-        form.data.data = post.data
-        form.city.data = post.city
-        form.gender.data = post.gender
+        image_file = url_for('static', filename='profile_pics/' + post.image_file)
+        form1.title.data = post.title
+        form1.data.data = post.data
+        form1.city.data = post.city
+        form1.gender.data = post.gender
+        form1.picture.data = image_file
     return render_template('update_post.html',
-                           form=form, user = current_user)
+                           form=form1, user = current_user)
 
 
 @login_required
@@ -377,7 +444,8 @@ def user_info():
         info = UserInfo.query.filter_by(user_id = current_user.id).first()
         if info:
             flash('You have already filled the questionnaire.','sucess')
-            return redirect(url_for('show_matches'))
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('show_matches'))
             
     if request.method == 'POST':
         response = request.form
@@ -539,29 +607,43 @@ def show_matches(page = 1):
                 .order_by(Post.date_posted.desc())\
                 .filter(Post.user_id != current_user.id).order_by(func.random()).limit(8)
         
-        # response = request.form
-        # saved = {"saved":response.getlist('saved')}
-        # user_info.saved_dogs = saved
-        # db.session.commit()
-        # print(user_info.saved_dogs['saved'])
 
-        
-        
-        if request.method=="POST":
+        genders = ['male','female']
+        chosen_cities=[]
+        if request.method == "POST":
             chosen_cities = request.form.getlist('city')
-            result1 = result.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True)).order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
-
-           
+            chosen_gender = (request.form.get('gender')).lower() if request.form.get('gender') else False
             
+            if chosen_cities and chosen_gender:
+                result1 = result.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
+                        .filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
+                        .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+            elif chosen_cities:
+                result1 = result.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
+                    .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+            elif chosen_gender:
+                result1 = Post.query.filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
+                    .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+                
 
-        return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result1, cities = cities )
+        return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result1, cities = cities, genders = genders )
 
 @login_required
 def my_profile(page=1):
     posts = Post.query.filter_by(user_id = current_user.id).order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
     page = request.args.get('page', 1, type=int)
     author = User.query.filter_by(id = current_user.id).first()
-    return render_template('user.html', posts = posts, user = current_user, author = author)
+    profile = UserInfo.query.filter_by(user_id = current_user.id).first()
+    saved = []
+    if profile:
+        saved_dogs = set(profile.saved_dogs['saved'])
+        for id in saved_dogs:
+            dog = Post.query.filter_by(id = id).first()
+            if dog != None:
+                saved.append(dog)
+        print(saved)
+        print(posts, 'postovi')
+    return render_template('user.html', posts = posts, user = current_user, author = author, saved = saved)
 
 def user(user_id, page = 1):
     author = User.query.filter_by(id = user_id).first()
@@ -570,4 +652,51 @@ def user(user_id, page = 1):
     return render_template('user.html', posts = posts, user = current_user, author = author)
 
 
+@login_required
+def contact_foster(foster_id):
+    
+    
+    foster_parent = User.query.filter_by(id = foster_id).first()
+    
+    if request.method == 'POST':
+        author = current_user.email
+        recipient = request.form.get('recipient')
+        message = request.form.get('message')
+        subject = request.form.get('subject')
 
+        msg = Message(subject,
+                    sender = 'dopeconnect@admin.com',
+                    recipients= [recipient],
+                    reply_to = author)
+        msg.html = f" <p> {message} </p> <h4> This message was sent to you via <a href= {url_for('welcome', _external=True)}> dope connect <a/> app.</h4>"
+        mail.send(msg)
+        flash('Your email has been sent!','success')
+
+        
+    return render_template('email_form.html', foster_parent = foster_parent)
+
+
+saved_dogs = {"saved": []}
+def saved():
+
+    data = request.get_json()
+    print(data)
+    saved = data.get('saved')
+    post_id = saved.get('postId')
+        
+    if "saved" in saved_dogs:
+        saved_dogs["saved"].append(post_id)
+    else:
+        saved_dogs["saved"] = post_id
+        
+    print(saved_dogs, 'provjera')
+    user = UserInfo.query.filter_by(user_id = current_user.id).first() 
+    if user:   # prebaciti na usera
+        user.saved_dogs = saved_dogs
+        db.session.commit()
+    else:
+        flash('You must first fill the adoption preferences','info')
+    print(user.saved_dogs)
+    res = make_response(jsonify({"message":'did it'}),200)
+    
+    return res

@@ -1,9 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from sqlalchemy.sql import func
-from itsdangerous import TimedSerializer as Serializer
 from flask import current_app
-from sqlalchemy.ext.mutable import MutableList
+import jwt
+import datetime
 
 
 
@@ -20,12 +20,12 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     dog_info = db.relationship('DogInfo', backref = 'user', uselist = False)
 
-    def __repr__(self):
-        return f"Post('{self.title}', '{self.date_posted}')"
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     email = db.Column(db.String(150), unique = True)
+    is_verified = db.Column(db.Boolean(150), default = False)
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
     image_file = db.Column(db.String(150), nullable=False, default='default.jpg')
@@ -35,15 +35,23 @@ class User(db.Model, UserMixin):
 
 
     def get_reset_token(self, expires_sec=1800):
-        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')        
+
+        secret_key = 'mysecretkey'
+        payload = {
+            'user_id': self.id,
+            'username': self.first_name,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+        }
+        return jwt.encode(payload, secret_key, algorithm='HS256')
+
         # ovo nije staticna metoda jer se poziva na user objektu kog dobijamo preko mejla iz reset request forme 
 
     @staticmethod
     def verify_reset_token(token):
-        s = Serializer(current_app.config['SECRET_KEY'])
+        secret_key = 'mysecretkey'
+        
         try:
-            user_id = s.loads(token)['user_id']
+            user_id = jwt.decode(token, secret_key, algorithms=['HS256'])['user_id']
         except:
             return None
         return User.query.get(user_id)
@@ -76,12 +84,7 @@ class UserInfo(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
-    def __repr__(self):
-        return f"User preferes mixed breed('{self.prefers_mixed_breed},preffers{self.prefered_breed}, {self.age_preference}'\
-            ,{self.size_preference}, {self.color_preference}, {self.coat_length_preference},children: {self.dog_with_children}\
-                dogs:{self.dog_in_house}, cats:{self.dog_with_cats}, sm animals:{self.dog_with_sm_animals}, big anm: {self.dog_with_big_animals}\
-                    special_need: {self.special_need_dog}, spayed: {self.spay_needed}, activity: {self.activity_level}\
-                        park:{self.park}, yard: {self.yard})"
+   
 class DogInfo(db.Model):
     id = db.Column(db.Integer(), primary_key = True)
     primary_breed = db.Column(db.String(150))
@@ -102,7 +105,3 @@ class DogInfo(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
     
 
-    def __repr__(self):
-        return f"Dog is mixed breed('{self.mixed_breed}, {self.primary_breed}, {self.age},{self.size},\
-            {self.color},{self.coat_length},children: {self.dog_with_children}, dogs: {self.dog_with_dogs},cats:{self.dog_with_cats},sm animals:{self.dog_with_sm_animals}', big anm : {self.dog_with_big_animals}\
-                , special_need: {self.special_need_dog}, spayed: {self.spayed}, activity: {self.activity_level})"

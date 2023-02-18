@@ -83,16 +83,21 @@
           <br>
           <br>
           <div class="row text-center">
-            {% for post in alternative_posts %}
-            <div class="col-lg-3">
-              <div class="dog-card">
-                <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
-                <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
-                <p>{{ post[0].city }}, {{ post[0].gender }} </p>
-                <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
+            {%if alternative_post%}
+              {% for post in alternative_posts %}
+              <div class="col-lg-3">
+                <div class="dog-card">
+                  {% if post[0].author.id != current_user.id %}
+                    <div data-post-id="{{ post.id }}" id = "like" value="{{ post.id }}" onclick="savePostToFavorites(this)" style="position: absolute; top: 80px; color:rgb(116, 117, 119);border-color:rgb(167, 168, 169);box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);font-size: 30px;"><i class="heart fa fa-heart-o"></i></div>
+                  {%endif%}
+                  <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
+                  <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
+                  <p>{{ post[0].city }}, {{ post[0].gender }} </p>
+                  <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
+                </div>
               </div>
-            </div>
-            {% endfor %} 
+              {% endfor %}
+            {%endif} 
           </div>
           {% else %}
           <div class="colored-strip">
@@ -102,27 +107,43 @@
           </div>
           <div style="margin-top: 185px;">
             <form action="" method="POST">
+        
               {% for city in cities%}
-              <input type="checkbox" name="city" id="city" value="{{ city }}"> 
-              <label for="city">{{city}}</label> &nbsp
+                  <input type="checkbox" id="remember-checkbox" name="city" value="{{ city }}" {% if city in chosen_cities %}checked{% endif %}> 
+                  <label style="display: inline block;" for="city">{{city}}</label> &nbsp
               {% endfor %}
+          
               <div class="col-lg-3" style="margin-left: -15px;">
                 <button class="btn btn-secondary btn-sm" type="submit">Filter by city</button>
-                <button class="btn btn-secondary btn-sm" type="checkbox" name="city" id="city" value="all">Clear the filter</button>
+                <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="city" value="all">Clear the filter</button>
+              </div>
+            
+              {% for gender in genders%}
+              <input type="radio" id="radio" name="gender" value="{{ gender }}" style="margin-top: 20px;"> 
+              <label style="display: inline block;" style="margin-top: 20px;" for="gender">{{gender}} </label> &nbsp
+              {% endfor %}
+              <div class="col-lg-3" style="margin-left: -15px;">
+                <button class="btn btn-secondary btn-sm" type="submit">Filter by gender</button>
+                <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="gender" value="all">Clear the filter</button>
               </div>
             </form>
           </div>
           <div class="row text-center">
-            {% for post in posts %}
-            <div class="col-lg-3">
-              <div class="dog-card">
-                <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
-                <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
-                <p text-align="center"> {{ post[0].city }}, {{ post[0].gender }} </p>
-                <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
+            {% if posts}
+              {% for post in posts %}
+              <div class="col-lg-3">
+                <div class="dog-card">
+                  {% if post[0].author.id != current_user.id %}
+                    <div data-post-id="{{ post.id }}" id = "like" value="{{ post.id }}" onclick="savePostToFavorites(this)" style="position: absolute; top: 80px; color:rgb(116, 117, 119);border-color:rgb(167, 168, 169);box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);font-size: 30px;"><i class="heart fa fa-heart-o"></i></div>
+                  {%endif%}
+                  <img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog" />
+                  <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
+                  <p text-align="center"> {{ post[0].city }}, {{ post[0].gender }} </p>
+                  <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
+                </div>
               </div>
-            </div>
-            {% endfor %}
+              {% endfor %}
+            {%endif}
           </div>
           {% endif %}
 
@@ -144,4 +165,56 @@
       <br>
       <br>
       <br>
+
+      <script>
+          function savePostToFavorites(sacuvano) {
+          var postId = sacuvano.getAttribute("data-post-id");
+          var saved = {postId: postId};
+          console.log('postId:', postId);
+          fetch("/saved", {
+            method: "POST",
+            credentials : "include",
+            body: JSON.stringify({saved}),
+            cache : "no-cache",
+            headers : new Headers({
+              "content-type": "application/json"
+            })
+          })
+          .then(response => {
+            if (response.ok) {
+              alert('Post saved to favorites!');
+            } else {
+              alert('Failed to save post to favorites.');
+            }
+          })
+          .catch(error => {
+            alert('Failed to save post to favorites: ' + error.message);
+          });
+        }
+
+            // Get the checkbox element and add an event listener to it
+        const rememberCheckbox = document.getElementById('remember-checkbox');
+        rememberCheckbox.addEventListener('change', () => {
+          // If the checkbox is checked, store a value of 'true' in localStorage
+          // Otherwise, remove the 'remembered' value from localStorage
+          if (rememberCheckbox.checked) {
+            localStorage.setItem('remembered', 'true');
+          } else {
+            localStorage.removeItem('remembered');
+          }
+        });
+
+        // When the page loads, check if there's a 'remembered' value in localStorage
+        // If so, set the checkbox to checked
+        if (localStorage.getItem('remembered') === 'true') {
+          rememberCheckbox.checked = true;
+        }
+
+        function clearRememberedCheckboxes() {
+          const rememberCheckboxes = document.querySelectorAll('#remember-checkbox');
+          for (let i = 0; i < rememberCheckboxes.length; i++) {
+            rememberCheckboxes[i].checked = false;
+          }
+        }
+      </script>
       {% endblock %}

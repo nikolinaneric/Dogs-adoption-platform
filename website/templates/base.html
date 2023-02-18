@@ -93,13 +93,17 @@
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    {% else %}
+    {% elif category == 'success' %}
     <div class="alert alert-success alter-dismissable fade show" style="z-index: 10;" role="alert">
       {{ message }}
       <button type="button" class="close" data-dismiss="alert">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
+    {% else %}
+      <div class="alert alert-info" role="alert">
+        {{ message }}
+      </div>
     {% endif %} {% endfor %} {% endif %} {% endwith %}
 
     <div class="container">{% block content %} {% endblock %}</div>

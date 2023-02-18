@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Email Form</title>
+	<style>
+		body {
+			font-family: sans-serif;
+			background-color: white;
+		}
+		form {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 20px;
+			padding: 20px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			box-shadow: 0 0 5px #ccc;
+		}
+		label {
+		
+			margin-bottom: 5px;
+		}
+		input[type="email"], input[type="text"], input[type="password"], textarea {
+			padding: 10px;
+			margin-bottom: 10px;
+			border-radius: 5px;
+			border: 1px solid #ccc;
+			box-sizing: border-box;
+			width: 100%;
+			max-width: 400px;
+		}
+		textarea {
+			height: 150px;
+			resize: none;
+		}
+		button[type="submit"] {
+			background-color: #007bff;
+			color: #fff;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+	</style>
+
+	<link
+	rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+	crossorigin="anonymous"
+	/>
+	<link
+	rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+	crossorigin="anonymous"
+	/>
+</head>
+<body>
+	<br>
+	<br>
+	{% with messages = get_flashed_messages(with_categories=true) %} {% if
+		messages %} {% for category, message in messages %} {% if category == 'error' %}
+		<div class="alert alert-danger alter-dismissable fade show"style="z-index: 10; " role="alert">
+		  {{ message }}
+		 
+		</div>
+		{% else %}
+		<div class="alert alert-success alter-dismissable fade show" style="z-index: 10;" role="alert">
+		  {{ message }}
+		  
+		</div>
+		
+		{% endif %} {% endfor %} {% endif %} {% endwith %}
+
+		<div>
+			
+		</div>
+	<form method="post" action="">
+
+		
+
+		
+		<label for="recipient">To {% if post %} {{ post.author.first_name }} {% else %} {{ foster_parent.first_name}} {%endif%}</label>
+		<input type="email" id="recipient" name="recipient" value ="{% if post %} {{ post.author.email }} {% else %} {{foster_parent.email}} {%endif%}" required>
+
+		<label for="subject"> Subject </label>
+		<input type="text" id="subject" name="subject" value="About adopting {% if post %} {{ post.title }}  {%endif%}" required>
+
+		<label for="message">Message:</label>
+		<textarea id="message" name="message" placeholder="Type your message here..." required></textarea>
+		<br>
+		<button type="submit">Send</button>
+	</form>
+</body>
+</html>

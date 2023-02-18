@@ -6,6 +6,8 @@ from flask_mail import Mail
 from flask_migrate import Migrate
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import logging
+import sys
 
 
 
@@ -50,6 +52,10 @@ def create_app():
     app.add_url_rule("/profile", view_func=views.my_profile)
     app.add_url_rule("/comparison/<int:post_id>", view_func=views.comparison)
     app.add_url_rule("/dog-info/<int:post_id>", view_func=views.dog_info)
+    app.add_url_rule("/contact-foster/<int:post_id>", view_func=views.email_form, methods = ['GET', 'POST']) 
+    app.add_url_rule("/mail/<int:foster_id>", view_func=views.contact_foster, methods = ['GET', 'POST'])
+    app.add_url_rule("/verify_email/<token>", view_func = views.verify_email, methods=['GET'])
+    app.add_url_rule("/saved", view_func = views.saved, methods=['POST'])
 
     from .models import User
     create_dabatase(app)
@@ -58,17 +64,20 @@ def create_app():
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = "login"
-    login_manager.login_message_category = 'info'
     app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = "nericnikolina@gmail.com"
-    app.config['MAIL_PASSWORD'] = "vyjuvsuyjnvungwv"
+    app.config['MAIL_USERNAME'] = "dogs.people.connect@gmail.com"
+    app.config['MAIL_PASSWORD'] = 'jhkxemawoypigsfs' #os.environ.get('app_password')
    
     
     mail.init_app(app)
 
-  
+    
+
+    
+   
+
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id)) 

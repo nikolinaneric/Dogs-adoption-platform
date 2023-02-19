@@ -72,10 +72,15 @@
       .questionnaire {
         width: 100%;
         padding: 20px;
-        border: 1px solid rgb(179, 177, 177);
+       
         border-radius: 10px;
         text-align: left;
         margin-bottom: 5%;
+        border: 0.1px solid rgb(190, 188, 188);
+        background-color: #f2f2f2;
+        border-radius: 10px;
+        padding: 20px;
+        
         
       }
   
@@ -182,6 +187,7 @@
                 <label for="q3">3. Do you have an age preference?</label>
                 <br>
                 <input type="checkbox" id="q3" name="q3" value="puppy">puppy &nbsp &nbsp 
+                <input type="checkbox" id="q3" name="q3" value="young">young &nbsp &nbsp
                 <input type="checkbox" id="q3" name="q3" value="adult">adult &nbsp &nbsp  
                 <input type="checkbox" id="q3" name="q3" value="senior">senior &nbsp &nbsp
                 <input type="checkbox" id="q3" name="q3" value="all">no preference &nbsp &nbsp 
@@ -202,6 +208,7 @@
               <input type="checkbox" id="q5" name="q5" value="white">white &nbsp &nbsp 
               <input type="checkbox" id="q5" name="q5" value="yellow">yellow &nbsp &nbsp
               <input type="checkbox" id="q5" name="q5" value="brown">brown &nbsp &nbsp 
+              <input type="checkbox" id="q5" name="q5" value="gray">gray &nbsp &nbsp
               <input type="checkbox" id="q5" name="q5" value="black">black &nbsp &nbsp 
               <input type="checkbox" id="q5" name="q5" value="all">no preference &nbsp &nbsp  
             </div>
@@ -311,39 +318,5 @@
     </div>
     <br>
     <br>
-
-    <script>
-       const rememberCheckbox = document.querySelectorAll('input[type="checkbox"]');
-      rememberCheckbox.addEventListener('change', () => {
-        // If the checkbox is checked, store a value of 'true' in localStorage
-        // Otherwise, remove the 'remembered' value from localStorage
-        if (rememberCheckbox.checked) {
-          localStorage.setItem('remembered', 'true');
-        } else {
-          localStorage.removeItem('remembered');
-        }
-      });
-
-      const radioButtons = document.querySelectorAll('input[type="radio"]');
-
-      // Add a change event listener to each radio button
-      radioButtons.forEach((button) => {
-        button.addEventListener('change', () => {
-          // Store the value of the selected radio button in localStorage
-          localStorage.setItem('selectedOption', button.value);
-        });
-      });
-
-      // When the page loads, check if there's a stored value in localStorage
-      // If so, set the selected radio button accordingly
-      const selectedOption = localStorage.getItem('selectedOption');
-      if (selectedOption) {
-        radioButtons.forEach((button) => {
-          if (button.value === selectedOption) {
-            button.checked = true;
-          }
-        });
-      }
-    </script>
  
   {% endblock %}

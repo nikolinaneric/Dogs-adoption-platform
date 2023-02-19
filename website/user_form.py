@@ -45,6 +45,16 @@ class ResetPasswordForm(FlaskForm):
     password2 = PasswordField("Confirm Password", validators =[DataRequired(), Length(min=8), EqualTo('password1', message = "Passwords don't match!")])
     submit = SubmitField('Submit new password')
 
+class RequestVerificationForm(FlaskForm):
+    email = EmailField('Email',
+                        validators=[DataRequired()])
+    submit = SubmitField('Request Verification Mail')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('There is no account with that email. You must register first.')
+
 class PostForm(FlaskForm):
     title = StringField('Name', validators=[DataRequired()])
     city =  StringField('City', validators=[DataRequired()])

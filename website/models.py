@@ -31,6 +31,7 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(150), nullable=False, default='default.jpg')
     posts = db.relationship('Post', backref ='author', lazy = True)
     user_info = db.relationship('UserInfo', backref = 'info', uselist = False)
+    saved_dogs = db.Column(db.JSON)
     
 
 
@@ -80,7 +81,7 @@ class UserInfo(db.Model):
     park = db.Column(db.Boolean)
     activity_level = db.Column(db.String(150))
     special_need_dog = db.Column(db.Boolean)
-    saved_dogs = db.Column(db.JSON)
+    
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     

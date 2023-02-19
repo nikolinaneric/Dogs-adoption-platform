@@ -85,7 +85,7 @@
 		<input type="email" id="recipient" name="recipient" value ="{% if post %} {{ post.author.email }} {% else %} {{foster_parent.email}} {%endif%}" required>
 
 		<label for="subject"> Subject </label>
-		<input type="text" id="subject" name="subject" value="About adopting {% if post %} {{ post.title }}  {%endif%}" required>
+		<input type="text" id="subject" name="subject" value="About adopting {% if post %}{{ post.title }}{%endif%}" required>
 
 		<label for="message">Message:</label>
 		<textarea id="message" name="message" placeholder="Type your message here..." required></textarea>

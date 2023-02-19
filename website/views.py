@@ -6,38 +6,32 @@ from flask_login import login_required, current_user, login_user, logout_user
 from .models import db
 from .models import User, Post, UserInfo, DogInfo
 from werkzeug.security import generate_password_hash, check_password_hash
-from .user_form import UserFormSignUp, UserFormLogIn, UserSetUp, RequestResetForm, ResetPasswordForm, PostForm
+from .user_form import UserFormSignUp, UserFormLogIn, UserSetUp, RequestResetForm, ResetPasswordForm, PostForm, RequestVerificationForm
 from flask_mail import Message
 from . import mail, session
 from sqlalchemy import  update,and_, case, or_, func
 import jwt
 import datetime
-import logging
+
 
    
 def home(page = 1):
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
-    # if request.method == 'POST':
-    #     if current_user.is_authenticated:
-    #         user_info = UserInfo.query.filter_by(user_id = current_user.id).first()
-    #         if not user_info: 
-    #             flash('You must fill the adoption preferences questionnaire first','error')
-
-    #         saved_posts =  request.form.getlist('saved[]')
-    #         print(saved_posts)
-    #     else:
-    #         flash('You must be signed in for this action','error')
-        
 
     cities = set()
+    saved_posts = []
+    if current_user.is_authenticated:
+        saved_posts = current_user.saved_dogs['saved']
+        saved_posts = [int(id) for id in saved_posts]
     for post in session.query(Post.city).distinct():
         cities.add(post.city)
     genders = ['male','female']
     chosen_cities=[]
     if request.method == "POST":
         chosen_cities = request.form.getlist('city')
-        chosen_gender = (request.form.get('gender')).lower() if request.form.get('gender') else False
+        chosen_gender = request.form.get('gender') if request.form.get('gender') else False
+        print(chosen_gender)
         
         if chosen_cities and chosen_gender:
             posts = Post.query.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
@@ -51,7 +45,7 @@ def home(page = 1):
                 .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
         
     
-    return render_template("home.html", user = current_user, posts = posts, cities = cities, genders = genders, chosen_cities = chosen_cities)
+    return render_template("home.html", user = current_user, posts = posts, cities = cities, genders = genders, chosen_cities = chosen_cities, saved_posts = saved_posts)
     
 
 def login():
@@ -80,6 +74,21 @@ def login():
   
     return render_template("login.html", user = current_user, form = form)
 
+def resend_verification():
+    form = RequestVerificationForm()
+    if request.method == 'POST':
+        email = form.email.data
+        if (User.query.filter_by(email = email).first()):
+                    secret_key = 'mysecretkey'
+                    verification_token = jwt.encode({'email': email, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, secret_key, algorithm='HS256')
+                    verification_url = url_for('verify_email', token=verification_token, _external=True)
+                    msg = Message('Email Verification', sender = "dogs.people.connect@gmail.com" , recipients=[email])
+                    msg.body = f'''To verify your account, please visit the following link: {verification_url}   
+                        If you did not make this request then simply ignore this email and no changes will be made.
+                    '''
+                    mail.send(msg)
+                    flash('Verification email sent! Please check your inbox.','info')
+    return render_template('reset_request.html', form = form, user = current_user, title = "Request verification mail")
 @login_required    
 def logout():
     logout_user()
@@ -127,11 +136,13 @@ def verify_email(token):
     try:
         email = jwt.decode(token, secret_key, algorithms=['HS256'])['email']
     except:
-        return None
+        flash('Your token is either invalid or expired.','error')
+        return redirect(url_for('login'))
     if email:
         user = User.query.filter_by(email = email).first()
         user.is_verified = True
         db.session.commit()
+        flash('Your account has been verified. You may log in now.')
     return redirect(url_for('login'))
 
 def welcome():
@@ -188,7 +199,7 @@ def reset_request():
         flash('An email has been sent with instructions to reset your password.', 'info')
         return redirect(url_for('login'))
    
-    return render_template('reset_request.html', form = form, user = current_user)
+    return render_template('reset_request.html', form = form, user = current_user, title = "Request password reset")
 
 
 def send_reset_email(user):
@@ -229,7 +240,7 @@ def new_post():
         photo = form.picture.data
         image_name = save_picture(photo)
         city = form.city.data
-        gender = form.gender.data
+        gender = (form.gender.data).lower()
         #image_file = url_for('static', filename='profile_pics/' + image_name)
         post = Post(title=form.title.data, data=form.data.data, user_id = current_user.id, image_file = image_name, city = city, gender = gender)
         db.session.add(post)
@@ -476,8 +487,8 @@ def user_info():
             activity_level = activity_level, special_need_dog = special_need_dog, user_id = current_user.id)
         db.session.add(info)
         db.session.commit()
-  
-        return redirect(url_for('show_matches') )
+        next_page = request.args.get('next')
+        return redirect(next_page) if next_page else redirect(url_for('show_matches'))
 
     return render_template('user_info.html', user = current_user, breeds = breeds, posts = posts)
 
@@ -535,8 +546,8 @@ def edit_user_info():
             info.user_id = current_user.id
         
             db.session.commit()
-    
-        return redirect(url_for('show_matches') )
+        next_page = request.args.get('next')
+        return redirect(next_page) if next_page else redirect(url_for('show_matches'))
 
     return render_template('user_info.html', user = current_user, breeds = breeds, posts = posts)
 
@@ -607,7 +618,11 @@ def show_matches(page = 1):
                 .order_by(Post.date_posted.desc())\
                 .filter(Post.user_id != current_user.id).order_by(func.random()).limit(8)
         
-
+        
+        saved_posts = current_user.saved_dogs['saved']
+        saved_posts = [int(id) for id in saved_posts]
+        print(saved_posts)
+        print(saved_posts)
         genders = ['male','female']
         chosen_cities=[]
         if request.method == "POST":
@@ -625,15 +640,14 @@ def show_matches(page = 1):
                 result1 = Post.query.filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
                     .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
                 
-
-        return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result1, cities = cities, genders = genders )
+        print(saved_posts)
+        return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result1, cities = cities, genders = genders, saved_posts = saved_posts )
 
 @login_required
 def my_profile(page=1):
     posts = Post.query.filter_by(user_id = current_user.id).order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
     page = request.args.get('page', 1, type=int)
-    author = User.query.filter_by(id = current_user.id).first()
-    profile = UserInfo.query.filter_by(user_id = current_user.id).first()
+    profile = User.query.filter_by(id = current_user.id).first()
     saved = []
     if profile:
         saved_dogs = set(profile.saved_dogs['saved'])
@@ -643,7 +657,7 @@ def my_profile(page=1):
                 saved.append(dog)
         print(saved)
         print(posts, 'postovi')
-    return render_template('user.html', posts = posts, user = current_user, author = author, saved = saved)
+    return render_template('user.html', posts = posts, user = current_user, author = profile, saved = saved)
 
 def user(user_id, page = 1):
     author = User.query.filter_by(id = user_id).first()
@@ -677,26 +691,23 @@ def contact_foster(foster_id):
 
 
 saved_dogs = {"saved": []}
-def saved():
 
+def saved():
     data = request.get_json()
     print(data)
     saved = data.get('saved')
     post_id = saved.get('postId')
-        
-    if "saved" in saved_dogs:
+    if post_id not in saved_dogs['saved']:
         saved_dogs["saved"].append(post_id)
     else:
-        saved_dogs["saved"] = post_id
+        saved_dogs["saved"].remove(post_id)
+
         
     print(saved_dogs, 'provjera')
-    user = UserInfo.query.filter_by(user_id = current_user.id).first() 
-    if user:   # prebaciti na usera
+    user = User.query.filter_by(id = current_user.id).first() 
+    if user:   
         user.saved_dogs = saved_dogs
         db.session.commit()
-    else:
-        flash('You must first fill the adoption preferences','info')
-    print(user.saved_dogs)
     res = make_response(jsonify({"message":'did it'}),200)
     
     return res

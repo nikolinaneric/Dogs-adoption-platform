@@ -44,7 +44,6 @@
     </div>
     <form method="POST" action="" enctype="multipart/form-data">
         {{ form.csrf_token }}
-
         <fieldset class="form-group">
           <legend class="border-bottom mb-4"></legend>
         <div class="form-group">
@@ -61,7 +60,6 @@
             </div>
         </p>
         {% endfor %}
-        
         <div class="form-group">
           <label for="first_name">First Name</label>
           {{ form.first_name(autofocus=True, class='form-control') }}
@@ -73,22 +71,16 @@
         {% endfor %}
         <div class="form-group">
           <label for="picture">Upload your picture</label>
-          
           {{ form.picture(autofocus=True, class="form-control") }} 
-          
-        
         </div>
         {% for error in form.picture.errors %}
-        
           <div class="alert alert-danger alter-dismissable fade show" role="alert">
             {{ error }}
             <button type="button" class="close" data-dismiss="alert">
               <span aria-hidden="true">&times;</span>
             </button>
             </div>
-        
         {% endfor %}
-    
         <br />
         <button  type="submit" class="btn btn-primary">Submit</button>
       </form>

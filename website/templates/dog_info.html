@@ -13,9 +13,6 @@
             vertical-align: top;
             }
 
-            
-  
-
     </style>
     <title>Dog info</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -53,7 +50,7 @@
          
           <td class="right-column"> {% if dog_info['d_compatibility'] %}
             is known to be good with 
-            {% for being in dog_info['d_compatibility']%} {{ being }} {% endfor %} 
+            {% for being in dog_info['d_compatibility'][0:-1]%} {{ being }},{% endfor %} {{dog_info['d_compatibility'][-1]}}
           {% else %}
             isn't adapted to be around other animals or children or it is unknown
           {%endif%} 

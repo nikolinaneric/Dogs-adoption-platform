@@ -3,7 +3,6 @@
     <br>
     <form method="POST">
       {{ form.csrf_token }}
-
       <h3 text-align="center">Sign Up</h3>
       <br>
       <div class="form-group">
@@ -32,10 +31,7 @@
       {% endfor %}
       <div class="form-group">
         <label for="password1">Password</label>
-        
         {{ form.password1(required=True, autofocus=True, class="form-control") }} 
-        
-      
       </div>
       {% for error in form.password1.errors %}
       

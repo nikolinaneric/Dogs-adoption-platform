@@ -4,6 +4,7 @@ from sqlalchemy.sql import func
 from flask import current_app
 import jwt
 import datetime
+from flask import flash, redirect, url_for
 
 
 
@@ -54,7 +55,8 @@ class User(db.Model, UserMixin):
         try:
             user_id = jwt.decode(token, secret_key, algorithms=['HS256'])['user_id']
         except:
-            return None
+            None
+            return redirect(url_for('login'))
         return User.query.get(user_id)
     # ovo je staticna metoda jer nemamo pristup useru u tom trenutku jer nije ulogovan i nismo u aplikaciji u trenutku primanja mejla za verifikaciju
     

@@ -184,10 +184,6 @@
       {% endif %}
       </div>
 
-      
-          
-        
-      
         <div class="pagination">
           {% if author.id != current_user.id %}
             {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}

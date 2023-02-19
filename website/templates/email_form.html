@@ -63,24 +63,15 @@
 		messages %} {% for category, message in messages %} {% if category == 'error' %}
 		<div class="alert alert-danger alter-dismissable fade show"style="z-index: 10; " role="alert">
 		  {{ message }}
-		 
 		</div>
 		{% else %}
 		<div class="alert alert-success alter-dismissable fade show" style="z-index: 10;" role="alert">
 		  {{ message }}
-		  
 		</div>
-		
 		{% endif %} {% endfor %} {% endif %} {% endwith %}
-
-		<div>
-			
+		<div>	
 		</div>
 	<form method="post" action="">
-
-		
-
-		
 		<label for="recipient">To {% if post %} {{ post.author.first_name }} {% else %} {{ foster_parent.first_name}} {%endif%}</label>
 		<input type="email" id="recipient" name="recipient" value ="{% if post %} {{ post.author.email }} {% else %} {{foster_parent.email}} {%endif%}" required>
 

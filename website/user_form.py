@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, IntegerField, PasswordField, EmailField, RadioField, SubmitField
-from wtforms.validators import InputRequired, DataRequired, NumberRange, Optional, Length, EqualTo, ValidationError
+from wtforms import StringField, PasswordField, EmailField, SubmitField
+from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 from flask_login import current_user
 from .models import User
 
@@ -11,8 +11,6 @@ class UserFormSignUp(FlaskForm):
     password2 = PasswordField("Confirm Password", validators =[DataRequired(), Length(min=8), EqualTo('password1', message = "Passwords don't match!")])
     first_name = StringField("First name", validators = [DataRequired(), Length(min=3)])
     
-    
-
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user:
@@ -30,8 +28,7 @@ class UserSetUp(FlaskForm):
     
 
 class RequestResetForm(FlaskForm):
-    email = EmailField('Email',
-                        validators=[DataRequired()])
+    email = EmailField('Email', validators=[DataRequired()])
     submit = SubmitField('Request Password Reset')
 
     def validate_email(self, email):
@@ -46,8 +43,7 @@ class ResetPasswordForm(FlaskForm):
     submit = SubmitField('Submit new password')
 
 class RequestVerificationForm(FlaskForm):
-    email = EmailField('Email',
-                        validators=[DataRequired()])
+    email = EmailField('Email', validators=[DataRequired()])
     submit = SubmitField('Request Verification Mail')
 
     def validate_email(self, email):
@@ -60,5 +56,5 @@ class PostForm(FlaskForm):
     city =  StringField('City', validators=[DataRequired()])
     gender =  StringField('Gender', validators=[DataRequired()])
     data = StringField('Description', validators=[DataRequired()])
-    picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg','png','jpeg'])])
+    picture = FileField('Add a picture', validators=[FileAllowed(['jpg','png','jpeg'])])
     

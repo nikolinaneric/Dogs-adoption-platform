@@ -56,6 +56,8 @@ def create_app():
     app.add_url_rule("/mail/<int:foster_id>", view_func=views.contact_foster, methods = ['GET', 'POST'])
     app.add_url_rule("/verify_email/<token>", view_func = views.verify_email, methods=['GET'])
     app.add_url_rule("/saved", view_func = views.saved, methods=['POST'])
+    app.add_url_rule("/reverification", view_func = views.resend_verification, methods=['GET','POST'])
+
 
     from .models import User
     create_dabatase(app)

@@ -22,11 +22,11 @@
     <table>
         <tr class="border-bottom mb-4">
         
-          <td class="right-column">Dog</td> 
+          <td >Dog</td> 
         </tr>
         <tr class="border-bottom mb-4">
          
-          <td class="right-column"> {% if dog_info['d_mixed_breed'] %}
+          <td > {% if dog_info['d_mixed_breed'] %}
                                       is mixed breed
                                     {% else %}
                                       is pure breed 
@@ -35,12 +35,12 @@
         </tr>
         <tr class="border-bottom mb-4">
             
-            <td class="right-column">primary breed {{ dog_info['d_primary_breed'] }}, {{ dog_info['d_age'] }}, {{ dog_info['d_size'] }} size,
-                {{ dog_info['d_color'] }} and {{ dog_info['d_coat_length'] }} hair  </td> 
+            <td >primary breed {{ dog_info['d_primary_breed'] }}, {{ dog_info['d_age'] }}, {{ dog_info['d_size'] }} size (estimated size of adult),
+                primarily {{ dog_info['d_color'] }} and {{ dog_info['d_coat_length'] }} hair  </td> 
         </tr> 
         <tr class="border-bottom mb-4">
           
-          <td class="right-column">{% if dog_info['d_spayed'] %}
+          <td >{% if dog_info['d_spayed'] %}
                                       is spayed/neutered
                                     {% else %}
                                       is not spayed/neutered
@@ -48,7 +48,7 @@
         </tr>
         <tr class="border-bottom mb-4">
          
-          <td class="right-column"> {% if dog_info['d_compatibility'] %}
+          <td > {% if dog_info['d_compatibility'] %}
             is known to be good with 
             {% for being in dog_info['d_compatibility'][0:-1]%} {{ being }},{% endfor %} {{dog_info['d_compatibility'][-1]}}
           {% else %}
@@ -57,7 +57,7 @@
         </tr>
         <tr class="border-bottom mb-4">
           
-          <td class="right-column">   {% if dog_info['d_special_need'] %}
+          <td >   {% if dog_info['d_special_need'] %}
                                         is special-needs dog
                                       {% else %}
                                         is not a special-needs dog 
@@ -66,12 +66,12 @@
         <tr class="border-bottom mb-4">
           
           </td>
-          <td class="right-column"> needs a {{ dog_info['d_activity'] }} level of activity
+          <td > needs a {{ dog_info['d_activity'] }} level of activity
           </td>
         </tr>
         <tr class="border-bottom mb-4">
           
-          <td class="right-column"> {%if  dog_info['d_age'] == "puppy"  or  dog_info['d_size'] == "small" %}
+          <td > {%if  dog_info['d_age'] == "puppy"  or  dog_info['d_size'] == "small" %}
                                       needs to live inside
                                     {% else %}
                                       doesn't need to live inside

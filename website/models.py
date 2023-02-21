@@ -36,7 +36,7 @@ class User(db.Model, UserMixin):
     
 
 
-    def get_reset_token(self, expires_sec=1800):
+    def get_reset_token(self):
 
         secret_key = 'mysecretkey'
         payload = {

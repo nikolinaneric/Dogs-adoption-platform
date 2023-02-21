@@ -20,35 +20,35 @@ def welcome():
 
 def home(page = 1):
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
     cities = set()
     saved_posts = []
     if current_user.is_authenticated:
-        saved_posts = current_user.saved_dogs
-        if saved_posts:
-            saved_posts = current_user.saved_dogs['saved']
+        saved_dogs = current_user.saved_dogs
+        if saved_dogs:
+            saved_posts = saved_dogs['saved']
             saved_posts = [int(id) for id in saved_posts]
     for post in session.query(Post.city).distinct():
         cities.add(post.city)
     genders = ['male','female']
     chosen_cities=[]
-    if request.method == "POST":
-        chosen_cities = request.form.getlist('city')
-        chosen_gender = request.form.get('gender') if request.form.get('gender') else False
+    if request.method == "GET":
+        chosen_cities = request.args.getlist('city') if request.args.getlist('city') else []
+        chosen_gender = request.args.get('gender') if request.args.get('gender') else None
         
         if chosen_cities and chosen_gender:
             posts = Post.query.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
                     .filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
-                    .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+                    .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
         elif chosen_cities:
             posts = Post.query.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
-                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
         elif chosen_gender:
             posts = Post.query.filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
-                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
         
     
-    return render_template("home.html", user = current_user, posts = posts, cities = cities, genders = genders, chosen_cities = chosen_cities, saved_posts = saved_posts)
+    return render_template("home.html", user = current_user, posts = posts, cities = cities, genders = genders, chosen_cities = chosen_cities, chosen_gender = chosen_gender, saved_posts = saved_posts)
     
 
 def login():
@@ -157,7 +157,7 @@ def save_picture(form_picture):
 
     # smanjivanje velicine slike radi ustede memorije u bazi pomocu pillow paketa:
 
-        output_size = (900,450)
+        output_size = (1200,630)
         i = Image.open(form_picture)
         i.thumbnail(output_size)
         i.save(picture_path)   # cuvanje slike na picture_pathu
@@ -169,16 +169,29 @@ def set_profile():
     form = UserSetUp()
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     if form.validate_on_submit():
+        if form.data['email'] != current_user.email:
+            email = form.data['email']
+            secret_key = 'mysecretkey'
+            verification_token = jwt.encode({'email': email, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, secret_key, algorithm='HS256')
+            verification_url = url_for('verify_new_email', token=verification_token, _external=True)
+            msg = Message('Email Verification', sender = "dogs.people.connect@gmail.com" , recipients=[email])
+            msg.body = f'''To verify your account, please visit the following link: {verification_url}   
+                        If you did not make this request then simply ignore this email and no changes will be made.
+                    '''
+            mail.send(msg)
+            flash('Verification email sent! Please check your inbox.','info') # ne radi flash
+            return redirect(url_for('my_profile'))
         if form.data['picture']:
             profile_pic = save_picture(form.picture.data)
             previous_pic = current_user.image_file
             if previous_pic != "default.jpg":
                 os.remove(current_app.root_path + '/static/profile_pics/' + previous_pic)
             current_user.image_file = profile_pic
-        current_user.email = form.data['email']
-        current_user.first_name = form.data['first_name']
+            flash('Your account has been updated!', 'success')
+        if form.data['first_name'] != current_user.first_name:
+            current_user.first_name = form.data['first_name']
+            flash('Your account has been updated!', 'success')
         db.session.commit()
-        flash('Your account has been updated!', 'success')
         return redirect(url_for('my_profile'))
 
     elif request.method == 'GET':
@@ -187,6 +200,20 @@ def set_profile():
         
     return render_template('set_profile.html', user = current_user, form= form, image_file = image_file)
 
+@login_required
+def verify_new_email(token):
+    secret_key = 'mysecretkey'
+    try:
+        email = jwt.decode(token, secret_key, algorithms=['HS256'])['email']
+    except:
+        flash('Your token is either invalid or expired.','error')
+        return redirect(url_for('set_profile'))
+    if email:
+        current_user.email = email
+        current_user.is_verified = True
+        db.session.commit()
+        flash('Your new email has been verified.','info')
+        return redirect(url_for('my_profile'))
 
 def reset_request():
     if current_user.is_authenticated:
@@ -237,7 +264,7 @@ def new_post():
         photo = form.picture.data
         image_name = save_picture(photo)
         city = form.city.data
-        gender = (form.gender.data).lower()
+        gender = (form.gender.data)
         post = Post(title=form.title.data, data=form.data.data, user_id = current_user.id, image_file = image_name, city = city, gender = gender)
         db.session.add(post)
         db.session.commit()
@@ -360,7 +387,7 @@ def dog_info(post_id):
     
     
 @login_required
-def update_post(post_id):
+def update_post(post_id):   
     post = Post.query.get_or_404(post_id)
     if post.user_id != current_user.id:
         abort(403)
@@ -370,8 +397,11 @@ def update_post(post_id):
         post.data = form1.data.data
         post.gender = form1.gender.data
         post.city = form1.city.data
-        photo = form1.picture.data 
-        post.image_name = save_picture(photo)
+        if form1.picture.data:
+            current_image = post.image_file
+            os.remove(current_app.root_path + '/static/profile_pics/' + current_image)
+            photo = form1.picture.data 
+            post.image_file = save_picture(photo)
         db.session.add(post)
         db.session.commit()
         flash('Your post has been updated!', 'success')
@@ -416,6 +446,8 @@ def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
     if post.user_id != current_user.id:
         abort(403)
+    current_image = post.image_file
+    os.remove(current_app.root_path + '/static/profile_pics/' + current_image)
     db.session.delete(post)
     db.session.commit()
     flash('Your post has been deleted!', 'success')
@@ -426,16 +458,14 @@ def delete_post(post_id):
 @login_required
 def user_info():
     if request.method == 'GET':
-        posts = Post.query.order_by(Post.date_posted.asc()).limit(8).all()
+        posts = Post.query.filter(Post.user_id != current_user.id).order_by(Post.date_posted.asc()).limit(10).all()
         breeds = set()
         for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != ('unknown' or 'Unknown')).distinct():
             breeds.add((dog.primary_breed).lower())
         info = UserInfo.query.filter_by(user_id = current_user.id).first()
         if info:
             flash('You have already filled the questionnaire.','warning')
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('show_matches'))
-            
+            return redirect(url_for('show_matches'))
     if request.method == 'POST':
         response = request.form
         user_data = {
@@ -455,7 +485,8 @@ def user_info():
         "yard" : bool(int(response.get('q14'))),
         "park" : bool(int(response.get('q15'))),
         "activity_level" : response.get('q16'),
-        "special_need_dog" : bool(int(response.get('q17')))
+        "special_need_dog" : bool(int(response.get('q17'))),
+        "user_id" : current_user.id
         }
         flash('You successfully submited your answers. Here are your matches!', 'success')
     
@@ -473,7 +504,7 @@ def edit_user_info():
     if request.method == 'GET':
         if not info:
             abort(403)
-        posts = Post.query.order_by(Post.date_posted.asc()).limit(8).all()
+        posts = Post.query.filter(Post.user_id != current_user.id).order_by(Post.date_posted.asc()).limit(8).all()
         breeds = set()
         for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != ('unknown' or 'Unknown')).distinct():
             breeds.add((dog.primary_breed).lower())
@@ -496,7 +527,8 @@ def edit_user_info():
         "yard" : bool(int(response.get('q14'))) if response.get('q14') is not None else None,
         "park" : bool(int(response.get('q15'))) if response.get('q15') is not None else None,
         "activity_level" : response.get('q16'),
-        "special_need_dog" : bool(int(response.get('q17'))) if response.get('q17') is not None else None
+        "special_need_dog" : bool(int(response.get('q17'))) if response.get('q17') is not None else None,
+        "user_id" : current_user.id
         }
         flash('You successfully submited your new answers. Here are your matches!', 'success')
         
@@ -548,9 +580,13 @@ def show_matches(page = 1):
                     (and_(UserInfo.yard == True , UserInfo.park == True, UserInfo.activity_level == 'high'), UserInfo.activity_level.in_(['low','medium','high'])),
                     (and_(or_(UserInfo.yard == True , UserInfo.park == True),UserInfo.activity_level == 'high'),DogInfo.activity_level.in_(['low','medium','high'])),
                     (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level == 'high'), DogInfo.activity_level != 'high'),
-                    (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level != 'high'), UserInfo.activity_level == DogInfo.activity_level), else_= True
+                    (and_(or_(UserInfo.yard == True , UserInfo.park == True), UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])),
+                    (and_(UserInfo.yard == True , UserInfo.park == True, UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])),
+                    (and_(or_(UserInfo.yard == False , UserInfo.park == False), UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])),
+                    (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])), 
+                    else_= (UserInfo.activity_level == DogInfo.activity_level)
                 )
-                )
+                )       #Ne valja
   
     city_query = result.with_entities(Post.city).distinct()
     cities = set()
@@ -558,13 +594,13 @@ def show_matches(page = 1):
         cities.add(post.city)      
 
     warning = None
-    result1 = result.order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+    result1 = result.order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
     if not result1.items:
         flash('Oops, it seems there aren\'t matches for your preferences...', category='error')
         warning = "Check if there are preferences that can be modified or take a look at some of the our random choices."
     else:   
         result1, warning = result.filter(case((and_(UserInfo.dog_in_house == False, UserInfo.yard == False), False), else_=True))\
-        .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10), None
+        .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8), None
         
         if not result1.items:
             warning = "If you would not keep a dog in the house and if there is no yard, then where would the dog live?\
@@ -575,38 +611,41 @@ def show_matches(page = 1):
             .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
             .order_by(Post.date_posted.desc())\
             .filter(Post.user_id != current_user.id).order_by(func.random()).limit(8)
-        
-        
-    saved_posts = current_user.saved_dogs['saved']
-    saved_posts = [int(id) for id in saved_posts]
+    
+    saved_posts = []
+    saved_dogs = current_user.saved_dogs
+    if saved_dogs:
+        saved_posts = saved_dogs['saved']
+        saved_posts = [int(id) for id in saved_posts]
     genders = ['male','female']
     chosen_cities=[]
-    if request.method == "POST":
-        chosen_cities = request.form.getlist('city')
-        chosen_gender = (request.form.get('gender')).lower() if request.form.get('gender') else False   
+    if request.method == "GET":
+        chosen_cities = request.args.getlist('city') if request.args.getlist('city') else []
+        chosen_gender = request.args.get('gender') if request.args.get('gender') else None
         if chosen_cities and chosen_gender:
             result1 = result.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
                     .filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
-                    .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+                    .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
         elif chosen_cities:
             result1 = result.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
-                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
         elif chosen_gender:
             result1 = Post.query.filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
-                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
          
-    return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result1, cities = cities, genders = genders, saved_posts = saved_posts )
+    return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result1, cities = cities, genders = genders, chosen_cities = chosen_cities, chosen_gender = chosen_gender, saved_posts = saved_posts )
 
 @login_required
 def my_profile(page=1):
-    posts = Post.query.filter_by(user_id = current_user.id).order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+    posts = Post.query.filter_by(user_id = current_user.id).order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
     page = request.args.get('page', 1, type=int)
     profile = User.query.filter_by(id = current_user.id).first()
     saved = []
     if profile:
         saved_dogs = profile.saved_dogs
+        print(saved_dogs)
         if saved_dogs:
-            saved_dogs = set(profile.saved_dogs['saved'])
+            saved_dogs = set(saved_dogs['saved'])
             for id in saved_dogs:
                 dog = Post.query.filter_by(id = id).first()
                 if dog != None:
@@ -617,7 +656,7 @@ def my_profile(page=1):
 def user(user_id, page = 1):
     author = User.query.filter_by(id = user_id).first()
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.filter_by(user_id = user_id).order_by(Post.date_posted.desc()).paginate(page=page, per_page=10)
+    posts = Post.query.filter_by(user_id = user_id).order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
     return render_template('user.html', posts = posts, user = current_user, author = author)
 
 
@@ -648,14 +687,37 @@ def saved():
     data = request.get_json()
     saved = data.get('saved')
     post_id = saved.get('postId')
+    saved_dogs = current_user.saved_dogs
     if post_id not in saved_dogs['saved']:
-        saved_dogs["saved"].append(post_id)
+        saved_dogs['saved'].append(post_id)
     else:
-        saved_dogs["saved"].remove(post_id)
-    user = User.query.filter_by(id = current_user.id).first() 
-    if user:   
-        user.saved_dogs = saved_dogs
-        db.session.commit()
+        saved_dogs['saved'].remove(post_id)
+    user = User.query.filter_by(id = current_user.id).first()
+    update = {"saved_dogs":saved_dogs}
+    db.session.query(User).filter(User.id==current_user.id).update(update)
+    db.session.commit()
     res = make_response(jsonify({"message":'did it'}),200)
-    
     return res
+
+def user_preferences(user_id):
+    user = UserInfo.query.filter_by(user_id = user_id).first()
+    u_needs= ['children' if user.dog_with_children else '', 'dogs' if user.dog_with_dogs else '', 'cats' if user.dog_with_cats else '',\
+            'small animals' if user.dog_with_sm_animals else '', 'big animals' if user.dog_with_big_animals else '']
+    u_needs = [need for need in u_needs if need != '']
+    
+    u_info = {
+        "u_mixed_breed" : user.prefers_mixed_breed,
+        "u_prefered_breed" : user.prefered_breed['prefered_breed'][:],
+        "u_prefered_size" : user.size_preference['size_preference'][:],
+        "u_prefered_age" : user.age_preference['age_preference'][:],
+        "u_prefered_color" : user.color_preference['color_preference'][:],
+        "u_prefered_coat_length" : user.coat_length_preference,
+        "u_spay_needed" : user.spay_needed,
+        "u_needs": u_needs,
+        "u_special_need" : user.special_need_dog,
+        "u_activity" : user.activity_level,
+        "u_dog_in_house" : user.dog_in_house,
+        "u_yard": user.yard,
+        "u_park": user.park
+    }
+    return render_template('user_preferences.html', u_info = u_info)

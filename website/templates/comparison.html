@@ -56,8 +56,8 @@
                 {% for color in comparison['u_prefered_color']%} {{ color }} {% endfor %} color/s and 
                 {{ comparison['u_prefered_coat_length'] }} coat length
             </td>
-            <td class="right-column">primary breed {{ comparison['d_primary_breed'] }}, {{ comparison['d_age'] }}, {{ comparison['d_size']}} size,
-                {{ comparison['d_color'] }} and {{ comparison['d_coat_length'] }} hair  </td> 
+            <td class="right-column">primary breed {{ comparison['d_primary_breed'] }}, {{ comparison['d_age'] }}, {{ comparison['d_size']}} size (estimated size of adult),
+                primarily {{ comparison['d_color'] }} and {{ comparison['d_coat_length'] }} hair  </td> 
         </tr> 
         <tr class="border-bottom mb-4">
           <td class="left-column">{% if comparison['u_spay_needed'] %}
@@ -75,7 +75,7 @@
         <tr class="border-bottom mb-4">
           <td class="left-column">  {% if comparison['u_needs'] %}
                                       your dog would be around 
-                                      {% for being in comparison['u_needs']%} {{ being }}, {% endfor %}
+                                      {% for being in comparison['u_needs'][:-1]%} {{ being }},{% endfor %}{{comparison['u_needs'][-1]}}
                                     {% else %}
                                       don't need dog to be adapted to children or other animals
                                     {%endif%} 

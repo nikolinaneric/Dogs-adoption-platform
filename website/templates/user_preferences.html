@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            }
+
+            td {
+            padding: 10px;
+            vertical-align: top;
+            }
+
+    </style>
+    <title>Comparison</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  </head>
+  <body>
+    <br>
+    <table>
+        <tr class="border-bottom mb-4">
+          <td >You</td>
+        </tr>
+        <tr class="border-bottom mb-4">
+          <td >{% if u_info['u_mixed_breed'] %}
+                                    are fine with mixed breed dogs
+                                  {% else %}
+                                    preferre pure breed {%endif%}</td>
+          
+        </tr>
+        <tr class="border-bottom mb-4">
+            <td >prefer {% for breed in u_info['u_prefered_breed']%} {{ breed }} {% endfor %} breed/s, 
+                {% for age in u_info['u_prefered_age']%} {{ age }} {% endfor %} age/s and 
+                {% for size in u_info['u_prefered_size']%} {{ size }} {% endfor %} size dogs, with 
+                {% for color in u_info['u_prefered_color']%} {{ color }} {% endfor %} color/s and 
+                {{ u_info['u_prefered_coat_length'] }} coat length
+        </tr> 
+        <tr class="border-bottom mb-4">
+          <td >{% if u_info['u_spay_needed'] %}
+                                    need already spayed/neutered dog
+                                  {% else %}
+                                  can take care of spaying/neutering
+                                  <p> (Note that this is an obligatory procedure as soon as the dog is mature enough!)</p>
+                                  {% endif %} </td>
+        </tr>
+        <tr class="border-bottom mb-4">
+          <td >  {% if u_info['u_needs'] %}
+                                      your dog would be around 
+                                      {% for being in u_info['u_needs']%} {{ being }}, {% endfor %}
+                                    {% else %}
+                                      don't need dog to be adapted to children or other animals
+                                    {%endif%} 
+          </td>
+        </tr>
+        <tr class="border-bottom mb-4">
+          <td >  {% if u_info['u_special_need'] %}
+                                        are open to adopting a dog with special needs 
+                                    {% else %}
+                                      are not open to adopting a dog with special need  
+                                    {%endif%} 
+          </td>
+        <tr class="border mb-4">
+          <td >  could provide a {{ u_info['u_activity'] }} level of activity{% if u_info['u_yard'] %}, have a yard {%else %}, don't have a yard{% endif %}{% if u_info['u_park'] %}, have a park nearby {%else %}, don't have a park nearby {% endif %}
+          </td>
+        </tr>
+        <tr class="border-bottom mb-4">
+          <td >   {% if u_info['u_dog_in_house'] %}
+                                        would keep a dog in a house if needed
+                                     {% else %}
+                                        wouldn't keep a dog in a house 
+                                     {%endif%}
+          </td>
+        </tr>
+      </table>
+      <br>
+  </body>
+</html>

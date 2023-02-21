@@ -10,7 +10,7 @@
           vertical-align: top;
           flex-direction: column;
           align-items: center;
-          height: 250px;
+          height: 280px;
           background-color: #f2f2f2;
           border-radius: 10px;
           padding: 20px;
@@ -19,9 +19,11 @@
       }
 
       .dog-card img {
+        
         width: 100%;
         height: 150px;
         object-fit: cover;
+        object-position: top;
         border-radius: 10px;
         margin-bottom: 20px;
       }
@@ -35,7 +37,7 @@
       font-size: 12px;
       }
 
-      .dog-card small {
+      .dog-card small  {
       font-size: 12px;
       }
 
@@ -93,7 +95,7 @@
     
     <div style="margin-top: 185px;">
       
-      <form action="" method="POST">
+      <form action="" method="GET">
         
         {% for city in cities%}
             <input type="checkbox" id="remember-checkbox" name="city" value="{{ city }}" {% if city in chosen_cities %}checked{% endif %}> 
@@ -106,12 +108,12 @@
         </div>
       
         {% for gender in genders%}
-        <input type="radio" id="radio" name="gender" value="{{ gender }}" style="margin-top: 20px;"> 
-        <label style="display: inline block;" style="margin-top: 20px;" for="gender">{{gender}} </label> &nbsp
+        <input type="radio" id="remember-radio" name="gender" value="{{ gender }}"{% if chosen_gender == gender  %} checked {% endif %} style="margin-top: 20px;"> 
+        <label style="display: inline block;" style="margin-top: 20px;"  for="gender">{{gender}}</label> &nbsp
         {% endfor %}
         <div class="col-lg-3" style="margin-left: -15px;">
           <button class="btn btn-secondary btn-sm" type="submit">Filter by gender</button>
-          <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="gender" value="all">Clear the filter</button>
+          <button onclick= "clearRememberedGender()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="gender" value="all">Clear the filter</button>
         </div>
       </form>
   
@@ -120,7 +122,7 @@
     {% if posts%}
     <div class="row text-center">
       {% for post in posts %}
-      <div class="col-lg-3">
+      <div class="col-lg-3" >
         <div class="dog-card">
           {% if post.author.id != current_user.id and current_user.is_authenticated%}
             <div data-post-id="{{ post.id }}" id = "like" value="{{ post.id }}" onclick="savePostToFavorites(this)" style="position: absolute; top: 80px; color:rgb(116, 117, 119);border-color:rgb(167, 168, 169);box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);font-size: 30px;">
@@ -131,7 +133,7 @@
             {% endif %}
             </div>
           {%endif%}
-          <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog" />
+          <a href="{{ url_for('post', post_id = post.id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog"></a>
           <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
           <p text-align="center"> {{ post.city }}, {{ post.gender }} </p>
           <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
@@ -197,11 +199,10 @@
       <br>
 
   <script>
-        // Get the checkbox element and add an event listener to it
+        
     const rememberCheckbox = document.getElementById('remember-checkbox');
     rememberCheckbox.addEventListener('change', () => {
-      // If the checkbox is checked, store a value of 'true' in localStorage
-      // Otherwise, remove the 'remembered' value from localStorage
+      
       if (rememberCheckbox.checked) {
         localStorage.setItem('remembered', 'true');
       } else {
@@ -209,18 +210,42 @@
       }
     });
 
-    // When the page loads, check if there's a 'remembered' value in localStorage
-    // If so, set the checkbox to checked
+   
     if (localStorage.getItem('remembered') === 'true') {
       rememberCheckbox.checked = true;
     }
 
     function clearRememberedCheckboxes() {
-      const rememberCheckboxes = document.querySelectorAll('#remember-checkbox');
+      const rememberCheckboxes = document.querySelectorAll('input[name="city"]');
       for (let i = 0; i < rememberCheckboxes.length; i++) {
         rememberCheckboxes[i].checked = false;
       }
+      localStorage.removeItem('remembered');
     }
+
+    var radios = document.getElementsByName('gender');
+    var selectedValue = localStorage.getItem('selectedGender');
+
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].value === selectedValue) {
+        radios[i].checked = true;
+      }
+      
+      radios[i].addEventListener('change', function() {
+        selectedValue = this.value;
+        localStorage.setItem('selectedGender', selectedValue);
+      });
+    }
+
+    function clearRememberedGender() {
+      const rememberRadios = document.querySelectorAll('input[name="gender"]');
+      for (let i = 0; i < rememberRadios.length; i++) {
+        rememberRadios[i].checked = false;
+      }
+      localStorage.removeItem('selectedGender');
+    }
+
+
   </script>
     
     {% endblock %}

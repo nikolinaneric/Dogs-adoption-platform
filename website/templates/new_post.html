@@ -137,7 +137,7 @@
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form.gender(class="form-control form-control-lg") }}
+                {{ form.gender }}
             {% endif %}
           </div>
           <legend class="border-bottom mb-4"></legend>
@@ -197,7 +197,7 @@
             </div>
 
             <div class="question">
-                <label for="a4">4. What is the dog's size?</label>
+                <label for="a4">4. What is the dog's estimated adult size?</label>
                 <br>
                 <input type="radio" id="a4" name="a4" value="small">small &nbsp &nbsp 
                 <input type="radio" id="a4" name="a4" value="medium">medium &nbsp &nbsp  

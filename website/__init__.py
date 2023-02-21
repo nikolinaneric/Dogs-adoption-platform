@@ -26,6 +26,7 @@ def create_app():
     
     app.add_url_rule("/", view_func = views.welcome)
     app.add_url_rule("/home", view_func = views.home, methods = ['GET','POST'])
+    app.add_url_rule("/home/<int>", view_func = views.home, methods = ['GET','POST'])
     app.add_url_rule("/login", view_func = views.login, methods = ['GET','POST'])
     app.add_url_rule("/logout", view_func = views.logout)
     app.add_url_rule("/sign-up", view_func = views.sign_up, methods = ['GET','POST'])
@@ -46,8 +47,10 @@ def create_app():
     app.add_url_rule("/contact-foster/<int:post_id>", view_func=views.email_form, methods = ['GET', 'POST']) 
     app.add_url_rule("/mail/<int:foster_id>", view_func=views.contact_foster, methods = ['GET', 'POST'])
     app.add_url_rule("/verify_email/<token>", view_func = views.verify_email, methods=['GET'])
+    app.add_url_rule("/verify_new_email/<token>", view_func = views.verify_new_email, methods=['GET'])
     app.add_url_rule("/saved", view_func = views.saved, methods=['POST'])
     app.add_url_rule("/reverification", view_func = views.resend_verification, methods=['GET','POST'])
+    app.add_url_rule("/user-info/<int:user_id>", view_func=views.user_preferences)
 
 
     from .models import User
@@ -61,7 +64,7 @@ def create_app():
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
     app.config['MAIL_USERNAME'] = "dogs.people.connect@gmail.com"
-    app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD')
+    app.config['MAIL_PASSWORD'] = os.environ.get('app_password')
    
     mail.init_app(app)
 

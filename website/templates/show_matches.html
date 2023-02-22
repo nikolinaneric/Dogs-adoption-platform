@@ -92,7 +92,7 @@
           <br>
           <br>
           <div class="row text-center">
-            {%if alternative_post%}
+            {%if alternative_posts%}
               {% for post in alternative_posts %}
               <div class="col-lg-3">
                 <div class="dog-card">
@@ -140,7 +140,7 @@
               {% endfor %}
               <div class="col-lg-3" style="margin-left: -15px;">
                 <button class="btn btn-secondary btn-sm" type="submit">Filter by gender</button>
-                <button onclick= "clearRememberedGender()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="gender" value="all">Clear the filter</button>
+                <button onclick= "clearRememberedGender()"id="clear-radio" class="btn btn-secondary btn-sm"name="gender" value="all">Clear the filter</button>
               </div>
             </form>
           </div>

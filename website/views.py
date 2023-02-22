@@ -15,6 +15,7 @@ import datetime
 
 
 
+
 def welcome():
     return render_template('welcome.html')
 
@@ -144,7 +145,7 @@ def verify_email(token):
         user = User.query.filter_by(email = email).first()
         user.is_verified = True
         db.session.commit()
-        flash('Your account has been verified. You may log in now.')
+        flash('Your account has been verified. You may log in now.','success')
     return redirect(url_for('login'))
 
 def save_picture(form_picture):
@@ -444,11 +445,13 @@ def update_post(post_id):
 @login_required
 def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
+    dog = DogInfo.query.filter_by(post_id = post_id).first()
     if post.user_id != current_user.id:
         abort(403)
     current_image = post.image_file
     os.remove(current_app.root_path + '/static/profile_pics/' + current_image)
     db.session.delete(post)
+    db.session.delete(dog)
     db.session.commit()
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('home'))
@@ -577,21 +580,20 @@ def show_matches(page = 1):
             .filter(case((UserInfo.dog_in_house == False,and_(DogInfo.age != "puppy", DogInfo.size != 'small')), else_= True))\
             .filter(Post.user_id != current_user.id)\
             .filter(case(
-                    (and_(UserInfo.yard == True , UserInfo.park == True, UserInfo.activity_level == 'high'), UserInfo.activity_level.in_(['low','medium','high'])),
+                    #(and_(UserInfo.yard == True , UserInfo.park == True, UserInfo.activity_level == 'high'), UserInfo.activity_level.in_(['low','medium','high'])),
                     (and_(or_(UserInfo.yard == True , UserInfo.park == True),UserInfo.activity_level == 'high'),DogInfo.activity_level.in_(['low','medium','high'])),
                     (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level == 'high'), DogInfo.activity_level != 'high'),
+                    #(and_(UserInfo.yard == True , UserInfo.park == True, UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])),
                     (and_(or_(UserInfo.yard == True , UserInfo.park == True), UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])),
-                    (and_(UserInfo.yard == True , UserInfo.park == True, UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])),
-                    (and_(or_(UserInfo.yard == False , UserInfo.park == False), UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])),
                     (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])), 
                     else_= (UserInfo.activity_level == DogInfo.activity_level)
                 )
-                )       #Ne valja
+                )       
   
     city_query = result.with_entities(Post.city).distinct()
     cities = set()
     for post in city_query:
-        cities.add(post.city)      
+        cities.add(post.city)  
 
     warning = None
     result1 = result.order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
@@ -609,9 +611,8 @@ def show_matches(page = 1):
     
     alternative_results = db.session.query(Post, DogInfo, UserInfo).join(DogInfo, Post.id == DogInfo.post_id)\
             .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
-            .order_by(Post.date_posted.desc())\
             .filter(Post.user_id != current_user.id).order_by(func.random()).limit(8)
-    
+
     saved_posts = []
     saved_dogs = current_user.saved_dogs
     if saved_dogs:
@@ -630,7 +631,7 @@ def show_matches(page = 1):
             result1 = result.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
                 .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
         elif chosen_gender:
-            result1 = Post.query.filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
+            result1 = result.filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
                 .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
          
     return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result1, cities = cities, genders = genders, chosen_cities = chosen_cities, chosen_gender = chosen_gender, saved_posts = saved_posts )
@@ -681,7 +682,6 @@ def contact_foster(foster_id):
     return render_template('email_form.html', foster_parent = foster_parent)
 
 
-saved_dogs = {"saved": []}
 
 def saved():
     data = request.get_json()
@@ -692,7 +692,6 @@ def saved():
         saved_dogs['saved'].append(post_id)
     else:
         saved_dogs['saved'].remove(post_id)
-    user = User.query.filter_by(id = current_user.id).first()
     update = {"saved_dogs":saved_dogs}
     db.session.query(User).filter(User.id==current_user.id).update(update)
     db.session.commit()

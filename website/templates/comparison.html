@@ -50,10 +50,10 @@
 </tr></td> 
         </tr>
         <tr class="border-bottom mb-4">
-            <td class="left-column">prefer {% for breed in comparison['u_prefered_breed']%} {{ breed }} {% endfor %} breed/s, 
-                {% for age in comparison['u_prefered_age']%} {{ age }} {% endfor %} age/s and 
-                {% for size in comparison['u_prefered_size']%} {{ size }} {% endfor %} size dogs, with 
-                {% for color in comparison['u_prefered_color']%} {{ color }} {% endfor %} color/s and 
+            <td class="left-column">prefer {% for breed in comparison['u_prefered_breed'][:-1]%} {{ breed }}, {% endfor %}{{comparison['u_prefered_breed'][-1]}} breed/s, 
+                {% for age in comparison['u_prefered_age'][:-1]%} {{ age }}, {% endfor %}{{comparison['u_prefered_age'][-1]}} age/s and 
+                {% for size in comparison['u_prefered_size'][:-1]%} {{ size }}, {% endfor %}{{comparison['u_prefered_size'][-1]}} size dogs, with 
+                {% for color in comparison['u_prefered_color'][:-1]%} {{ color }}, {% endfor %}{{comparison['u_prefered_color'][-1]}} color/s and 
                 {{ comparison['u_prefered_coat_length'] }} coat length
             </td>
             <td class="right-column">primary breed {{ comparison['d_primary_breed'] }}, {{ comparison['d_age'] }}, {{ comparison['d_size']}} size (estimated size of adult),
@@ -75,7 +75,7 @@
         <tr class="border-bottom mb-4">
           <td class="left-column">  {% if comparison['u_needs'] %}
                                       your dog would be around 
-                                      {% for being in comparison['u_needs'][:-1]%} {{ being }},{% endfor %}{{comparison['u_needs'][-1]}}
+                                      {% for being in comparison['u_needs'][:-1]%} {{ being }}, {% endfor %}{{comparison['u_needs'][-1]}}
                                     {% else %}
                                       don't need dog to be adapted to children or other animals
                                     {%endif%} 

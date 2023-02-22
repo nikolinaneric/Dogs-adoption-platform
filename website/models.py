@@ -32,7 +32,7 @@ class User(db.Model, UserMixin):
     image_file = db.Column(db.String(150), nullable=False, default='default.jpg')
     posts = db.relationship('Post', backref ='author', lazy = True)
     user_info = db.relationship('UserInfo', backref = 'info', uselist = False)
-    saved_dogs = db.Column(db.JSON)
+    saved_dogs = db.Column(db.JSON, default = {"saved":[]})
     
 
 

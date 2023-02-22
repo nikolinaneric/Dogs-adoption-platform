@@ -1,19 +1,21 @@
 {% extends "base.html" %} {% block title %}Questionnaire{% endblock %} {% block content
     %}
     
-      
+
     <style>
   
       @media only screen and (max-width: 768px) {
         .container {
+          margin-bottom: 100px;
           flex-direction: column;
           align-items: center;
         }
         
         .dog-card {
-          width: 80%;
+          width: 200px;
           margin: 2%;
         }
+       
       }
   
         .container {
@@ -84,8 +86,8 @@
         }
   
         .dog-card {
-          display: inline-block;
-          width: 40%;
+          display:inline-block;
+          width: 180px;
           margin: 2%;
           margin-bottom: 100px;
           margin-left: 6%;
@@ -159,6 +161,12 @@
           box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
         }
       }
+        .label {
+          display: inline-block;
+          margin-right: 10px;
+          text-align: left;
+          font-weight: normal;
+        }
   
       </style>
       <div class ="colored-strip">
@@ -176,16 +184,24 @@
           });
       </script> 
       </div>
+      <br>
+      <br>
       <div class="container">
         <div class="questionnaire class=left-side" >
             <form method="POST"  action="" >
               <div class="question">
                   <label for="q1">1. Do you have a preferred breed?</label>
                   <br>
+                <label class="label">
                   {% for breed in breeds %}
-                  <input type="checkbox" id="q1" name="q1" value="{{ breed }}"> {{ breed }} &nbsp &nbsp 
+                  <label class="label">
+                    <input type="checkbox" id="q1" name="q1" value="{{ breed }}"> {{ breed }} &nbsp &nbsp 
+                  </label> 
                   {% endfor %}   
-                  <input type="checkbox" id="q1" name="q1" value="all">no preference
+                  <label class="label" >
+                    <input type="checkbox" id="q1" name="q1" value="all">no preference
+                  </label>
+                </label>
               </div>
   
               <div class="question">
@@ -317,15 +333,19 @@
         <div class="right-side">
           <h6 text-align = "center" style="text-align: center; font-size: 14px;">Maybe you would also want to check out some of the dogs waiting for adoption the longest.</h6>
           <br>
+          <div class="row" style="justify-content: center;">
           {% for post in posts %}
-          <div class="dog-card">
-            <a href="{{ url_for('post', post_id = post.id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog"></a>
-            <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
-            <p>{{ post.city }}, {{ post.gender }} </p>
-            <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}</small>
-            <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
+            
+              <div class="dog-card">
+                <a href="{{ url_for('post', post_id = post.id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog"></a>
+                <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
+                <p>{{ post.city }}, {{ post.gender }} </p>
+                <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}</small>
+                <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
+              </div>
+             
+          {% endfor %}
           </div>
-        {% endfor %}
         </div>
       </div>
       <br>

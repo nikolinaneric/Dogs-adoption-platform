@@ -12,6 +12,7 @@ from . import mail, session
 from sqlalchemy import  update,and_, case, or_, func
 import jwt
 import datetime
+from .tasks import send_mail
 
 
 
@@ -86,11 +87,13 @@ def resend_verification():
                     secret_key = 'mysecretkey'
                     verification_token = jwt.encode({'email': email, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, secret_key, algorithm='HS256')
                     verification_url = url_for('verify_email', token=verification_token, _external=True)
-                    msg = Message('Email Verification', sender = "dogs.people.connect@gmail.com" , recipients=[email])
-                    msg.body = f'''To verify your account, please visit the following link: {verification_url}   
+                    subject = 'Email Verification'
+                    sender = "dogs.people.connect@gmail.com" 
+                    recipients=[email]
+                    message_body = f'''To verify your account, please visit the following link: {verification_url}   
                         If you did not make this request then simply ignore this email and no changes will be made.
                     '''
-                    mail.send(msg)
+                    send_mail.delay(subject, sender, recipients, message_body)
                     flash('Verification email sent! Please check your inbox.','info')
     return render_template('reset_request.html', form = form, user = current_user, title = "Request verification mail")
 @login_required    
@@ -117,11 +120,13 @@ def sign_up():
                 secret_key = 'mysecretkey'
                 verification_token = jwt.encode({'email': email, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, secret_key, algorithm='HS256')
                 verification_url = url_for('verify_email', token=verification_token, _external=True)
-                msg = Message('Email Verification', sender = "dogs.people.connect@gmail.com" , recipients=[email])
-                msg.body = f'''To verify your account, please visit the following link: {verification_url}   
+                subject = 'Email Verification'
+                sender = "dogs.people.connect@gmail.com" 
+                recipients=[email]
+                message_body = f'''To verify your account, please visit the following link: {verification_url}   
                     If you did not make this request then simply ignore this email and no changes will be made.
                 '''
-                mail.send(msg)
+                send_mail.delay(subject, sender, recipients, message_body)
                 flash('Verification email sent! Please check your inbox.','info')
                 try:
                     new_user = User(email = email, first_name = first_name, password = generate_password_hash(password1, method = 'sha256'), image_file = image_file)
@@ -175,11 +180,13 @@ def set_profile():
             secret_key = 'mysecretkey'
             verification_token = jwt.encode({'email': email, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, secret_key, algorithm='HS256')
             verification_url = url_for('verify_new_email', token=verification_token, _external=True)
-            msg = Message('Email Verification', sender = "dogs.people.connect@gmail.com" , recipients=[email])
-            msg.body = f'''To verify your account, please visit the following link: {verification_url}   
+            subject = 'Email Verification' 
+            sender = "dogs.people.connect@gmail.com" 
+            recipients=[email]
+            message_body = f'''To verify your account, please visit the following link: {verification_url}   
                         If you did not make this request then simply ignore this email and no changes will be made.
                     '''
-            mail.send(msg)
+            send_mail.delay(subject, sender, recipients, message_body)
             flash('Verification email sent! Please check your inbox.','info') # ne radi flash
             return redirect(url_for('my_profile'))
         if form.data['picture']:
@@ -231,14 +238,14 @@ def reset_request():
 
 def send_reset_email(user):
     token = user.get_reset_token()
-    msg = Message('Password Reset Request',
-                  sender='noreply@demo.com',
-                  recipients=[user.email])
-    msg.body = f'''To reset your password, visit the following link:
+    subject = 'Password Reset Request'
+    sender='dogs.people.connect@gmail.com'
+    recipients=[user.email]
+    message_body = f'''To reset your password, visit the following link:
     {url_for('reset_token', token=token, _external=True)}  
     If you did not make this request then simply ignore this email and no changes will be made.
     '''
-    mail.send(msg)
+    send_mail.delay(subject, sender, recipients, message_body)
 
 
 def reset_token(token):
@@ -352,13 +359,11 @@ def email_form(post_id):
         recipient = request.form.get('recipient')
         message = request.form.get('message')
         subject = request.form.get('subject')
-
-        msg = Message(subject,
-                    sender = 'dogs.people.connect@gmail.com',
-                    recipients= [recipient],
-                    reply_to = author)
-        msg.html = f" <p> {message} </p> <h4> This message was sent to you via <a href= {url_for('welcome', _external=True)}> dope connect <a/> app.</h4>"
-        mail.send(msg)
+        sender = 'dogs.people.connect@gmail.com',
+        recipients= [recipient],
+        reply_to = author
+        message_body = f" <p> {message} </p> <h4> This message was sent to you via <a href= {url_for('welcome', _external=True)}> dope connect <a/> app.</h4>"
+        send_mail.delay(subject, sender, recipients, message_body, reply_to)
         flash('Your email has been sent!','success')
         
     return render_template('email_form.html', user = current_user, post = post)
@@ -670,13 +675,12 @@ def contact_foster(foster_id):
         recipient = request.form.get('recipient')
         message = request.form.get('message')
         subject = request.form.get('subject')
-
-        msg = Message(subject,
-                    sender = 'dopeconnect@admin.com',
-                    recipients= [recipient],
-                    reply_to = author)
-        msg.html = f" <p> {message} </p> <h4> This message was sent to you via <a href= {url_for('welcome', _external=True)}> dope connect <a/> app.</h4>"
-        mail.send(msg)
+        
+        sender = 'dogs.people.connect@gmail.com'
+        recipients= [recipient]
+        reply_to = author
+        message_body = f" <p> {message} </p> <h4> This message was sent to you via <a href= {url_for('welcome', _external=True)}> dope connect <a/> app.</h4>"
+        send_mail.delay(subject, sender, recipients, message_body, reply_to)
         flash('Your email has been sent!','success')
 
     return render_template('email_form.html', foster_parent = foster_parent)

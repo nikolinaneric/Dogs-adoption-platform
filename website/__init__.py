@@ -3,9 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_login import LoginManager
 from flask_mail import Mail
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine,inspect
 from sqlalchemy.orm import sessionmaker
 from .models import db
+from .celery import make_celery
+from flask_migrate import Migrate
+
 DB_NAME = "database.db"
 
 mail = Mail()
@@ -14,11 +17,24 @@ print(basedir)
 engine = create_engine('sqlite:///' + os.path.join(basedir, DB_NAME), connect_args={'check_same_thread': False})
 Session = sessionmaker(bind=engine)
 session = Session()
+inspector = inspect(engine)
+table_names = inspector.get_table_names()
+
+# check if the 'Post' table exists
+if 'post' in table_names:
+    print("The 'Post' table exists in the database.")
+else:
+    print("The 'Post' table does not exist in the database.")
 def create_app():
     app = Flask(__name__)
     app.config.from_object("settings")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, DB_NAME)
     db.init_app(app)
+    app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+    app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+    celery = make_celery(app)
+    celery.set_default()
+    migrate = Migrate(app, db)
     
    
 
@@ -72,11 +88,12 @@ def create_app():
     def load_user(id):
         return User.query.get(int(id)) 
   
-    return app
+    return app, celery
 
 
 def create_dabatase(app):
     if not os.path.exists('website/' + DB_NAME):
         with app.app_context():
+            from .models import Post, User, UserInfo, DogInfo
             db.create_all()
 

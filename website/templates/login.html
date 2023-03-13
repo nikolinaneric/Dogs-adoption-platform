@@ -39,7 +39,9 @@
         <small class="text-muted ml-2">
             <a href="{{ url_for('reset_request') }}">Forgot Password?</a>
         </small>
-    </div>
+        <small><a style="color:rgb(236, 66, 66);"  class="ml-2" href="{{ url_for('resend_verification') }}">Send verification mail again</a>
+        </small>
+      </div>
   
       
     </form>
@@ -47,7 +49,6 @@
       <small class="text-muted">
           Need An Account? <a class="ml-2" href="{{ url_for('sign_up') }}">Sign Up Now</a>
           <br>
-          <a style="color:rgb(236, 66, 66); position:absolute; right:0;" class="ml-2" href="{{ url_for('resend_verification') }}">Send verification mail again</a>
       </small>
     </div>
   <br>

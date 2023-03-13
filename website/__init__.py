@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_login import LoginManager
 from flask_mail import Mail
-from sqlalchemy import create_engine,inspect
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from .models import db
 from .celery import make_celery
@@ -13,18 +13,11 @@ DB_NAME = "database.db"
 
 mail = Mail()
 basedir = os.path.abspath(os.path.dirname(__file__))
-print(basedir)
+
 engine = create_engine('sqlite:///' + os.path.join(basedir, DB_NAME), connect_args={'check_same_thread': False})
 Session = sessionmaker(bind=engine)
 session = Session()
-inspector = inspect(engine)
-table_names = inspector.get_table_names()
 
-# check if the 'Post' table exists
-if 'post' in table_names:
-    print("The 'Post' table exists in the database.")
-else:
-    print("The 'Post' table does not exist in the database.")
 def create_app():
     app = Flask(__name__)
     app.config.from_object("settings")
@@ -68,10 +61,7 @@ def create_app():
     app.add_url_rule("/reverification", view_func = views.resend_verification, methods=['GET','POST'])
     app.add_url_rule("/user-info/<int:user_id>", view_func=views.user_preferences)
 
-
-    from .models import User
     create_dabatase(app)
-    
 
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -84,6 +74,7 @@ def create_app():
    
     mail.init_app(app)
 
+    from .models import User
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id)) 
@@ -94,6 +85,5 @@ def create_app():
 def create_dabatase(app):
     if not os.path.exists('website/' + DB_NAME):
         with app.app_context():
-            from .models import Post, User, UserInfo, DogInfo
             db.create_all()
 

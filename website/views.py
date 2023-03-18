@@ -7,17 +7,29 @@ from .models import User, Post, UserInfo, DogInfo
 from werkzeug.security import generate_password_hash, check_password_hash
 from .user_form import UserFormSignUp, UserFormLogIn, UserSetUp, RequestResetForm, ResetPasswordForm, PostForm, RequestVerificationForm
 from . import session
-from sqlalchemy import  update,and_, case, or_, func
+from sqlalchemy import  update, and_, case, or_, func
 import jwt
 from .tasks import send_mail
-from .utils import verification_mail, email, save_picture, remove_none_values
-import time
+from .utils import verification_mail, email, save_picture, remove_none_values, send_reset_email, get_dog_data, get_dog_info, get_user_data, get_user_info, filtering
+
 
 
 def welcome():
+    """
+    Displays a welcome page to the user.
+    If the user is already authenticated, it redirects the user to the home page.
+    """
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     return render_template('welcome.html')
 
 def sign_up():
+    """
+    Handles the sign-up process of a new user.
+    If the user is already authenticated, it redirects the user to the home page.
+    It creates a new user account if the form data is valid and the email does not exist already in the database.
+    It sends a verification email to the user's email address to confirm the email.
+    """
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     
@@ -45,6 +57,10 @@ def sign_up():
 
     
 def verify_email(token):
+    """
+    Verifies the user's email address by decoding the token sent to the user's email.
+    It sets the user's "is_verified" attribute to True if the token is valid.
+    """
     secret_key = os.environ.get('secret_key')
     try:
         email = jwt.decode(token, secret_key, algorithms=['HS256'])['email']
@@ -59,6 +75,11 @@ def verify_email(token):
     return redirect(url_for('login'))
 
 def login():
+    """
+    This function handles the user login process.
+    If the user is already authenticated, it redirects the user to the home page.
+    It validates the login form data and logs in the user if the email and password are correct.
+    """
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = UserFormLogIn()
@@ -83,38 +104,55 @@ def login():
     return render_template("login.html", user = current_user, form = form)
 
 def resend_verification():
+    """
+    Renders and handles the resend verification form.
+
+    If the form is valid, sends a verification email to the entered email address
+    and shows a success message. If the email address is not associated with an existing user, gives the error message.
+    """
     form = RequestVerificationForm()
     if request.method == 'POST':
         email = form.email.data
         if User.query.filter_by(email = email).first():
-                    verification_mail(email)
-                    flash('Verification email sent! Please check your inbox.','info')
+                verification_mail(email)
+                flash('Verification email sent! Please check your inbox.','success')
     return render_template('reset_request.html', form = form, user = current_user, title = "Request verification mail")
 
 @login_required    
 def logout():
+    """
+    Logs out the current user and redirect to the welcome page.
+    """
     logout_user()
     return redirect(url_for('welcome'))
 
 @login_required
 def set_profile():
+    """
+    Renders and handles the set profile form.
+
+    GET: Renders the set profile form with the user's current information.
+    POST: Handles form submission. If the form is valid, updates the user's first name, email address, and/or profile picture
+    and shows a success message. If a new email address is entered, sends a verification email and redirects to the My Profile
+    page. If the form is invalid, show the same form with errors.
+    """
     form = UserSetUp()
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     if form.validate_on_submit():
+        if form.data['first_name'] != current_user.first_name:
+            current_user.first_name = form.data['first_name']
+            flash('Your account has been updated!', 'success')
         if form.data['email'] != current_user.email:
             email = form.data['email']
-            verification_mail(email)
+            verification_mail(email, first_mail_adress=False)
             flash('Verification email sent! Please check your inbox.','success')
             return redirect(url_for('my_profile'))
         if form.data['picture']:
             profile_pic = save_picture(form.picture.data)
             previous_pic = current_user.image_file
+            current_user.image_file = profile_pic
             if previous_pic != "default.jpg":
                 os.remove(current_app.root_path + '/static/profile_pics/' + previous_pic)
-            current_user.image_file = profile_pic
-            flash('Your account has been updated!', 'success')
-        if form.data['first_name'] != current_user.first_name:
-            current_user.first_name = form.data['first_name']
             flash('Your account has been updated!', 'success')
         db.session.commit()
         return redirect(url_for('my_profile'))
@@ -122,11 +160,19 @@ def set_profile():
     elif request.method == 'GET':
         form.first_name.data = current_user.first_name
         form.email.data = current_user.email
-        
     return render_template('set_profile.html', user = current_user, form= form, image_file = image_file)
 
 @login_required
 def verify_new_email(token):
+    """Verifies a new email address for the current user.
+
+    Args:
+        token: A JWT token containing the encoded email address.
+
+    Returns:
+        If the token is valid and the email address is updated: A redirection to the My Profile page with a success message.
+        If the token is invalid or expired: A redirection to the Edit Profile page with an error message.
+    """
     secret_key = os.environ.get('secret_key')
     try:
         email = jwt.decode(token, secret_key, algorithms=['HS256'])['email']
@@ -141,6 +187,11 @@ def verify_new_email(token):
         return redirect(url_for('my_profile'))
 
 def reset_request():
+    """
+    Sends an email with instructions for resetting a user's password.
+
+    If the user is already authenticated, redirects to the home page.
+    """
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = RequestResetForm()
@@ -153,22 +204,18 @@ def reset_request():
     return render_template('reset_request.html', form = form, user = current_user, title = "Request password reset")
 
 
-def send_reset_email(user):
-    token = user.get_reset_token()
-    subject = 'Password Reset Request'
-    sender='dogs.people.connect@gmail.com'
-    recipients=[user.email]
-    message_body = f'''To reset your password, visit the following link:
-    {url_for('reset_token', token=token, _external=True)}  
-    If you did not make this request then simply ignore this email and no changes will be made.
-    '''
-    send_mail.delay(subject, sender, recipients, message_body)
-
-
 def reset_token(token):
+    """Resets a user's password.
+
+    Args:
+        token (str): A JWT token containing the user's information.
+
+    If the user is already authenticated, redirects to the home page.
+    If the user's password is updated, redirects to the login page with a success message.
+    """
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    user = User.verify_reset_token(token)  # vraca nam odgovarajuci user objekat na osnovu id iz tokena
+    user = User.verify_reset_token(token)  
     if user is None:
         flash('That is an invalid or expired token', 'warning')
         return redirect(url_for('reset_request'))
@@ -182,15 +229,21 @@ def reset_token(token):
     
     return render_template('reset_password.html', form=form, user = current_user)
 
+    
 @login_required
 def my_profile(page=1):
-    posts = Post.query.filter_by(user_id = current_user.id).order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
+    """Displays the current user's profile page with the current user's posts, profile, and saved dogs.
+
+    Args:
+        page (int): The current page number for the paginated posts.
+
+    """
     page = request.args.get('page', 1, type=int)
+    posts = Post.query.filter_by(user_id = current_user.id).order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
     profile = User.query.filter_by(id = current_user.id).first()
     saved = []
     if profile:
         saved_dogs = profile.saved_dogs
-        print(saved_dogs)
         if saved_dogs:
             saved_dogs = set(saved_dogs['saved'])
             for id in saved_dogs:
@@ -201,6 +254,13 @@ def my_profile(page=1):
     return render_template('user.html', posts = posts, user = current_user, author = profile, saved = saved)
 
 def user(user_id, page = 1):
+    """
+    Renders a user-foster parent profile page with their adoption posts.
+
+    Args:
+        user_id: The id of the user whose profile is being viewed.
+        page: The current page number of the post pagination.
+    """
     author = User.query.filter_by(id = user_id).first()
     page = request.args.get('page', 1, type=int)
     posts = Post.query.filter_by(user_id = user_id).order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
@@ -209,6 +269,12 @@ def user(user_id, page = 1):
 
 @login_required
 def contact_foster(foster_id):
+    """
+    Renders a contact form for the current user to send an email to a foster parent.
+
+    Args:
+        foster_id: The id of the foster parent being contacted.
+    """
     foster_parent = User.query.filter_by(id = foster_id).first()
     
     if request.method == 'POST':
@@ -221,39 +287,30 @@ def contact_foster(foster_id):
 
 
 def home(page = 1):
+    """
+    Renders the home page with the available dog posts and the filtering options.
+
+    Args:
+        page: The current page number of the post pagination.
+    """
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
+    
     cities = set()
-    saved_posts = []
-    if current_user.is_authenticated:
-        saved_dogs = current_user.saved_dogs
-        if saved_dogs:
-            saved_posts = saved_dogs['saved']
-            saved_posts = [int(id) for id in saved_posts]
     for post in session.query(Post.city).distinct():
         cities.add(post.city)
-    genders = ['male','female']
-    chosen_cities=[]
-    if request.method == "GET":
-        chosen_cities = request.args.getlist('city') if request.args.getlist('city') else []
-        chosen_gender = request.args.get('gender') if request.args.get('gender') else None
-        
-        if chosen_cities and chosen_gender:
-            posts = Post.query.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
-                    .filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
-                    .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
-        elif chosen_cities:
-            posts = Post.query.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
-                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
-        elif chosen_gender:
-            posts = Post.query.filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
-                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
-        
-    
-    return render_template("home.html", user = current_user, posts = posts, cities = cities, genders = genders, chosen_cities = chosen_cities, chosen_gender = chosen_gender, saved_posts = saved_posts)
+
+    query_object = Post.query 
+    saved_posts, genders, filtered_posts, chosen_cities, chosen_gender = filtering(query_object, page)
+
+    return render_template("home.html", user = current_user, posts = filtered_posts if filtered_posts else posts, cities = sorted(cities),\
+                            genders = genders, chosen_cities = chosen_cities, chosen_gender = chosen_gender, saved_posts = saved_posts)
 
 @login_required
 def new_post():
+    """
+    View function for creating a new adoption post.
+    """
     form = PostForm()
     if form.validate_on_submit():
         photo = form.picture.data
@@ -265,23 +322,7 @@ def new_post():
         db.session.commit()
     
         response = request.form
-        dog_data = {
-        "primary_breed" : (response.get('a1')).lower(),
-        "mixed_breed" : bool(int(response.get('a2'))),
-        "age" : response.get('a3'),
-        "size" : response.get('a4'),
-        "color" : response.get('a5'),
-        "spayed" : bool(int(response.get('a6'))),
-        "coat_length" : response.get('a7'),
-        "dog_with_children" : bool(int(response.get('a8'))),
-        "dog_with_dogs" : bool(int(response.get('a9'))),
-        "dog_with_cats" : bool(int(response.get('a10'))),
-        "dog_with_sm_animals" : bool(int(response.get('a11'))), 
-        "dog_with_big_animals" : bool(int(response.get('a12'))), 
-        "activity_level" : response.get('a13'),
-        "special_need_dog" : bool(int(response.get('a14'))),
-        "post_id": post.id
-        }
+        dog_data = get_dog_data(response, post)
 
         dog = DogInfo(**dog_data)
         db.session.add(dog)
@@ -291,12 +332,19 @@ def new_post():
     return render_template('new_post.html', user = current_user, form = form)
 
 def post(post_id):
+    """
+    View function for displaying an adoption post with given post_id. 
+    If the user is author contains update, delete and dog info buttons.
+    Otherwise contains buttons for contacting foster parent and checking the fit with the dog.
+    """
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', post = post, user = current_user)
 
-    
 @login_required
-def update_post(post_id):   
+def update_post(post_id):  
+    """
+    View function for updating an existing adoption post with given post_id.
+    """ 
     post = Post.query.get_or_404(post_id)
     if post.user_id != current_user.id:
         abort(403)
@@ -313,29 +361,12 @@ def update_post(post_id):
             post.image_file = save_picture(photo)
         db.session.add(post)
         db.session.commit()
-        flash('Your post has been updated!', 'success')
+        flash('Your adoption post has been updated!', 'success')
 
         response = request.form
-        dog_update_data = {
-        "primary_breed" : (response.get('a1')).lower() if response.get('a1') else None,
-        "mixed_breed" : bool(int(response.get('a2'))) if response.get('a2') is not None else None,
-        "age" : response.get('a3'),
-        "size" : response.get('a4'),
-        "color" : response.get('a5'),
-        "spayed" : response.get('a6'),
-        "coat_length" : response.get('a7'),
-        "dog_with_children" : bool(int(response.get('a8'))) if response.get('a8') is not None else None ,
-        "dog_with_dogs" : bool(int(response.get('a9'))) if response.get('a9') is not None else None,
-        "dog_with_cats" : bool(int(response.get('a10'))) if response.get('a10') is not None else None,
-        "dog_with_sm_animals" : bool(int(response.get('a11'))) if response.get('a11') is not None else None,
-        "dog_with_big_animals" : bool(int(response.get('a12'))) if response.get('a12') is not None else None,
-        "activity_level" : response.get('a13'),
-        "special_need_dog" : bool(int(response.get('a14'))) if response.get('a14') is not None else None,
-        "post_id": post.id
-        }
-        dog_update_data = {k: v for k, v in dog_update_data.items() if v is not None}
-        print("DOG UPDATE",dog_update_data)
-        db.session.query(DogInfo).filter(DogInfo.post_id==post.id).update(dog_update_data)
+        dog_data = get_dog_data(response, post)
+        
+        db.session.query(DogInfo).filter(DogInfo.post_id==post.id).update(dog_data)
         db.session.commit()
        
         return redirect(url_for('post', post_id = post.id, user = current_user))
@@ -351,6 +382,9 @@ def update_post(post_id):
 
 @login_required
 def delete_post(post_id):
+    """
+    View function for deleting an existing adoption post with given post_id.
+    """
     post = Post.query.get_or_404(post_id)
     dog = DogInfo.query.filter_by(post_id = post_id).first()
     if post.user_id != current_user.id:
@@ -360,10 +394,14 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.delete(dog)
     db.session.commit()
-    flash('Your post has been deleted!', 'success')
+    flash('Your adoption post has been removed!', 'success')
     return redirect(url_for('home'))
 
 def comparison(post_id):
+    """
+    Returns a comparison of user preferences and dog traits 
+    for a given post ID and current user.
+    """
     dog = DogInfo.query.filter(DogInfo.post_id == post_id).first()
     if current_user.is_authenticated: 
         user = UserInfo.query.filter_by(user_id = current_user.id).first()
@@ -371,44 +409,21 @@ def comparison(post_id):
             return redirect(url_for('user_info'))       
     else:
         return redirect(url_for('login'))
-    d_compatibility = ['children' if dog.dog_with_children else '', 'dogs' if dog.dog_with_dogs else '', 'cats' if dog.dog_with_cats else '',\
-            'small animals' if dog.dog_with_sm_animals else '', 'big animals' if dog.dog_with_big_animals else '']
-    d_compatibility = [comp for comp in d_compatibility if comp != '']
-    u_needs= ['children' if user.dog_with_children else '', 'dogs' if user.dog_with_dogs else '', 'cats' if user.dog_with_cats else '',\
-            'small animals' if user.dog_with_sm_animals else '', 'big animals' if user.dog_with_big_animals else '']
-    u_needs = [need for need in u_needs if need != '']
-
-    comparison = {
-        "d_mixed_breed" : dog.mixed_breed,
-        "u_mixed_breed" : user.prefers_mixed_breed,
-        "d_primary_breed" : dog.primary_breed,
-        "u_prefered_breed" : user.prefered_breed['prefered_breed'][:],
-        "d_size" : dog.size,
-        "u_prefered_size" : user.size_preference['size_preference'][:],
-        "d_age" : dog.age,
-        "u_prefered_age" : user.age_preference['age_preference'][:],
-        "d_color" : dog.color,
-        "u_prefered_color" : user.color_preference['color_preference'][:],
-        "d_coat_length" : dog.coat_length,
-        "u_prefered_coat_length" : user.coat_length_preference,
-        "d_spayed" : dog.spayed,
-        "u_spay_needed" : user.spay_needed,
-        "d_compatibility": d_compatibility,
-        "u_needs": u_needs,
-        "d_special_need" : dog.special_need_dog,
-        "u_special_need" : user.special_need_dog,
-        "d_activity" : dog.activity_level,
-        "u_activity" : user.activity_level,
-        "u_dog_in_house" : user.dog_in_house,
-        "u_yard": user.yard,
-        "u_park": user.park
-
-    }
+    
+    user_info = get_user_info(user)
+    dog_info = get_dog_info(dog)
+    comparison = {**user_info, **dog_info}
     comparison = {k: v for k, v in comparison.items() if v}
     return render_template('comparison.html', comparison = comparison)
 
 @login_required
 def email_form(post_id):
+    """
+    Displays a form for the user to send an email to foster parent about a given post.
+
+    Args:
+        post_id (int): The ID of the post to send an email about.
+    """
     post = Post.query.filter(Post.id == post_id).first()
     if request.method == 'POST':
         email()
@@ -416,33 +431,28 @@ def email_form(post_id):
         
     return render_template('email_form.html', user = current_user, post = post)
     
+
 @login_required
 def dog_info(post_id):
-    dog = DogInfo.query.filter(DogInfo.post_id == post_id).first()
-    d_compatibility = ['children' if dog.dog_with_children else '', 'dogs' if dog.dog_with_dogs else '', 'cats' if dog.dog_with_cats else '',\
-            'small animals' if dog.dog_with_sm_animals else '', 'big animals' if dog.dog_with_big_animals else '']
-    d_compatibility = [comp for comp in d_compatibility if comp != '']
-    
+    """Displays information about a dog associated with the post.
 
-    dog_info = {
-        "d_mixed_breed" : dog.mixed_breed,
-        "d_primary_breed" : dog.primary_breed,
-        "d_size" : dog.size,
-        "d_age" : dog.age,
-        "d_color" : dog.color,
-        "d_coat_length" : dog.coat_length,
-        "d_spayed" : dog.spayed,
-        "d_compatibility": d_compatibility,
-        "d_special_need" : dog.special_need_dog,
-        "d_activity" : dog.activity_level,
-    }
+    Args:
+        post_id (int): The ID of the post to display dog information about.
+    """
+    dog = DogInfo.query.filter(DogInfo.post_id == post_id).first()
+    dog_info = get_dog_info(dog)
         
     return render_template('dog_info.html', dog_info = dog_info)
     
 
-
 @login_required
 def user_info():
+    """
+    Displays a form for the user to provide information about themselves
+    in order system to propose the best matches for adoption. 
+    
+    Also includes a list of dogs waiting for adoption the longest.
+    """
     if request.method == 'GET':
         posts = Post.query.filter(Post.user_id != current_user.id).order_by(Post.date_posted.asc()).limit(10).all()
         breeds = set()
@@ -450,30 +460,11 @@ def user_info():
             breeds.add((dog.primary_breed).lower())
         info = UserInfo.query.filter_by(user_id = current_user.id).first()
         if info:
-            flash('You have already filled the questionnaire.','warning')
+            flash('You have already filled out the questionnaire.','warning')
             return redirect(url_for('show_matches'))
     if request.method == 'POST':
         response = request.form
-        user_data = {
-        "prefered_breed" : {"prefered_breed": response.getlist('q1')},
-        "prefers_mixed_breed" : bool(int(response.get('q2'))),
-        "age_preference" : {"age_preference": response.getlist('q3')},
-        "size_preference" : {"size_preference": response.getlist('q4')},
-        "color_preference" : {"color_preference":response.getlist('q5')},
-        "spay_needed" : bool(int(response.get('q6'))),
-        "coat_length_preference" : response.get('q7'),
-        "dog_with_children" : bool(int(response.get('q8'))),
-        "dog_with_dogs" : bool(int(response.get('q9'))),
-        "dog_with_cats" : bool(int(response.get('q10'))),
-        "dog_with_sm_animals" : bool(int(response.get('q11'))),
-        "dog_with_big_animals" : bool(int(response.get('q12'))),
-        "dog_in_house" : bool(int(response.get('q13'))),
-        "yard" : bool(int(response.get('q14'))),
-        "park" : bool(int(response.get('q15'))),
-        "activity_level" : response.get('q16'),
-        "special_need_dog" : bool(int(response.get('q17'))),
-        "user_id" : current_user.id
-        }
+        user_data = get_user_data(response)
         flash('You successfully submited your answers. Here are your matches!', 'success')
     
         info = UserInfo(**user_data)
@@ -482,10 +473,17 @@ def user_info():
         next_page = request.args.get('next')
         return redirect(next_page) if next_page else redirect(url_for('show_matches'))
 
-    return render_template('user_info.html', user = current_user, breeds = breeds, posts = posts)
+    return render_template('user_info.html', user = current_user, breeds = sorted(breeds), posts = posts)
 
 @login_required
 def edit_user_info():
+    """
+    View function for editing user information. Only authenticated users can access this view.
+
+    If the user has not submitted any information, returns a 403 error.
+
+    Updates the user's information in the database and redirects the user to the matches page.
+    """
     info = UserInfo.query.filter_by(user_id = current_user.id).first()
     if request.method == 'GET':
         if not info:
@@ -496,26 +494,7 @@ def edit_user_info():
             breeds.add((dog.primary_breed).lower())
     if request.method == 'POST':
         response = request.form
-        user_update_data = {
-        "prefered_breed" : {"prefered_breed": response.getlist('q1')},
-        "prefers_mixed_breed" : bool(int(response.get('q2'))) if response.get('q2') is not None else None,
-        "age_preference" : {"age_preference": response.getlist('q3')},
-        "size_preference" : {"size_preference": response.getlist('q4')},
-        "color_preference" : {"color_preference":response.getlist('q5')},
-        "spay_needed" : bool(int(response.get('q6'))) if response.get('q6') is not None else None,
-        "coat_length_preference" : response.get('q7'),
-        "dog_with_children" : bool(int(response.get('q8'))) if response.get('q8') is not None else None,
-        "dog_with_dogs" : bool(int(response.get('q9'))) if response.get('q9') is not None else None,
-        "dog_with_cats" : bool(int(response.get('q10'))) if response.get('q10') is not None else None,
-        "dog_with_sm_animals" : bool(int(response.get('q11'))) if response.get('q11') is not None else None,
-        "dog_with_big_animals" : bool(int(response.get('q12'))) if response.get('q12') is not None else None,
-        "dog_in_house" : bool(int(response.get('q13'))) if response.get('q13') is not None else None,
-        "yard" : bool(int(response.get('q14'))) if response.get('q14') is not None else None,
-        "park" : bool(int(response.get('q15'))) if response.get('q15') is not None else None,
-        "activity_level" : response.get('q16'),
-        "special_need_dog" : bool(int(response.get('q17'))) if response.get('q17') is not None else None,
-        "user_id" : current_user.id
-        }
+        user_update_data = get_user_data(response)
         flash('You successfully submited your new answers. Here are your matches!', 'success')
         
         user_update_data = remove_none_values(user_update_data)
@@ -525,47 +504,41 @@ def edit_user_info():
         next_page = request.args.get('next')
         return redirect(next_page) if next_page else redirect(url_for('show_matches'))
 
-    return render_template('edit_user_info.html', user = current_user, breeds = breeds, posts = posts)
+    return render_template('edit_user_info.html', user = current_user, breeds = sorted(breeds), posts = posts)
 
 def user_preferences(user_id):
-    user = UserInfo.query.filter_by(user_id = user_id).first()
-    u_needs= ['children' if user.dog_with_children else '', 'dogs' if user.dog_with_dogs else '', 'cats' if user.dog_with_cats else '',\
-            'small animals' if user.dog_with_sm_animals else '', 'big animals' if user.dog_with_big_animals else '']
-    u_needs = [need for need in u_needs if need != '']
-    
-    u_info = {
-        "u_mixed_breed" : user.prefers_mixed_breed,
-        "u_prefered_breed" : user.prefered_breed['prefered_breed'][:],
-        "u_prefered_size" : user.size_preference['size_preference'][:],
-        "u_prefered_age" : user.age_preference['age_preference'][:],
-        "u_prefered_color" : user.color_preference['color_preference'][:],
-        "u_prefered_coat_length" : user.coat_length_preference,
-        "u_spay_needed" : user.spay_needed,
-        "u_needs": u_needs,
-        "u_special_need" : user.special_need_dog,
-        "u_activity" : user.activity_level,
-        "u_dog_in_house" : user.dog_in_house,
-        "u_yard": user.yard,
-        "u_park": user.park
-    }
-    return render_template('user_preferences.html', u_info = u_info)
+    """
+    View function for displaying the user's submitted adoption preferences.
 
+    Args:
+        user_id (int): The ID of the user whose preferences are being displayed.
+    """
+    user = UserInfo.query.filter_by(user_id = user_id).first()
+    u_info = get_user_info(user)
+    return render_template('user_preferences.html', u_info = u_info)
 
 
 @login_required
 def show_matches(page = 1):
+    """
+    View function for displaying the adoption matches for the current user 
+    made through sql statements and comparing different cases of user preferences and dog traits.
+
+    Args:
+        page (int): The current page number of the paginated results. Defaults to 1.
+
+    Also has the feature of filtering posts by city and gender and saving dogs for the later review.
+    """
+    page = int(request.args.get('page', 1))
     user_info = UserInfo.query.filter_by(user_id = current_user.id).first()
     if not user_info:
         return redirect(url_for('user_info'))
     
-    page = int(request.args.get('page', 1))
     prefered_breeds = (session.query(UserInfo.prefered_breed).filter(UserInfo.user_id == current_user.id).all())[0][0]['prefered_breed']
-    print(prefered_breeds, 'rase')
     age_preference = (session.query(UserInfo.age_preference).filter(UserInfo.user_id == current_user.id).all())[0][0]['age_preference']
-    print(age_preference)
     size_preference = (session.query(UserInfo.size_preference).filter(UserInfo.user_id == current_user.id).all())[0][0]['size_preference']
     color_preference = (session.query(UserInfo.color_preference).filter(UserInfo.user_id == current_user.id).all())[0][0]['color_preference']
-        
+    
     result = db.session.query(Post, DogInfo, UserInfo).join(DogInfo, Post.id == DogInfo.post_id)\
             .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
             .filter( UserInfo.user_id == current_user.id)\
@@ -585,20 +558,11 @@ def show_matches(page = 1):
             .filter(case((UserInfo.dog_in_house == False,and_(DogInfo.age != "puppy", DogInfo.size != 'small')), else_= True))\
             .filter(Post.user_id != current_user.id)\
             .filter(case(
-                    #(and_(UserInfo.yard == True , UserInfo.park == True, UserInfo.activity_level == 'high'), UserInfo.activity_level.in_(['low','medium','high'])),
                     (and_(or_(UserInfo.yard == True , UserInfo.park == True),UserInfo.activity_level == 'high'),DogInfo.activity_level.in_(['low','medium','high'])),
                     (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level == 'high'), DogInfo.activity_level != 'high'),
-                    #(and_(UserInfo.yard == True , UserInfo.park == True, UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])),
                     (and_(or_(UserInfo.yard == True , UserInfo.park == True), UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])),
                     (and_(UserInfo.yard == False , UserInfo.park == False, UserInfo.activity_level == 'medium'), DogInfo.activity_level.in_(['medium','low'])), 
-                    else_= (UserInfo.activity_level == DogInfo.activity_level)
-                )
-                )       
-  
-    city_query = result.with_entities(Post.city).distinct()
-    cities = set()
-    for post in city_query:
-        cities.add(post.city)  
+                    else_= (UserInfo.activity_level == DogInfo.activity_level)))       
 
     warning = None
     result1 = result.order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
@@ -618,31 +582,29 @@ def show_matches(page = 1):
             .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
             .filter(Post.user_id != current_user.id).order_by(func.random()).limit(8)
 
-    saved_posts = []
-    saved_dogs = current_user.saved_dogs
-    if saved_dogs:
-        saved_posts = saved_dogs['saved']
-        saved_posts = [int(id) for id in saved_posts]
-    genders = ['male','female']
-    chosen_cities=[]
-    if request.method == "GET":
-        chosen_cities = request.args.getlist('city') if request.args.getlist('city') else []
-        chosen_gender = request.args.get('gender') if request.args.get('gender') else None
-        if chosen_cities and chosen_gender:
-            result1 = result.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
-                    .filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
-                    .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
-        elif chosen_cities:
-            result1 = result.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\
-                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
-        elif chosen_gender:
-            result1 = result.filter(case((chosen_gender != 'all', Post.gender == chosen_gender), else_= True))\
-                .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
+    city_query = result.with_entities(Post.city).distinct()
+    cities = set()
+    for post in city_query:
+        cities.add(post.city)
+    saved_posts, genders, filtered_result1, chosen_cities, chosen_gender = filtering(result, page)
          
-    return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = result1, cities = cities, genders = genders, chosen_cities = chosen_cities, chosen_gender = chosen_gender, saved_posts = saved_posts )
+    return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = filtered_result1 if filtered_result1 else result1, cities = sorted(cities), genders = genders, chosen_cities = chosen_cities, chosen_gender = chosen_gender, saved_posts = saved_posts )
 
 
 def saved():
+    """
+    Toggle saving/un-saving a post for the current user.
+
+    Expects a JSON payload in the request with a 'saved' field containing a
+    dictionary with a 'postId' field specifying the ID of the post to be saved.
+
+    If the post is not already saved by the current user, it will be added to
+    their saved posts list. Otherwise, it will be removed from the list.
+
+    Returns a JSON response with a 'message' field indicating whether the
+    operation was successful (always 'success' if no error was raised) and a
+    HTTP status code of 200.
+    """
     data = request.get_json()
     saved = data.get('saved')
     post_id = saved.get('postId')
@@ -654,6 +616,6 @@ def saved():
     update = {"saved_dogs":saved_dogs}
     db.session.query(User).filter(User.id==current_user.id).update(update)
     db.session.commit()
-    res = make_response(jsonify({"message":'did it'}),200)
+    res = make_response(jsonify({"message":'successfull'}),200)
     return res
 

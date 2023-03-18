@@ -79,6 +79,43 @@
 
         }
 
+        .dropdown {
+          position: relative;
+          display: inline-block;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          margin-bottom: 3rem;
+          cursor: pointer;
+          font-size: 16px;
+          user-select: none;
+          width: 13.5rem;
+        }
+        .dropdown-content {
+          position: absolute;
+          z-index: 1;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          border-top: none;
+          border-radius: 0 0 4px 4px;
+          max-height: 40px;
+          overflow: auto;
+        }
+        .checkbox {
+          display: block;
+          padding: 5px;
+        }
+        .checkbox label {
+          display: inline-block;
+          margin: 0 5px 0 0;
+          font-weight: 400;
+        }
+            
+        
+
       </style> 
           {% if warning %}
           <div class="colored-strip">
@@ -124,13 +161,20 @@
           <div style="margin-top: 185px;">
             <form action="" method="GET">
         
-              {% for city in cities%}
-                  <input type="checkbox" id="remember-checkbox" name="city" value="{{ city }}" {% if city in chosen_cities %}checked{% endif %}> 
-                  <label style="display: inline block;" for="city">{{city}}</label> &nbsp
-              {% endfor %}
+              <div class="dropdown">
+                <div class="dropdown-content">
+                  {% for city in cities%}
+                  <div class="checkbox">
+                    <input type="checkbox" id="remember-checkbox" name="city" value="{{ city }}" {% if city in chosen_cities %}checked{% endif %}> 
+                    <label style="display: inline block;" for="city">{{city}}</label> &nbsp
+                  </div>
+                  {%endfor%}
+                </div>
+              </div>
+              <br>
           
               <div class="col-lg-3" style="margin-left: -15px;">
-                <button class="btn btn-secondary btn-sm" type="submit">Filter by city</button>
+                <button class="btn btn-secondary btn-sm" type="submit">Filter by city</button>&nbsp;&nbsp;&nbsp;&nbsp;
                 <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="city" value="all">Clear the filter</button>
               </div>
             
@@ -139,7 +183,7 @@
               <label style="display: inline block;" style="margin-top: 20px;"  for="gender">{{gender}}</label> &nbsp
               {% endfor %}
               <div class="col-lg-3" style="margin-left: -15px;">
-                <button class="btn btn-secondary btn-sm" type="submit">Filter by gender</button>
+                <button class="btn btn-secondary btn-sm" type="submit">Filter by gender</button>&nbsp;&nbsp;&nbsp;&nbsp;
                 <button onclick= "clearRememberedGender()"id="clear-radio" class="btn btn-secondary btn-sm"name="gender" value="all">Clear the filter</button>
               </div>
             </form>

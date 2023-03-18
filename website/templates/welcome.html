@@ -5,36 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <style>
       html, body {
-      margin: 0;
-      height: 100%;
+        margin: 0;
+        height: 100%;
       }
 
       body {
         background: linear-gradient(to right, #ce7516, #f1e022);
-        background-size: absolute;
-        background-repeat: no-repeat;
         font-family: Arial, sans-serif;
         color: white;
         text-align: center;
+      }
+      .col-md-6 {
+        margin-top: 8rem;
       }
 
       .container {
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        flex-direction: column;
+        min-height: 100vh;
+
       }
 
       .img-container {
-        margin-top:200px;
-        width: 300px;
-        height: 300px;
+        margin-top: 10vh;
+        width: 40vw;
+        height: 40vw;
+        max-width: 300px;
+        max-height: 300px;
         overflow: hidden;
-        margin: 0 auto;
-        border-radius: 50%;
         margin-bottom: 30px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
       }
       
       .img-container img {
@@ -45,11 +54,11 @@
         opacity: 0.7;
       }
 
-      
       .btn-outline-info {
         color: #ffffff;
         border-color: #ffffff;
       }
+
       .btn-outline-info:hover {
         border-color: #f47b1e;
         background-color: #f47b1e;
@@ -62,82 +71,92 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 50%;
-        height: 300px;
+        width: 90%;
+        max-width: 500px;
+        height: 50vh;
+        max-height: 300px;
         z-index: 1;
         box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
       }
 
-      @media screen and (max-width: 768px) {
-        body {
-          font-size: 14px;
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+
+      @media screen and (max-width: 576px) {
+        .img-container {
+          margin-top: 5vh;
+          width: 60vw;
+          height: 60vw;
+          max-width: 200px;
+          max-height: 200px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
 
-        .img-container {
-        
-          margin-top: 40px;
-          width: 200px;
-          height: 200px;
+        .col-md-6 {
+          margin-top: 1rem;
         }
 
         h1 {
-          font-size: 24px;
+          font-size: 2rem;
         }
 
         h2 {
-          font-size: 18px;
+          font-size: 1.2rem;
         }
 
         p {
-          font-size: 14px;
+          font-size: 0.8rem;
         }
 
         #pop-up {
-          display: none;
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 100%;
-          height: 300px;
-          z-index: 1;
-          box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .container {
-          flex-direction: column;
-          align-items: center;
-          margin-bottom: 40px;
+          width: 90%;
+          height: 50%;
         }
       }
-
     </style>
   </head>
   <body>
     <div class="container">
       <div class="row">
-        <div class="col-md-6 mx-auto">
-          <div class="img-container">
-              <img src="{{ url_for('static', filename='profile_pics/' + 'cuko.jpg') }}" alt="">
+        <div class="col-md-4 mx-auto text-center">
+          <div class="img-container mx-auto" >
+              <img class="img-fluid" src="{{ url_for('static', filename='profile_pics/' + 'cuko.jpg') }}" alt="">
           </div>
           <h1 class="text-light">We are here to match dogs and people</h1>
           <p class="text-light">and to make a dope connection!</p>
           <div class="text-center">
             <button id ="pop-up-button" class="btn btn-primary btn-lg m-2">Sign In</button>
             <div id="pop-up" style="display:none";>
-              <iframe src="/login" width="100%" height="300" style=" border-style: solid;border-radius: 8px"></iframe>
+              <iframe id="i-frame" src="/login" width="100%" height="450" style=" border-style: solid;border-radius: 8px"></iframe>
               <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">Close</button>
-              <button style="position:fixed; top:2px ;right:90px" class="btn btn-secondary" data-dismiss="modal"><a href="\home" style="color:white">Full screen</a></button>
+              <button id="full-screen" style="position:fixed; top:2px ;right:90px" class="btn btn-secondary" data-dismiss="modal" style="color:white">Full screen</button>
             </div>
           </div>
         </div>
-      </div>
+      
       <script>
         document.getElementById("pop-up-button").addEventListener("click", function() {
           document.getElementById("pop-up").style.display = "block";
         });
+        var iframe = document.getElementById('i-frame');
+        var fullScreen = document.getElementById("full-screen")
+        fullScreen.addEventListener('click', function() {
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        window.location.href = iframe.src;
+      });
       </script>
-      <br>
         <div class="col-md-6">
           <h2 class="text-light">Want to adopt a dog or to put a dog for adoption?</h2>
           <br>
@@ -145,14 +164,15 @@
           <p class="text-light"> In a view of enhancing that, we came up with the solution of connecting dogs and people based on their traits and preferences. Let's try our luck today and make some lives better!
           </p>
           <div class="text-center">
-            <a href="/home" class="btn btn-outline-info btn-outline-info m-2">View our dogs</a>
+            <a href="/home" class="btn btn-outline-info btn-outline-info m-2;">View our dogs</a>
           </div> 
+          <br>
         </div>
       <footer style="position: fixed;
       bottom: 5px;
       right: 10px;
       padding: 8px;">
-        <small>&copy; dope.connect 2023, Nikolina Nerić</small>
+         <small><a class="text-muted" href="https://github.com/nikolinaneric/Dogs-adoption-platform">&copy; dope.connect 2023, Nikolina Nerić</a></small>
       </footer>
     </div>
   </body>

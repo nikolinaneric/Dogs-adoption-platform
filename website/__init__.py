@@ -71,7 +71,8 @@ def create_app():
     app.config['MAIL_USE_TLS'] = True
     app.config['MAIL_USERNAME'] = "dogs.people.connect@gmail.com"
     app.config['MAIL_PASSWORD'] = os.environ.get('app_password')
-   
+    app.config['MAIL_DEFAULT_SENDER'] = 'dogs.people.connect@gmail.com'
+
     mail.init_app(app)
 
     from .models import User

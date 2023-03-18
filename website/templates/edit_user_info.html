@@ -167,14 +167,49 @@
           text-align: left;
           font-weight: normal;
         }
-  
+
+        .dropdown {
+        position: relative;
+        display: inline-block;
+        margin: 5px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        
+        cursor: pointer;
+        font-size: 16px;
+        user-select: none;
+        width: 90%;
+      }
+      .dropdown-content {
+        position: absolute;
+        z-index: 1;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-top: none;
+        border-radius: 0 0 4px 4px;
+        max-height: 40px;
+        overflow: auto;
+      }
+      .checkbox {
+        display: block;
+        padding: 5px;
+      }
+      .checkbox label {
+        display: inline-block;
+        margin: 0 5px 0 0;
+        font-weight: 400;
+      }
       </style>
       <div class ="colored-strip">
         <h4 text-align = "center">Adoption preferences</h4>
         <h7 text-align = "center">Would you like to change some preferences to enhance the chance of finding the best fit for you?
         You can reanswer just the questions which answer you want to change.</h7>
         <button id ="pop-up-button" class="btn btn-outline-info btn-outline-info m-2" style="float: right;">Check your submited preferences</button>
-        <div id="pop-up" style="display:none";>
+        <div id="pop-up" style="display:none; z-index: 10;">
           <iframe src="{{ url_for('user_preferences', user_id = user.id) }}" width="100%" height="450"style=" border-style:hidden ;border-radius: 8px ; z-index: 10;"></iframe>
           <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">Close</button>
         </div>
@@ -190,19 +225,23 @@
         <div class="questionnaire class=left-side" >
             <form method="POST"  action="" >
               <div class="question">
-                  <label for="q1">1. Do you have a preferred breed?</label>
-                  <br>
-                <label class="label">
-                  {% for breed in breeds %}
-                  <label class="label">
-                    <input type="checkbox" id="q1" name="q1" value="{{ breed }}"> {{ breed }} &nbsp &nbsp 
-                  </label> 
-                  {% endfor %}   
-                  <label class="label" >
-                    <input type="checkbox" id="q1" name="q1" value="all">no preference
-                  </label>
-                </label>
+                <label for="q1">1. Do you have a preferred breed?</label>
+                <div class="dropdown">
+                  <div class="dropdown-content">
+                    {% for breed in breeds %}
+                    <div class="checkbox">
+                      <input type="checkbox" id="q1" name="q1" value="{{ breed }}">
+                      <label for="q1">{{ breed }}</label>
+                    </div>
+                    {%endfor%}
+                    <div class="checkbox">
+                      <input type="checkbox" id="q1" name="q1" value="all">
+                      <label for="q1">no preference</label>
+                    </div>
+                  </div>
+                </div>
               </div>
+              <br>
   
               <div class="question">
                   <label for="q2">2. Are you okay with a mixed-breed dog?</label>
@@ -216,9 +255,9 @@
                   <br>
                   <input type="checkbox" id="q3" name="q3" value="puppy">puppy &nbsp &nbsp 
                   <input type="checkbox" id="q3" name="q3" value="young">young &nbsp &nbsp
-                  <input type="checkbox" id="q3" name="q3" value="adult">adult &nbsp &nbsp  
+                  <input type="checkbox" id="q3" name="q3" value="adult">adult &nbsp &nbsp &nbsp  
                   <input type="checkbox" id="q3" name="q3" value="senior">senior &nbsp &nbsp
-                  <input type="checkbox" id="q3" name="q3" value="all">no preference &nbsp &nbsp 
+                  <input type="checkbox" id="q3" name="q3" value="all">no preference 
               </div>
   
               <div class="question">
@@ -226,8 +265,8 @@
                   <br>
                   <input type="checkbox" id="q4" name="q4" value="small">small &nbsp &nbsp 
                   <input type="checkbox" id="q4" name="q4" value="medium">medium &nbsp &nbsp  
-                  <input type="checkbox" id="q4" name="q4" value="large">large &nbsp &nbsp
-                  <input type="checkbox" id="q4" name="q4" value="all">no preference &nbsp &nbsp  
+                  <input type="checkbox" id="q4" name="q4" value="large">large &nbsp &nbsp &nbsp
+                  <input type="checkbox" id="q4" name="q4" value="all">no preference  
               </div>
   
               <div class="question">
@@ -235,10 +274,10 @@
                 <br>
                 <input type="checkbox" id="q5" name="q5" value="white">white &nbsp &nbsp 
                 <input type="checkbox" id="q5" name="q5" value="yellow">yellow &nbsp &nbsp
-                <input type="checkbox" id="q5" name="q5" value="brown">brown &nbsp &nbsp 
+                <input type="checkbox" id="q5" name="q5" value="brown">brown &nbsp &nbsp &nbsp  
                 <input type="checkbox" id="q5" name="q5" value="gray">gray &nbsp &nbsp
                 <input type="checkbox" id="q5" name="q5" value="black">black &nbsp &nbsp 
-                <input type="checkbox" id="q5" name="q5" value="all">no preference &nbsp &nbsp  
+                <input type="checkbox" id="q5" name="q5" value="all">no preference   
               </div>
   
               <div class="question">
@@ -252,8 +291,8 @@
               <label for="q7">7. Do you have a coat lenght preference? </label>
               <br>
               <input type="radio" id="q7" name="q7" value="short">short-haired  &nbsp &nbsp 
-              <input type="radio" id="q7" name="q7" value="long">long-haired &nbsp &nbsp
-              <input type="radio" id="q7" name="q7" value="all">no preference &nbsp &nbsp
+              <input type="radio" id="q7" name="q7" value="long">long-haired &nbsp &nbsp &nbsp
+              <input type="radio" id="q7" name="q7" value="all">no preference
             </div>
   
             <div class="question">

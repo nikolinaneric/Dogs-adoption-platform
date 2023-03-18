@@ -68,11 +68,14 @@
           padding: 35px;
           color:#f2f2f2
         }
-        .btn-outline-info {
+        .contact-button {
+        all: btn-outline-info;
         color: #ffffff;
         border-color: #ffffff;
         }
-        .btn-outline-info:hover {
+
+        .contact-button:hover {
+          all: btn-outline-info;
           border-color:  #ea7835;;
           background-color:  #ea7835;;
           color: white;
@@ -87,9 +90,11 @@
           color: #f47b1e;
           }
 
+  
         #pop-up {
           display: none;
           position: fixed;
+          width: 50%;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
@@ -101,6 +106,7 @@
         #pop-up  {
           display: none;
           position: fixed;
+          width: 90%;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
@@ -116,9 +122,9 @@
       <div class ="colored-strip">
         <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + author.image_file) }}" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid; border-color: whitesmoke; float: right; margin-top: -15px;">
         {% if author.id != current_user.id %}
-        <button id ="pop-up-button" class="btn btn-outline-info btn-outline-info m-2" style="float: right;">Contact me</button>
+        <button id ="pop-up-button" class="btn contact-button m-2" style="float: right;">Contact me</button>
         <div id="pop-up" style="display:none";>
-          <iframe src="{{ url_for('contact_foster', foster_id = author.id) }}" width="400px" height="300px" style=" border-style:hidden ;border-radius: 8px"></iframe>
+          <iframe src="{{ url_for('contact_foster', foster_id = author.id) }}" width="100%" height="450px" style=" border-style:hidden ;border-radius: 8px"></iframe>
           <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">Close</button>
         </div>
        
@@ -126,7 +132,7 @@
         <h7 text-align = "center">If you like some of these dogs, you should contact {{ author.first_name }}. </h7>
         
         {% else %}
-        <a href="/set-profile" class="btn btn-outline-info btn-outline-info m-2" style="float: right; ">Edit profile</a>
+        <a href="/set-profile" class="btn contact-button m-2" style="float: right; ">Edit profile</a>
         
         <h4 text-align = "center">Dogs in your foster</h4>
           {%if posts.items%}
@@ -172,7 +178,7 @@
           {% for post in saved %}
           <div class="col-lg-3">
             <div class="dog-card">
-              <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog" />
+              <a href="{{ url_for('post', post_id = post.id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog" /></a>
                 <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
                 <p text-align="center"> {{ post.city }}, {{ post.gender }} </p>
                 <small class="text-muted">Foster parent: <a href="{{url_for('user', user_id = post.author.id)}}">{{ post.author.first_name }}</a></small>
@@ -184,6 +190,7 @@
       {% endif %}
       </div>
 
+      
         <div class="pagination">
           {% if author.id != current_user.id %}
             {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}

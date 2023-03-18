@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, EmailField, SubmitField, RadioField, SelectMultipleField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
+from wtforms_alchemy import QuerySelectMultipleField
 from flask_login import current_user
 from .models import User, Post
 from . import session
@@ -59,8 +60,4 @@ class PostForm(FlaskForm):
     data = TextAreaField('Description', validators=[DataRequired(), Length(max=300)])
     picture = FileField('Add a picture', validators=[FileAllowed(['jpg','png','jpeg'])])
 
-class FilterForm(FlaskForm):
-    choices = set()
-    for post in session.query(Post.city).distinct():
-        choices.add((post.city,post.city))
-    cities = SelectMultipleField('', choices = choices)
+    

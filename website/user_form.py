@@ -4,8 +4,8 @@ from wtforms import StringField, PasswordField, EmailField, SubmitField, RadioFi
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 from wtforms_alchemy import QuerySelectMultipleField
 from flask_login import current_user
-from .models import User, Post
-from . import session
+from .models import User
+
 
 class UserFormSignUp(FlaskForm):
     email = EmailField("Email", validators = [DataRequired(), Length(min=4)])

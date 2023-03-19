@@ -9,6 +9,7 @@ from .tasks import send_mail
 from .models import Post
 from sqlalchemy import case
 
+
 def verification_mail(email, first_mail_adress = True):
     """
     Sends a verification email to the specified email address with a verification link

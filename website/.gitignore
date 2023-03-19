@@ -2,4 +2,4 @@ env/
 __pycache__/
 profile_pics/
 database.db
-migrations/
+

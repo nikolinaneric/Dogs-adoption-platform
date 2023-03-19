@@ -13,7 +13,6 @@ from .tasks import send_mail
 from .utils import verification_mail, email, save_picture, remove_none_values, send_reset_email, get_dog_data, get_dog_info, get_user_data, get_user_info, filtering
 
 
-
 def welcome():
     """
     Displays a welcome page to the user.

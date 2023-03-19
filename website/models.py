@@ -4,9 +4,7 @@ from sqlalchemy.sql import func
 from flask import current_app
 import jwt
 import datetime
-
 from flask import flash, redirect, url_for
-
 
 
 db = SQLAlchemy()

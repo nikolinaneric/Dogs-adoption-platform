@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Questionnaire{% endblock %} {% block content
+{% extends "base.html" %} {% block title %}{{ _('Questionnaire') }}{% endblock %} {% block content
   %}
   
   <script>
@@ -195,9 +195,9 @@
 		}
     </style>
     <div class ="colored-strip">
-      <h4 text-align = "center">Adoption preferences</h4>
-      <h7 text-align = "center">Would you like to find a dog that would probably be the best fit for you?
-      Give us some info about you so we can make a perfect match with our dogs.</h7>
+      <h4 text-align = "center">{{ _('Adoption preferences') }}</h4>
+      <h7 text-align = "center">{{ _('ould you like to find a dog that would probably be the best fit for you?
+      Give us some info about you so we can make a perfect match with our dogs.') }}</h7>
     </div>
     <br>
     <br>
@@ -205,7 +205,7 @@
       <div class="questionnaire class=left-side" >
           <form method="POST"  action=""  onsubmit="return validateForm();">
             <div class="question">
-              <label for="q1">1. Do you have a preferred breed?</label>
+              <label for="q1">1. {{ _('Do you have a preferred breed?') }}</label>
               <div class="dropdown">
                 <div class="dropdown-content">
                   {% for breed in breeds %}
@@ -216,7 +216,7 @@
                   {%endfor%}
                   <div class="checkbox">
                     <input type="checkbox" id="q1" name="q1" value="all">
-                    <label for="q1">no preference</label>
+                    <label for="q1">{{ _('No preference') }}</label>
                   </div>
                 </div>
               </div>
@@ -224,142 +224,142 @@
             <br>
 
             <div class="question">
-                <label for="q2">2. Are you okay with a mixed-breed dog?</label>
+                <label for="q2">2. {{ _('Are you okay with a mixed-breed dog?') }}</label>
                 <br>
-                <input type="radio" id="q2" name="q2" value=1 >Yes &nbsp &nbsp 
-                <input type="radio" id="q2" name="q2" value=0>No 
+                <input type="radio" id="q2" name="q2" value=1 >{{ _('Yes') }} &nbsp &nbsp 
+                <input type="radio" id="q2" name="q2" value=0>{{ _('No') }} 
             </div>
 
             <div class="question">
-                <label for="q3">3. Do you have an age preference?</label>
+                <label for="q3">3. {{ _('Do you have an age preference?') }}</label>
                 <br>
-                <input type="checkbox" id="q3" name="q3" value="puppy">puppy &nbsp &nbsp 
-                <input type="checkbox" id="q3" name="q3" value="young">young &nbsp &nbsp
-                <input type="checkbox" id="q3" name="q3" value="adult">adult &nbsp &nbsp &nbsp  
-                <input type="checkbox" id="q3" name="q3" value="senior">senior &nbsp &nbsp
-                <input type="checkbox" id="q3" name="q3" value="all">no preference
+                <input type="checkbox" id="q3" name="q3" value="puppy">{{ _('Puppy') }} &nbsp &nbsp 
+                <input type="checkbox" id="q3" name="q3" value="young">{{ _('Young') }} &nbsp &nbsp
+                <input type="checkbox" id="q3" name="q3" value="adult">{{ _('Adult') }} &nbsp &nbsp &nbsp  
+                <input type="checkbox" id="q3" name="q3" value="senior">{{ _('Senior') }} &nbsp &nbsp
+                <input type="checkbox" id="q3" name="q3" value="all">{{ _('No preference') }}
             </div>
 
             <div class="question">
-                <label for="q4">4. Do you have a size preference?</label>
+                <label for="q4">4. {{ _('Do you have a size preference?') }}</label>
                 <br>
-                <input type="checkbox" id="q4" name="q4" value="small">small &nbsp &nbsp 
-                <input type="checkbox" id="q4" name="q4" value="medium">medium &nbsp &nbsp  
-                <input type="checkbox" id="q4" name="q4" value="large">large &nbsp &nbsp &nbsp
-                <input type="checkbox" id="q4" name="q4" value="all">no preference  
+                <input type="checkbox" id="q4" name="q4" value="small">{{ _('Small') }} &nbsp &nbsp 
+                <input type="checkbox" id="q4" name="q4" value="medium">{{ _('Medium') }} &nbsp &nbsp  
+                <input type="checkbox" id="q4" name="q4" value="large">{{ _('Large') }} &nbsp &nbsp &nbsp
+                <input type="checkbox" id="q4" name="q4" value="all">{{ _('No preference') }}  
             </div>
 
             <div class="question">
-              <label for="q5">5. Do you have a color preference?</label>
+              <label for="q5">5. {{ _('Do you have a color preference?') }}</label>
               <br>
-              <input type="checkbox" id="q5" name="q5" value="white">white &nbsp &nbsp 
-              <input type="checkbox" id="q5" name="q5" value="yellow">yellow &nbsp &nbsp
-              <input type="checkbox" id="q5" name="q5" value="brown">brown &nbsp &nbsp &nbsp 
-              <input type="checkbox" id="q5" name="q5" value="gray">gray &nbsp &nbsp
-              <input type="checkbox" id="q5" name="q5" value="black">black &nbsp &nbsp 
-              <input type="checkbox" id="q5" name="q5" value="all">no preference
+              <input type="checkbox" id="q5" name="q5" value="white">{{ _('White') }} &nbsp &nbsp 
+              <input type="checkbox" id="q5" name="q5" value="yellow">{{ _('Yellow') }} &nbsp &nbsp
+              <input type="checkbox" id="q5" name="q5" value="brown">{{ _('Brown') }} &nbsp &nbsp &nbsp 
+              <input type="checkbox" id="q5" name="q5" value="gray">{{ _('Gray') }} &nbsp &nbsp
+              <input type="checkbox" id="q5" name="q5" value="black">{{ _('Black') }} &nbsp &nbsp 
+              <input type="checkbox" id="q5" name="q5" value="all">{{ _('No preference') }}
             </div>
 
             <div class="question">
-              <label for="q6">6. Do you need already spayed/neutered dog or are you willing to take care of it on your own expense?</label>
+              <label for="q6">6. {{ _('Do you need already spayed/neutered dog or are you willing to take care of it on your own expense?') }}</label>
               <br>
-              <input type="radio" id="q6" name="q6" value=1>I need spayed/neutered &nbsp &nbsp  
-              <input type="radio" id="q6" name="q6" value=0>I can take care of it 
+              <input type="radio" id="q6" name="q6" value=1>{{ _('I need spayed/neutered') }} &nbsp &nbsp  
+              <input type="radio" id="q6" name="q6" value=0>{{ _('I can take care of it') }} 
             </div>
 
             <div class="question">
-              <label for="q7">7. Do you have a coat lenght preference? </label>
+              <label for="q7">7. {{ _('Do you have a coat length preference?') }}</label>
               <br>
-              <input type="radio" id="q7" name="q7" value="short">short-haired  &nbsp &nbsp 
-              <input type="radio" id="q7" name="q7" value="long">long-haired &nbsp &nbsp &nbsp
-              <input type="radio" id="q7" name="q7" value="all">no preference
+              <input type="radio" id="q7" name="q7" value="short">{{ _('Short-haired') }}  &nbsp &nbsp 
+              <input type="radio" id="q7" name="q7" value="long">{{ _('Long-haired') }} &nbsp &nbsp &nbsp
+              <input type="radio" id="q7" name="q7" value="all">{{ _('No preference') }}
             </div>
 
             <div class="question">
-              <label for="q8">8. Would your dog be around children? </label>
+              <label for="q8">8. {{ _('Would your dog be around children?') }} </label>
               <br>
-              <input type="radio" id="q8" name="q8" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q8" name="q8" value=0>No &nbsp &nbsp
+              <input type="radio" id="q8" name="q8" value=1>{{ _('Yes') }} &nbsp &nbsp 
+              <input type="radio" id="q8" name="q8" value=0>{{ _('No') }} &nbsp &nbsp
             </div>
 
             <div class="question">
-              <label for="q9">9. Do you already own a dog? </label>
+              <label for="q9">9. {{ _('Do you already own a dog?') }} </label>
               <br>
-              <input type="radio" id="q9" name="q9" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q9" name="q9" value=0>No &nbsp &nbsp
+              <input type="radio" id="q9" name="q9" value=1>{{ _('Yes') }} &nbsp &nbsp 
+              <input type="radio" id="q9" name="q9" value=0>{{ _('No') }} &nbsp &nbsp
             </div>
 
             <div class="question">
-              <label for="q10">10. Do you own a cat? </label>
+              <label for="q10">10. {{ _('Do you own a cat?') }} </label>
               <br>
-              <input type="radio" id="q10" name="q10" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q10" name="q10" value=0>No &nbsp &nbsp
+              <input type="radio" id="q10" name="q10" value=1>{{ _('Yes') }} &nbsp &nbsp 
+              <input type="radio" id="q10" name="q10" value=0>{{ _('No') }} &nbsp &nbsp
             </div>
 
             <div class="question">
-              <label for="q11">11. Do you own other small animals such as a hamster, rabbit, etc? </label>
+              <label for="q11">11. {{ _('Do you own other small animals such as a hamster, rabbit, etc?') }} </label>
               <br>
-              <input type="radio" id="q11" name="q11" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q11" name="q11" value=0>No &nbsp &nbsp
+              <input type="radio" id="q11" name="q11" value=1>{{ _('Yes') }} &nbsp &nbsp 
+              <input type="radio" id="q11" name="q11" value=0>{{ _('No') }} &nbsp &nbsp
             </div>
 
             <div class="question">
-              <label for="q12">12. Do you own big animals such as cows, pigs, etc? </label>
+              <label for="q12">{{ _('12. Do you own big animals such as cows, pigs, etc?') }} </label>
               <br>
-              <input type="radio" id="q12" name="q12" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q12" name="q12" value=0>No &nbsp &nbsp
+              <input type="radio" id="q12" name="q12" value=1>{{ _('Yes') }} &nbsp &nbsp 
+              <input type="radio" id="q12" name="q12" value=0>{{ _('No') }} &nbsp &nbsp
             </div>
 
             <div class="question">
-              <label for="q13">13. Would you keep your dog inside house if needed? </label>
+              <label for="q13">13. {{ _('Would you keep your dog inside house if needed?') }} </label>
               <br>
-              <input type="radio" id="q13" name="q13" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q13" name="q13" value=0>No &nbsp &nbsp
+              <input type="radio" id="q13" name="q13" value=1>{{ _('Yes') }} &nbsp &nbsp 
+              <input type="radio" id="q13" name="q13" value=0>{{ _('No') }} &nbsp &nbsp
             </div>
 
             <div class="question">
-              <label for="14">14. Do you have a yard? </label>
+              <label for="14">14. {{ _('Do you have a yard?') }} </label>
               <br>
-              <input type="radio" id="q14" name="q14" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q14" name="q14" value=0>No &nbsp &nbsp
+              <input type="radio" id="q14" name="q14" value=1>{{ _('Yes') }} &nbsp &nbsp 
+              <input type="radio" id="q14" name="q14" value=0>{{ _('No') }} &nbsp &nbsp
             </div>
 
             <div class="question">
-              <label for="15">15. Do you have a park nearby? </label>
+              <label for="15">15. {{ _('Do you have a park nearby?') }} </label>
               <br>
-              <input type="radio" id="q15" name="q15" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="q15" name="q15" value=0>No &nbsp &nbsp
+              <input type="radio" id="q15" name="q15" value=1>{{ _('Yes') }} &nbsp &nbsp 
+              <input type="radio" id="q15" name="q15" value=0>{{ _('No') }} &nbsp &nbsp
             </div>
 
             <div class="question">
-              <label for="16">16. Which level of activity can you provide to your dog? </label>
+              <label for="16">16. {{ _('Which level of activity can you provide to your dog?') }} </label>
               <br>
-              <input type="radio" id="q16" name="q16" value="low">Low &nbsp &nbsp 
-              <input type="radio" id="q16" name="q16" value="medium">Medium &nbsp &nbsp
-              <input type="radio" id="q16" name="q16" value="high">High &nbsp &nbsp
+              <input type="radio" id="q16" name="q16" value="low">{{ _('Low') }} &nbsp &nbsp 
+              <input type="radio" id="q16" name="q16" value="medium">{{ _('Medium') }} &nbsp &nbsp
+              <input type="radio" id="q16" name="q16" value="high">{{ _('High') }} &nbsp &nbsp
             </div>
 
             <div class="question">
-              <label for="17">17. Are you open to adopting a special-needs dog? </label>
+              <label for="17">17. {{ _('Are you open to adopting a special-needs dog?') }}</label>
               <br>
-              <input type="radio" id="remember-checkbox" name="q17" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="remember-checkbox" name="q17" value=0>No &nbsp &nbsp
+              <input type="radio" id="remember-checkbox" name="q17" value=1>{{ _('Yes') }} &nbsp &nbsp 
+              <input type="radio" id="remember-checkbox" name="q17" value=0>{{ _('No') }} &nbsp &nbsp
             </div>
-            <input type="submit" value="Submit">
+            <input type="submit" value="{{ _('Submit') }}">
           </form>
       </div>
       <br>
       <div class="right-side">
-        <h6 text-align = "center" style="text-align: center; font-size: 14px;">Maybe you would also want to check out some of the dogs waiting for adoption the longest.</h6>
+        <h6 text-align = "center" style="text-align: center; font-size: 14px;">{{ _('Maybe you would also want to check out <br>some of the dogs waiting for adoption the longest.') }}</h6>
         <br>
         <div class="row" style="justify-content: center;">
         {% for post in posts %}
         <div class="dog-card">
           <a href="{{ url_for('post', post_id = post.id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog"></a>
           <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
-          <p>{{ post.city }}, {{ post.gender }} </p>
+          <p>{{ post.city }}, {{ _(post.gender) }} </p>
           <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}</small>
-          <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
+          <small class="text-muted">{{ _('Foster parent') }}: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
         </div>
         {% endfor %}
         </div>

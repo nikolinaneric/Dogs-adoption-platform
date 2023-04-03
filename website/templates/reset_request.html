@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}{{ title }} {% endblock %} {% block
+{% extends "base.html" %} {% block title %}{{ (_title) }} {% endblock %} {% block
     content %}
     <br>
     
@@ -7,7 +7,7 @@
         <h3 text-align="center">{{ title }}</h3>
         <br>
         <div class="form-group">
-          <label for="email">Email Address</label>
+          <label for="email">{{ _('Email Address') }}</label>
           {{ form.email(required=True, autofocus=True, class='form-control') }}
         </div>
         {% for error in form.email.errors %}

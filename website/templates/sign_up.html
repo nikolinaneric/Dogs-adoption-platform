@@ -1,12 +1,12 @@
-{% extends "base.html" %} {% block title %}Sign Up{% endblock %} {% block
+{% extends "base.html" %} {% block title %}{{ _('Sign Up') }}{% endblock %} {% block
     content %}
     <br>
     <form method="POST">
       {{ form.csrf_token }}
-      <h3 text-align="center">Sign Up</h3>
+      <h3 text-align="center">{{ _('Sign Up') }}</h3>
       <br>
       <div class="form-group">
-        <label for="email">Email Address</label>
+        <label for="email">{{ _('Email Address') }}</label>
         {{ form.email(required=True, autofocus=True, class='form-control') }}
       </div>
       {% for error in form.email.errors %}
@@ -20,7 +20,7 @@
       </p>
       {% endfor %}
       <div class="form-group">
-        <label for="first_name">First Name</label>
+        <label for="first_name">{{ _('First Name') }}</label>
         {{ form.first_name(required=True, autofocus=True, class='form-control') }}
       </div>
       {% for error in form.first_name.errors %}
@@ -29,7 +29,7 @@
       </p>
       {% endfor %}
       <div class="form-group">
-        <label for="password1">Password</label>
+        <label for="password1">{{ _('Password') }}</label>
         {{ form.password1(required=True, autofocus=True, class="form-control") }} 
       </div>
       {% for error in form.password1.errors %}
@@ -43,7 +43,7 @@
       
       {% endfor %}
       <div class="form-group">
-        <label for="password2">Password (Confirm)</label>
+        <label for="password2">{{ _('Password (Confirm)') }}</label>
         {{ form.password2(required=True, autofocus=True, class='form-control') }}
       </div>
       {% for error in form.password2.errors %}
@@ -57,12 +57,13 @@
       </p>
       {% endfor %}
       <br />
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="submit" class="btn btn-primary">{{ _('Submit') }}</button>
     </form>
     <br>
     <div class="border-top pt-3">
       <small class="text-muted">
-        Just want to browse? <a class="ml-2" href="{{ url_for('home') }}">View available dogs unregistered</a>
+        {{ _('Just want to browse?') }} <a class="ml-2" href="{{ url_for('home') }}">{{ _('View available dogs unregistered') }}</a>
       </small>
-    
+    <br>
+    <br>
     {% endblock %}

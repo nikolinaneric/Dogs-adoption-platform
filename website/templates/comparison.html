@@ -24,98 +24,97 @@
             }
     </style>
     
-    <title>Comparison</title>
+    <title>{{ _('Comparison') }}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
   </head>
   <body>
     <br>
     <table>
         <tr class="border-bottom mb-4">
-          <td class="left-column">You</td>
-          <td class="right-column">Dog</td> 
+          <td class="left-column">{{ _('You') }}</td>
+          <td class="right-column">{{ _('Dog') }}</td> 
         </tr>
         <tr class="border-bottom mb-4">
           <td class="left-column">{% if comparison['u_mixed_breed'] %}
-                                    are fine with mixed breed dogs
+                                  {{ _('are fine with mixed breed dogs') }}
                                   {% else %}
-                                    preferre pure breed 
-          {%endif%}</td>
+                                  {{ _('prefer pure breed') }} {%endif%}
+                                  </td>
           <td class="right-column"> {% if comparison['d_mixed_breed'] %}
-                                      is mixed breed
+                                    {{ _('is mixed breed') }}
                                     {% else %}
-                                      is pure breed 
-                                    {%endif%} 
-</tr></td> 
+                                    {{ _('is pure breed ') }}
+                                    {%endif%} </td>
         </tr>
         <tr class="border-bottom mb-4">
-            <td class="left-column">prefer {% for breed in comparison['u_prefered_breed'][:-1]%} {{ breed }}, {% endfor %}{{comparison['u_prefered_breed'][-1]}} breed/s, 
-                {% for age in comparison['u_prefered_age'][:-1]%} {{ age }}, {% endfor %}{{comparison['u_prefered_age'][-1]}} age/s and 
-                {% for size in comparison['u_prefered_size'][:-1]%} {{ size }}, {% endfor %}{{comparison['u_prefered_size'][-1]}} size dogs, with 
-                {% for color in comparison['u_prefered_color'][:-1]%} {{ color }}, {% endfor %}{{comparison['u_prefered_color'][-1]}} color/s and 
-                {{ comparison['u_prefered_coat_length'] }} coat length
+            <td class="left-column">{{ _('prefer') }} {% for breed in comparison['u_prefered_breed'][:-1]%} {{ breed }}, {% endfor %}{{comparison['u_prefered_breed'][-1]}} {{ _('breeds') }},
+                {% for age in comparison['u_prefered_age'][:-1]%} {{ age }}, {% endfor %}{{comparison['u_prefered_age'][-1]}} {{ _('(age)') }} {{ _('and') }}
+                {% for size in comparison['u_prefered_size'][:-1]%} {{ size }}, {% endfor %}{{comparison['u_prefered_size'][-1]}} {{ _('(size) dogs, with') }} 
+                {% for color in comparison['u_prefered_color'][:-1]%} {{ color }}, {% endfor %}{{comparison['u_prefered_color'][-1]}} {{ _('(color) and') }}
+                {{ comparison['u_prefered_coat_length'] }} {{ _('coat length') }}
             </td>
-            <td class="right-column">primary breed {{ comparison['d_primary_breed'] }}, {{ comparison['d_age'] }}, {{ comparison['d_size']}} size (estimated size of adult),
-                primarily {{ comparison['d_color'] }} and {{ comparison['d_coat_length'] }} hair  </td> 
+            <td class="right-column">{{ _('primary breed') }} {{ comparison['d_primary_breed'] }}, {{ comparison['d_age'] }}, {{ comparison['d_size']}} {{ _('size (estimated size of adult)') }},
+              {{ _('primarily') }} {{ comparison['d_color'] }} {{ _('and') }} {{ comparison['d_coat_length'] }} {{ _('hair') }}  </td> 
         </tr> 
         <tr class="border-bottom mb-4">
           <td class="left-column">{% if comparison['u_spay_needed'] %}
-                                    need already spayed/neutered dog
+                                  {{ _('need already spayed/neutered dog') }}
                                   {% else %}
-                                  can take care of spaying/neutering
-                                  <p> (Note that this is an obligatory procedure as soon as the dog is mature enough!)</p>
+                                  {{ _('can take care of spaying/neutering') }}
+                                  <p> {{ _('(Note that this is an obligatory procedure as soon as the dog is mature enough!)') }}</p>
                                   {% endif %} </td>
           <td class="right-column">{% if comparison['d_spayed'] %}
-                                      is spayed/neutered
-                                    {% else %}
-                                      is not spayed/neutered
-                                    {% endif %}</td>
+                                  {{ _('is spayed/neutered') }}
+                                  {% else %}
+                                  {{ _('is not spayed/neutered') }}
+                                  {% endif %}</td>
         </tr>
         <tr class="border-bottom mb-4">
           <td class="left-column">  {% if comparison['u_needs'] %}
-                                      your dog would be around 
-                                      {% for being in comparison['u_needs'][:-1]%} {{ being }}, {% endfor %}{{comparison['u_needs'][-1]}}
+                                    {{ _('your dog would be around') }}
+                                    {% for being in comparison['u_needs'][:-1]%} {{ being }}, {% endfor %}{{comparison['u_needs'][-1]}}
                                     {% else %}
-                                      don't need dog to be adapted to children or other animals
+                                    {{ _('don\'t need dog to be adapted to children or other animals') }}
                                     {%endif%} 
           </td>
           <td class="right-column"> {% if comparison['d_compatibility'] %}
-            is known to be good with 
-            {% for being in comparison['d_compatibility'][0:-1]%} {{ being }},{% endfor %} {{comparison['d_compatibility'][-1]}} 
-          {% else %}
-            isn't adapted to be around other animals or children or it is unknown
-          {%endif%} 
+                                    {{ _('is known to be good with') }} 
+                                    {% for being in comparison['d_compatibility'][0:-1]%} {{ being }},{% endfor %} {{comparison['d_compatibility'][-1]}} 
+                                    {% else %}
+                                    {{ _('isn\'t adapted to be around other animals or children or it is unknown') }}
+                                    {%endif%} 
         </tr>
         <tr class="border-bottom mb-4">
           <td class="left-column">  {% if comparison['u_special_need'] %}
-                                        are open to adopting a dog with special needs 
+                                    {{ _('are open to adopting a dog with special needs') }} 
                                     {% else %}
-                                      are not open to adopting a dog with special need  
-                                    {%endif%} 
+                                    {{ _('are not open to adopting a dog with special need') }} 
+                                    {%endif%}  
           </td>
           <td class="right-column">   {% if comparison['d_special_need'] %}
-                                        is special-needs dog
+                                      {{ _('is special-needs dog') }}
                                       {% else %}
-                                        is not a special-needs dog 
-                                      {%endif%} 
+                                      {{ _('is not a special-needs dog') }}
+                                      {%endif%}  </td>
         </tr>
         <tr class="border mb-4">
-          <td class="left-column">  could provide a {{ comparison['u_activity'] }} level of activity{% if comparison['u_yard'] %}, have a yard {%else %}, don't have a yard{% endif %}{% if comparison['u_park'] %}, have a park nearby {%else %}, don't have a park nearby {% endif %}
+          <td class="left-column">  {{ _('could provide a') }} {{ comparison['u_activity'] }} {{ _('level of activity') }}{% if comparison['u_yard'] %}, {{ _('have a yard') }} {%else %}, {{ _(' don\'t have a yard') }}{% endif %}{% if comparison['u_park'] %}, {{ _('have a park nearby') }} {%else %}, {{ _('don\'t have a park nearby') }} {% endif %}
 
           </td>
-          <td class="right-column"> needs a {{ comparison['d_activity'] }} level of activity
+          <td class="right-column"> {{ _('needs a') }} {{ comparison['d_activity'] }} {{ _('level of activity') }}
           </td>
         </tr>
         <tr class="border-bottom mb-4">
-          <td class="left-column">   {% if comparison['u_dog_in_house'] %}
-                                        would keep a dog in a house if needed
-                                     {% else %}
-                                        wouldn't keep a dog in a house 
-                                     {%endif%}
-          </td>
-          <td class="right-column"> {%if  comparison['d_age'] == "puppy"  or  comparison['d_size'] == "small" %}
-                                      needs to live inside
+          <td class="left-column">  {% if comparison['u_dog_in_house'] %}
+                                    {{ _('would keep a dog in a house if needed') }}
                                     {% else %}
-                                      doesn't need to live inside
+                                    {{ _('wouldn\'t keep a dog in a house') }}
+                                    {%endif%}
+          </td>
+          <td class="right-column"> {%if  comparison['d_age'] == "{{ _('puppy') }}"  or  comparison['d_size'] == "{{ _('small') }}" %}
+                                    {{ _('needs to live inside') }}
+                                    {% else %}
+                                    {{ _('doesn\'t need to live inside') }}
                                     {% endif %}
         </tr>
       </table>

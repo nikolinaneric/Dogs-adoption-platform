@@ -1,0 +1,1263 @@
+# Serbian translations for PROJECT.
+# Copyright (C) 2023 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2023-04-03 18:51+0200\n"
+"PO-Revision-Date: 2023-04-02 16:38+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: sr\n"
+"Language-Team: sr <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.12.1\n"
+
+#: website/user_form.py:11 website/user_form.py:18 website/user_form.py:23
+#: website/user_form.py:28
+msgid "Email"
+msgstr "Mejl"
+
+#: website/templates/login.html:23 website/templates/sign_up.html:32
+#: website/user_form.py:12 website/user_form.py:19 website/user_form.py:38
+msgid "Password"
+msgstr "Lozinka"
+
+#: website/user_form.py:13 website/user_form.py:39
+msgid "Confirm Password"
+msgstr "Potvrda lozinke"
+
+#: website/user_form.py:14 website/user_form.py:22
+msgid "First name"
+msgstr "Ime"
+
+#: website/user_form.py:19 website/user_form.py:38
+msgid "Password must contain at least 8 characters"
+msgstr "Lozinka mora sadržati minimum 8 znakova"
+
+#: website/user_form.py:24
+msgid "Update Profile Picture"
+msgstr "Ažurirajte profilnu fotografiju"
+
+#: website/user_form.py:29
+msgid "Request Password Reset"
+msgstr "Zahtjev za resetovanje lozinke"
+
+#: website/user_form.py:39
+msgid "Passwords don't match!"
+msgstr "Lozinke se ne podudaraju"
+
+#: website/user_form.py:40
+msgid "Submit new password"
+msgstr "Sačuvajte novu lozinku"
+
+#: website/user_form.py:44
+msgid "Request Verification Mail"
+msgstr "Zahtjev za verifikacioni mejl"
+
+#: website/templates/new_post.html:116 website/templates/update_post.html:87
+#: website/user_form.py:47
+msgid "Name"
+msgstr "Ime"
+
+#: website/templates/new_post.html:144 website/templates/update_post.html:115
+#: website/user_form.py:48
+msgid "City"
+msgstr "Grad"
+
+#: website/templates/new_post.html:130 website/templates/update_post.html:101
+#: website/user_form.py:49
+msgid "Gender"
+msgstr "Pol"
+
+#: website/templates/new_post.html:158 website/templates/update_post.html:129
+#: website/user_form.py:50
+msgid "Description"
+msgstr "Opis"
+
+#: website/user_form.py:51
+msgid "Add a picture"
+msgstr "Dodajte fotografiju"
+
+#: website/utils.py:137 website/utils.py:199
+msgid "children"
+msgstr "djece"
+
+#: website/utils.py:137 website/utils.py:199
+msgid "dogs"
+msgstr "pasa"
+
+#: website/utils.py:137 website/utils.py:199
+msgid "cats"
+msgstr "mačaka"
+
+#: website/utils.py:138 website/utils.py:200
+msgid "small animals"
+msgstr "malih životinja"
+
+#: website/utils.py:138 website/utils.py:200
+msgid "big animals"
+msgstr "velikih životinja"
+
+#: website/utils.py:243
+msgid "male"
+msgstr "muški"
+
+#: website/utils.py:243
+msgid "female"
+msgstr "ženski"
+
+#: website/views.py:48
+msgid ""
+"The email address you're trying to add has been registered with the "
+"account already."
+msgstr "Mejl adresa je već povezana sa postojećim nalogom."
+
+#: website/views.py:53 website/views.py:130 website/views.py:163
+msgid "Verification email sent! Please check your inbox."
+msgstr "Verifikacioni mejl je poslat. Molimo Vas provjerite poštansko sanduče."
+
+#: website/views.py:58
+msgid "Account created!"
+msgstr "Nalog kreiran!"
+
+#: website/views.py:74 website/views.py:197 website/views.py:241
+msgid "Your token is either invalid or expired."
+msgstr "Vaš token je nevažeći ili istekao."
+
+#: website/views.py:81
+msgid "Your account has been verified. You may log in now."
+msgstr "Vaš nalog je verifikovan. Možete se ulogovati."
+
+#: website/views.py:101
+msgid "Logged in successfully!"
+msgstr "Ulogovani ste uspješno!"
+
+#: website/views.py:107
+msgid "Incorrect password, try again"
+msgstr "Pogrešna lozinka, pokušajte ponovo"
+
+#: website/views.py:110
+msgid "Email is not verified."
+msgstr "Mejl nije verifikovan."
+
+#: website/views.py:113
+msgid "Account does not exist."
+msgstr "Nalog ne postoji."
+
+#: website/views.py:132
+msgid "Request verification mail"
+msgstr "Zahtjev za verifikacioni mejl"
+
+#: website/views.py:158 website/views.py:172
+msgid "Your account has been updated!"
+msgstr "Vaš nalog je ažuriran!"
+
+#: website/views.py:204
+msgid "Your new email has been verified. You may log in now."
+msgstr "Vaš nova mejl adresa je verifikovana. Možete se ulogovati."
+
+#: website/views.py:220
+msgid "An email has been sent with instructions to reset your password."
+msgstr "Mejl je poslat sa instrukcijama za resetovanje lozinke."
+
+#: website/views.py:223
+msgid "Request password reset"
+msgstr "Zahtjev za resetovanje lozinke"
+
+#: website/views.py:249
+msgid "Your password has been updated! You are now able to log in"
+msgstr "Vaša lozinka je uspješno promijenjena. Možete se ulogovati."
+
+#: website/views.py:305 website/views.py:456
+msgid "Your email has been sent!"
+msgstr "Vaš mejl je poslat!"
+
+#: website/views.py:388
+msgid "Your adoption post has been updated!"
+msgstr "Vaša objava o udomljavanju je ažurirana!"
+
+#: website/views.py:422
+msgid "Your adoption post has been removed!"
+msgstr "Vaša objava o udomljavanju je uklonjena!"
+
+#: website/views.py:490
+msgid "You have already filled out the questionnaire."
+msgstr "Upitnik je već popunjen."
+
+#: website/views.py:496
+msgid "You successfully submited your answers. Here are your matches!"
+msgstr ""
+"Uspješno ste sačuvali svoje odgovore. Ovo su psi s kojima biste se "
+"uklapali."
+
+#: website/views.py:527
+msgid "You successfully submited your new answers. Here are your matches!"
+msgstr ""
+"Uspješno ste sačuvali svoje nove odgovore. Ovo su psi s kojima biste se "
+"uklapali."
+
+#: website/views.py:600 website/views.py:610
+msgid "Oops, it seems there aren't matches for your preferences..."
+msgstr "Ups, izgleda da nema poklapanja za Vaše preferencije..."
+
+#: website/views.py:602
+msgid ""
+"Check if there are preferences that can be modified or take a look at "
+"some of the our random choices."
+msgstr ""
+"Provjerite da li postoje preferencije koje možete izmijeniti ili "
+"pogledajte neke od naših nasumičnih odabira."
+
+#: website/views.py:608
+msgid ""
+"If you would not keep a dog in the house and if there is no yard, then "
+"where would the dog live?            Please check your answers."
+msgstr ""
+"Ako ne biste držali psa u kući, i ako nemate dvorište, gdje bi pas živio?"
+" Molimo Vas provjerite Vaše odgovore."
+
+#: website/templates/base.html:102 website/templates/base.html:109
+msgid "Home"
+msgstr "Početna stranica"
+
+#: website/templates/base.html:103
+msgid "My profile"
+msgstr "Moj profil"
+
+#: website/templates/base.html:104
+msgid "Add a dog for adoption"
+msgstr "Dodajte psa za udomljavanje"
+
+#: website/templates/base.html:105
+msgid "Find a dog to adopt"
+msgstr "Pronađite psa za udomljavanje"
+
+#: website/templates/base.html:110 website/templates/login.html:1
+#: website/templates/login.html:6 website/templates/login.html:38
+msgid "Login"
+msgstr "Prijava"
+
+#: website/templates/base.html:111 website/templates/sign_up.html:1
+#: website/templates/sign_up.html:6
+msgid "Sign Up"
+msgstr "Registracija"
+
+#: website/templates/base.html:116
+msgid "Logout"
+msgstr "Odjava"
+
+#: website/templates/comparison.html:27
+msgid "Comparison"
+msgstr "Poređenje"
+
+#: website/templates/comparison.html:34
+#: website/templates/user_preferences.html:24
+msgid "You"
+msgstr "Vi"
+
+#: website/templates/comparison.html:35 website/templates/dog_info.html:25
+msgid "Dog"
+msgstr "Pas"
+
+#: website/templates/comparison.html:39
+#: website/templates/user_preferences.html:28
+msgid "are fine with mixed breed dogs"
+msgstr "udomili biste mješanca "
+
+#: website/templates/comparison.html:41
+#: website/templates/user_preferences.html:30
+msgid "prefer pure breed"
+msgstr "preferirate rasnog psa"
+
+#: website/templates/comparison.html:44 website/templates/dog_info.html:30
+msgid "is mixed breed"
+msgstr "je mješanac"
+
+#: website/templates/comparison.html:46 website/templates/dog_info.html:32
+msgid "is pure breed "
+msgstr "je rasni"
+
+#: website/templates/comparison.html:50
+#: website/templates/user_preferences.html:36
+msgid "prefer"
+msgstr "preferirate"
+
+#: website/templates/comparison.html:50
+msgid "breeds"
+msgstr "rase"
+
+#: website/templates/comparison.html:51
+#: website/templates/user_preferences.html:37
+msgid "(age)"
+msgstr "(starosti)"
+
+#: website/templates/comparison.html:51 website/templates/comparison.html:57
+#: website/templates/dog_info.html:39
+#: website/templates/user_preferences.html:37
+msgid "and"
+msgstr "i"
+
+#: website/templates/comparison.html:52
+msgid "(size) dogs, with"
+msgstr "(veličine) pse, "
+
+#: website/templates/comparison.html:53
+#: website/templates/user_preferences.html:39
+msgid "(color) and"
+msgstr "boje i"
+
+#: website/templates/comparison.html:54
+#: website/templates/user_preferences.html:40
+msgid "coat length"
+msgstr "dlake"
+
+#: website/templates/comparison.html:56 website/templates/dog_info.html:38
+msgid "primary breed"
+msgstr "primarna rasa"
+
+#: website/templates/comparison.html:56 website/templates/dog_info.html:38
+msgid "size (estimated size of adult)"
+msgstr "procijenjene veličine odraslog psa"
+
+#: website/templates/comparison.html:57 website/templates/dog_info.html:39
+msgid "primarily"
+msgstr "primarno"
+
+#: website/templates/comparison.html:57 website/templates/dog_info.html:39
+msgid "hair"
+msgstr "dlake"
+
+#: website/templates/comparison.html:61
+#: website/templates/user_preferences.html:44
+msgid "need already spayed/neutered dog"
+msgstr "želite već sterilisanog/kastriranog"
+
+#: website/templates/comparison.html:63
+#: website/templates/user_preferences.html:46
+msgid "can take care of spaying/neutering"
+msgstr "pobrinuli biste se za sterilizaciju"
+
+#: website/templates/comparison.html:64
+#: website/templates/user_preferences.html:47
+msgid ""
+"(Note that this is an obligatory procedure as soon as the dog is mature "
+"enough!)"
+msgstr "(Napominjemo da je ovo obavezna procedura nakon što pas odraste!)"
+
+#: website/templates/comparison.html:67 website/templates/dog_info.html:44
+msgid "is spayed/neutered"
+msgstr "je sterilisan/kastriran"
+
+#: website/templates/comparison.html:69 website/templates/dog_info.html:46
+msgid "is not spayed/neutered"
+msgstr "nije sterilisan/kastriran"
+
+#: website/templates/comparison.html:74
+#: website/templates/user_preferences.html:52
+msgid "your dog would be around"
+msgstr "Vaš pas bi bio u blizini"
+
+#: website/templates/comparison.html:77
+#: website/templates/user_preferences.html:55
+msgid "don't need dog to be adapted to children or other animals"
+msgstr "ne zahtjevate da pas bude u blizini djece ili drugih životinja"
+
+#: website/templates/comparison.html:81
+msgid "is known to be good with"
+msgstr "je dobar u blizini"
+
+#: website/templates/comparison.html:84 website/templates/dog_info.html:55
+msgid "isn't adapted to be around other animals or children or it is unknown"
+msgstr "nije adaptiran za okruženje drugih životinja ili djece, ili je nepoznato"
+
+#: website/templates/comparison.html:89
+#: website/templates/user_preferences.html:61
+msgid "are open to adopting a dog with special needs"
+msgstr "otvoreni ste za udomljavanje pasa sa posebnim potrebama"
+
+#: website/templates/comparison.html:91
+msgid "are not open to adopting a dog with special need"
+msgstr "niste otvoreni za udomljavnje psa sa posebnim potrebama"
+
+#: website/templates/comparison.html:95 website/templates/dog_info.html:61
+msgid "is special-needs dog"
+msgstr "ima posebne potrebe"
+
+#: website/templates/comparison.html:97 website/templates/dog_info.html:63
+msgid "is not a special-needs dog"
+msgstr "nema posebne potrebe"
+
+#: website/templates/comparison.html:101
+#: website/templates/user_preferences.html:67
+msgid "could provide a"
+msgstr "možete obezbjediti"
+
+#: website/templates/comparison.html:101 website/templates/comparison.html:104
+#: website/templates/dog_info.html:69
+#: website/templates/user_preferences.html:67
+msgid "level of activity"
+msgstr "nivo aktivnosti"
+
+#: website/templates/comparison.html:101
+#: website/templates/user_preferences.html:67
+msgid "have a yard"
+msgstr "imate dvorište"
+
+#: website/templates/comparison.html:101
+msgid " don't have a yard"
+msgstr "nemate dvorište"
+
+#: website/templates/comparison.html:101
+#: website/templates/user_preferences.html:67
+msgid "have a park nearby"
+msgstr "imate park u blizini"
+
+#: website/templates/comparison.html:101
+#: website/templates/user_preferences.html:67
+msgid "don't have a park nearby"
+msgstr "nemate park u blizini"
+
+#: website/templates/comparison.html:104 website/templates/dog_info.html:69
+msgid "needs a"
+msgstr "zahtjeva"
+
+#: website/templates/comparison.html:109
+#: website/templates/user_preferences.html:72
+msgid "would keep a dog in a house if needed"
+msgstr "držali biste psa u kući ako je potrebno"
+
+#: website/templates/comparison.html:111
+#: website/templates/user_preferences.html:74
+msgid "wouldn't keep a dog in a house"
+msgstr "ne biste držali psa u kući"
+
+#: website/templates/comparison.html:115 website/templates/dog_info.html:75
+msgid "needs to live inside"
+msgstr "mora da živi unutra"
+
+#: website/templates/comparison.html:117 website/templates/dog_info.html:77
+msgid "doesn't need to live inside"
+msgstr "ne mora da živi unutra"
+
+#: website/templates/dog_info.html:17 website/templates/post.html:143
+msgid "Dog info"
+msgstr "Informacije o psu"
+
+#: website/templates/dog_info.html:52
+msgid "is known to be good with "
+msgstr "je dobar u blizini"
+
+#: website/templates/edit_user_info.html:1 website/templates/user_info.html:1
+msgid "Questionnaire"
+msgstr "Upitnik"
+
+#: website/templates/edit_user_info.html:207
+#: website/templates/user_info.html:198
+msgid "Adoption preferences"
+msgstr "Preferencije za udomljavanje"
+
+#: website/templates/edit_user_info.html:208
+msgid ""
+"Would you like to change some preferences to enhance the chance of "
+"finding the best fit for you?\n"
+"        You can reanswer just the questions which answer you want to "
+"change."
+msgstr ""
+"Da li biste željeli da izmijenite neke od preferencija u cilju povećanja "
+"šanse za nalaženjem najboljih spojeva za Vas.        Potrebno je da "
+"ponovo odgovorite samo na pitanja na koja dajete izmijenjen odgovor."
+
+#: website/templates/edit_user_info.html:210
+msgid "Check your submited preferences"
+msgstr "Pogledajte Vaše unesene preferencije"
+
+#: website/templates/edit_user_info.html:213 website/templates/post.html:148
+#: website/templates/post.html:162 website/templates/post.html:168
+#: website/templates/post.html:174 website/templates/post.html:200
+msgid "Close"
+msgstr "Zatvori"
+
+#: website/templates/edit_user_info.html:227
+#: website/templates/user_info.html:208
+msgid "Do you have a preferred breed?"
+msgstr "Da li preferirate određenu rasu?"
+
+#: website/templates/edit_user_info.html:238
+#: website/templates/edit_user_info.html:259
+#: website/templates/edit_user_info.html:268
+#: website/templates/edit_user_info.html:279
+#: website/templates/edit_user_info.html:294
+#: website/templates/user_info.html:219 website/templates/user_info.html:240
+#: website/templates/user_info.html:249 website/templates/user_info.html:260
+#: website/templates/user_info.html:275
+msgid "No preference"
+msgstr "Bez preference"
+
+#: website/templates/edit_user_info.html:246
+#: website/templates/user_info.html:227
+msgid "Are you okay with a mixed-breed dog?"
+msgstr "Da li biste udomili mješanca? "
+
+#: website/templates/edit_user_info.html:248
+#: website/templates/edit_user_info.html:300
+#: website/templates/edit_user_info.html:307
+#: website/templates/edit_user_info.html:314
+#: website/templates/edit_user_info.html:321
+#: website/templates/edit_user_info.html:328
+#: website/templates/edit_user_info.html:335
+#: website/templates/edit_user_info.html:342
+#: website/templates/edit_user_info.html:349
+#: website/templates/edit_user_info.html:364
+#: website/templates/new_post.html:184 website/templates/new_post.html:220
+#: website/templates/new_post.html:234 website/templates/new_post.html:242
+#: website/templates/new_post.html:250 website/templates/new_post.html:258
+#: website/templates/new_post.html:266 website/templates/new_post.html:282
+#: website/templates/update_post.html:155
+#: website/templates/update_post.html:191
+#: website/templates/update_post.html:205
+#: website/templates/update_post.html:213
+#: website/templates/update_post.html:221
+#: website/templates/update_post.html:229
+#: website/templates/update_post.html:237
+#: website/templates/update_post.html:253 website/templates/user_info.html:229
+#: website/templates/user_info.html:281 website/templates/user_info.html:288
+#: website/templates/user_info.html:295 website/templates/user_info.html:302
+#: website/templates/user_info.html:309 website/templates/user_info.html:316
+#: website/templates/user_info.html:323 website/templates/user_info.html:330
+#: website/templates/user_info.html:345
+msgid "Yes"
+msgstr "Da"
+
+#: website/templates/edit_user_info.html:249
+#: website/templates/edit_user_info.html:301
+#: website/templates/edit_user_info.html:308
+#: website/templates/edit_user_info.html:315
+#: website/templates/edit_user_info.html:322
+#: website/templates/edit_user_info.html:329
+#: website/templates/edit_user_info.html:336
+#: website/templates/edit_user_info.html:343
+#: website/templates/edit_user_info.html:350
+#: website/templates/edit_user_info.html:365
+#: website/templates/new_post.html:185 website/templates/new_post.html:221
+#: website/templates/new_post.html:235 website/templates/new_post.html:243
+#: website/templates/new_post.html:251 website/templates/new_post.html:259
+#: website/templates/new_post.html:267 website/templates/new_post.html:283
+#: website/templates/update_post.html:156
+#: website/templates/update_post.html:192
+#: website/templates/update_post.html:206
+#: website/templates/update_post.html:214
+#: website/templates/update_post.html:222
+#: website/templates/update_post.html:230
+#: website/templates/update_post.html:238
+#: website/templates/update_post.html:254 website/templates/user_info.html:230
+#: website/templates/user_info.html:282 website/templates/user_info.html:289
+#: website/templates/user_info.html:296 website/templates/user_info.html:303
+#: website/templates/user_info.html:310 website/templates/user_info.html:317
+#: website/templates/user_info.html:324 website/templates/user_info.html:331
+#: website/templates/user_info.html:346
+msgid "No"
+msgstr "Ne"
+
+#: website/templates/edit_user_info.html:253
+#: website/templates/user_info.html:234
+msgid "Do you have an age preference?"
+msgstr "Da li imate preferencu za starost psa?"
+
+#: website/templates/edit_user_info.html:255
+#: website/templates/new_post.html:191 website/templates/update_post.html:162
+#: website/templates/user_info.html:236
+msgid "Puppy"
+msgstr "Kuče"
+
+#: website/templates/edit_user_info.html:256
+#: website/templates/new_post.html:192 website/templates/update_post.html:163
+#: website/templates/user_info.html:237
+msgid "Young"
+msgstr "Mladi"
+
+#: website/templates/edit_user_info.html:257
+#: website/templates/new_post.html:193 website/templates/update_post.html:164
+#: website/templates/user_info.html:238
+msgid "Adult"
+msgstr "Odrasli"
+
+#: website/templates/edit_user_info.html:258
+#: website/templates/new_post.html:194 website/templates/update_post.html:165
+#: website/templates/user_info.html:239
+msgid "Senior"
+msgstr "Stari"
+
+#: website/templates/edit_user_info.html:263
+#: website/templates/user_info.html:244
+msgid "Do you have a size preference?"
+msgstr "Da li imate preferencu za veličinu psa?"
+
+#: website/templates/edit_user_info.html:265
+#: website/templates/new_post.html:201 website/templates/update_post.html:172
+#: website/templates/user_info.html:246
+msgid "Small"
+msgstr "Mali"
+
+#: website/templates/edit_user_info.html:266
+#: website/templates/edit_user_info.html:357
+#: website/templates/new_post.html:202 website/templates/new_post.html:275
+#: website/templates/update_post.html:173
+#: website/templates/update_post.html:246 website/templates/user_info.html:247
+#: website/templates/user_info.html:338
+msgid "Medium"
+msgstr "Srednji"
+
+#: website/templates/edit_user_info.html:267
+#: website/templates/new_post.html:203 website/templates/update_post.html:174
+#: website/templates/user_info.html:248
+msgid "Large"
+msgstr "Veliki"
+
+#: website/templates/edit_user_info.html:272
+#: website/templates/user_info.html:253
+msgid "Do you have a color preference?"
+msgstr "Da li imate preferencije za boju krzna psa?"
+
+#: website/templates/edit_user_info.html:274
+#: website/templates/new_post.html:210 website/templates/update_post.html:181
+#: website/templates/user_info.html:255
+msgid "White"
+msgstr "Bijela"
+
+#: website/templates/edit_user_info.html:275
+#: website/templates/new_post.html:211 website/templates/update_post.html:182
+#: website/templates/user_info.html:256
+msgid "Yellow"
+msgstr "Žuta"
+
+#: website/templates/edit_user_info.html:276
+#: website/templates/new_post.html:212 website/templates/update_post.html:183
+#: website/templates/user_info.html:257
+msgid "Brown"
+msgstr "Smeđa"
+
+#: website/templates/edit_user_info.html:277
+#: website/templates/new_post.html:213 website/templates/update_post.html:184
+#: website/templates/user_info.html:258
+msgid "Gray"
+msgstr "Siva"
+
+#: website/templates/edit_user_info.html:278
+#: website/templates/new_post.html:214 website/templates/update_post.html:185
+#: website/templates/user_info.html:259
+msgid "Black"
+msgstr "Crna"
+
+#: website/templates/edit_user_info.html:283
+#: website/templates/user_info.html:264
+msgid ""
+"Do you need already spayed/neutered dog or are you willing to take care "
+"of it on your own expense?"
+msgstr ""
+"Da li Vam je potreban već sterilisan/kastriran pas ili ste spremni da to "
+"uradite o svom trošku?"
+
+#: website/templates/edit_user_info.html:285
+#: website/templates/user_info.html:266
+msgid "I need spayed/neutered"
+msgstr "Potreban mi je sterilisan/kastriran"
+
+#: website/templates/edit_user_info.html:286
+#: website/templates/user_info.html:267
+msgid "I can take care of it"
+msgstr "Pobrinuću se za to"
+
+#: website/templates/edit_user_info.html:290
+#: website/templates/user_info.html:271
+msgid "Do you have a coat length preference?"
+msgstr "Da li imate preferencije za dužinu krzna psa?"
+
+#: website/templates/edit_user_info.html:292
+#: website/templates/new_post.html:227 website/templates/update_post.html:198
+#: website/templates/user_info.html:273
+msgid "Short-haired"
+msgstr "Kratkodlaka"
+
+#: website/templates/edit_user_info.html:293
+#: website/templates/new_post.html:228 website/templates/update_post.html:199
+#: website/templates/user_info.html:274
+msgid "Long-haired"
+msgstr "Dugodlaka"
+
+#: website/templates/edit_user_info.html:298
+#: website/templates/user_info.html:279
+msgid "Would your dog be around children?"
+msgstr "Da li bi Vaš pas bio u blizini djece?"
+
+#: website/templates/edit_user_info.html:305
+#: website/templates/user_info.html:286
+msgid "Do you already own a dog?"
+msgstr "Da li već imate psa?"
+
+#: website/templates/edit_user_info.html:312
+#: website/templates/user_info.html:293
+msgid "Do you own a cat?"
+msgstr "Da li imate mačku?"
+
+#: website/templates/edit_user_info.html:319
+#: website/templates/user_info.html:300
+msgid "Do you own other small animals such as a hamster, rabbit, etc?"
+msgstr "Da li imate druge male životinje poput hrčka, zeca, i sl?"
+
+#: website/templates/edit_user_info.html:326
+#: website/templates/user_info.html:307
+msgid "12. Do you own big animals such as cows, pigs, etc?"
+msgstr "Da li imate velike životinje poput krava, svinja, i sl?"
+
+#: website/templates/edit_user_info.html:333
+#: website/templates/user_info.html:314
+msgid "Would you keep your dog inside house if needed?"
+msgstr "Da li biste držali psa u kući ako je potrebno?"
+
+#: website/templates/edit_user_info.html:340
+#: website/templates/user_info.html:321
+msgid "Do you have a yard?"
+msgstr "Da li imate dvorište?"
+
+#: website/templates/edit_user_info.html:347
+#: website/templates/user_info.html:328
+msgid "Do you have a park nearby?"
+msgstr "Da li imate park u blizini?"
+
+#: website/templates/edit_user_info.html:354
+#: website/templates/user_info.html:335
+msgid "Which level of activity can you provide to your dog?"
+msgstr "Koliki nivo aktivnosti možete obezbjediti psu?"
+
+#: website/templates/edit_user_info.html:356
+#: website/templates/new_post.html:274 website/templates/update_post.html:245
+#: website/templates/user_info.html:337
+msgid "Low"
+msgstr "Nizak"
+
+#: website/templates/edit_user_info.html:358
+#: website/templates/new_post.html:276 website/templates/update_post.html:247
+#: website/templates/user_info.html:339
+msgid "High"
+msgstr "Visok"
+
+#: website/templates/edit_user_info.html:362
+#: website/templates/user_info.html:343
+msgid "Are you open to adopting a special-needs dog?"
+msgstr "Da li ste otvoreni za udomljavanje pasa sa posebnim potrebama?"
+
+#: website/templates/edit_user_info.html:367 website/templates/sign_up.html:60
+#: website/templates/user_info.html:348
+msgid "Submit"
+msgstr "Potvrdi"
+
+#: website/templates/edit_user_info.html:372
+#: website/templates/user_info.html:353
+msgid ""
+"Maybe you would also want to check out <br>some of the dogs waiting for "
+"adoption the longest."
+msgstr ""
+"Možda biste takođe željeli da pogledate <br>neke od pasa koji čekaju za "
+"udomljavanje najduže."
+
+#: website/templates/edit_user_info.html:381 website/templates/home.html:179
+#: website/templates/user.html:1 website/templates/user.html:183
+#: website/templates/user_info.html:362
+msgid "Foster parent"
+msgstr "Hranitelj"
+
+#: website/templates/email_form.html:4
+msgid "Email Form"
+msgstr "Mejl forma"
+
+#: website/templates/email_form.html:75
+msgid "To"
+msgstr "Za"
+
+#: website/templates/email_form.html:78
+msgid "Subject"
+msgstr "Predmet"
+
+#: website/templates/email_form.html:79
+msgid "About adopting "
+msgstr "Udomljavanje"
+
+#: website/templates/email_form.html:81
+msgid "Message"
+msgstr "Poruka"
+
+#: website/templates/email_form.html:82
+msgid "Type your message here"
+msgstr "Unesite Vašu poruku ovdje"
+
+#: website/templates/email_form.html:84
+msgid "Send"
+msgstr "Pošalji"
+
+#: website/templates/home.html:1
+msgid "Dogs"
+msgstr "Psi"
+
+#: website/templates/home.html:123
+msgid "Dogs for adoption"
+msgstr "Psi za udomljavanje"
+
+#: website/templates/home.html:124
+msgid "Would you like to find a dog that would probably be the best fit for you?"
+msgstr "Da li biste željeli da pronađete psa koji bi bio najpogodniji za Vas?"
+
+#: website/templates/home.html:125
+msgid "Fill out the questionnaire and try our dope connection sistem."
+msgstr "Popunite upitnik i isprobajte naš sistem povezivanja."
+
+#: website/templates/home.html:145
+msgid "Filter by city"
+msgstr "Filtriraj po gradu"
+
+#: website/templates/home.html:146 website/templates/home.html:155
+msgid "Clear the filter"
+msgstr "Ukloni filter"
+
+#: website/templates/home.html:154
+msgid "Filter by gender"
+msgstr "Filtriraj po polu"
+
+#: website/templates/login.html:9 website/templates/reset_request.html:10
+#: website/templates/sign_up.html:9
+msgid "Email Address"
+msgstr "Mejl adresa"
+
+#: website/templates/login.html:41
+msgid "Forgot Password?"
+msgstr "Zaboravljena lozinka?"
+
+#: website/templates/login.html:44
+msgid "Send verification mail again"
+msgstr "Pošalji verifikacioni mejl ponovo"
+
+#: website/templates/login.html:48
+msgid "Need An Account?"
+msgstr "Potreban Vam je nalog?"
+
+#: website/templates/login.html:48
+msgid "Sign Up Now"
+msgstr "Registrujte se"
+
+#: website/templates/new_post.html:97
+msgid "Adding a dog for adoption"
+msgstr "Dodavanje psa za udomljavanje"
+
+#: website/templates/new_post.html:98 website/templates/update_post.html:69
+msgid ""
+"Please try to provide accurate information to make adopting more "
+"successful."
+msgstr ""
+"Molimo Vas dostavite što preciznije informacije kako bi udomljavanje bilo"
+" uspješnije."
+
+#: website/templates/new_post.html:110
+msgid "Upload a picture"
+msgstr "Dodajte fotografiju"
+
+#: website/templates/new_post.html:173 website/templates/update_post.html:144
+msgid ""
+"Give us some details about your dogs in foster, so we can find a perfect "
+"human for them!"
+msgstr ""
+"Dajte nam neke detalje o psima iz Vašeg hraniteljstva, kako bismo našli "
+"savršene ljude za njih!"
+
+#: website/templates/new_post.html:177 website/templates/update_post.html:148
+msgid "What is dog's primary breed? 'Unknown' is valid answer also. "
+msgstr "Koja je primarna rasa psa? 'Nepoznata' je takođe validan odgovor."
+
+#: website/templates/new_post.html:179 website/templates/update_post.html:150
+msgid "Enter your answer"
+msgstr "Unesite odgovor"
+
+#: website/templates/new_post.html:182 website/templates/update_post.html:153
+msgid "Is dog in your foster a mixed-breed dog?"
+msgstr "Da li je pas iz Vašeg hraniteljstva mješanac? "
+
+#: website/templates/new_post.html:189 website/templates/update_post.html:160
+msgid "What is the dog's age?"
+msgstr "Koja je starost psa?"
+
+#: website/templates/new_post.html:199 website/templates/update_post.html:170
+msgid "What is the dog's estimated adult size?"
+msgstr "Koja je procijenjena veličina odraslog psa?"
+
+#: website/templates/new_post.html:208 website/templates/update_post.html:179
+msgid "What is the primary color of the dog's coat?"
+msgstr "Koja je primarna boja psećeg krzna?"
+
+#: website/templates/new_post.html:218 website/templates/update_post.html:189
+msgid "Is this dog neutered/spayed?"
+msgstr "Da li je pas sterilisan/kastriran?"
+
+#: website/templates/new_post.html:225 website/templates/update_post.html:196
+msgid "What is the dog's coat length?"
+msgstr "Koja je dužina psećeg krzna?"
+
+#: website/templates/new_post.html:232 website/templates/update_post.html:203
+msgid "Is this dog known to be good with children?"
+msgstr "Da li je ovaj pas dobar sa djecom?"
+
+#: website/templates/new_post.html:236 website/templates/new_post.html:244
+#: website/templates/new_post.html:252 website/templates/new_post.html:260
+#: website/templates/new_post.html:268 website/templates/update_post.html:207
+#: website/templates/update_post.html:215
+#: website/templates/update_post.html:223
+#: website/templates/update_post.html:231
+#: website/templates/update_post.html:239
+msgid "Unknown"
+msgstr "Nepoznato"
+
+#: website/templates/new_post.html:240 website/templates/update_post.html:211
+msgid "Is this dog known to be good with other dogs?"
+msgstr "Da li je ovaj pas dobar sa drugim psima?"
+
+#: website/templates/new_post.html:248 website/templates/update_post.html:219
+msgid "10. Is this dog known to be good with cats?"
+msgstr "Da li je ovaj pas dobar sa mačkama?"
+
+#: website/templates/new_post.html:256 website/templates/update_post.html:227
+msgid ""
+"Is this dog known to be good with small animals such as a hamster, "
+"rabbit, etc?"
+msgstr "Da li je ovaj pas dobar sa malim životinjama poput hrčka, zeca, i sl?"
+
+#: website/templates/new_post.html:264 website/templates/update_post.html:235
+msgid "Is this dog known to be good with big animals such as cows, pigs, etc?"
+msgstr "Da li je ovaj pas dobar sa velikim životinjama poput krava, svinja, i sl?"
+
+#: website/templates/new_post.html:272 website/templates/update_post.html:243
+msgid "Which level of activity does this dog need to have?"
+msgstr "Koliki nivo aktivnosti je potreban ovom psu?"
+
+#: website/templates/new_post.html:280 website/templates/update_post.html:251
+msgid "Is this dog a special-needs dog?"
+msgstr "Da li pas ima posebne potrebe?"
+
+#: website/templates/new_post.html:285 website/templates/update_post.html:256
+msgid "Post"
+msgstr "Postavi"
+
+#: website/templates/post.html:130
+msgid "Meet"
+msgstr "Ovo je"
+
+#: website/templates/post.html:140
+msgid "Update"
+msgstr "Ažuriraj"
+
+#: website/templates/post.html:142
+msgid "Delete"
+msgstr "Obriši"
+
+#: website/templates/post.html:153
+msgid "Thinking about adopting"
+msgstr "Razmišljate o udomljavanju"
+
+#: website/templates/post.html:154
+msgid "Contact the foster parent"
+msgstr "Kontaktirajte hranitelja"
+
+#: website/templates/post.html:155
+msgid "Check the fit"
+msgstr "Provjerite kompatibilnost"
+
+#: website/templates/post.html:167
+msgid "You need to fill out the"
+msgstr "Potrebno je da popunite"
+
+#: website/templates/post.html:167
+msgid "adoption preferences"
+msgstr "preferencije za udomljavanje"
+
+#: website/templates/post.html:167
+msgid "in order to see the compatibility result."
+msgstr "kako biste vidjeli rezultat kompatibilnosti."
+
+#: website/templates/post.html:194
+msgid "Delete Post?"
+msgstr "Obrisati objavu?"
+
+#: website/templates/reset_password.html:1
+#: website/templates/reset_password.html:6
+msgid "Password reset"
+msgstr "Resetovanje lozinke"
+
+#: website/templates/reset_password.html:9
+msgid "New password"
+msgstr "Nova lozinka"
+
+#: website/templates/reset_password.html:23
+msgid "Confirm new password"
+msgstr "Potvrda nove lozinke"
+
+#: website/templates/reset_password.html:37
+msgid "Reset password"
+msgstr "Resetovanje lozinke"
+
+#: website/templates/sign_up.html:23
+msgid "First Name"
+msgstr "Ime"
+
+#: website/templates/sign_up.html:46
+msgid "Password (Confirm)"
+msgstr "Potvrda lozinke"
+
+#: website/templates/sign_up.html:65
+msgid "Just want to browse?"
+msgstr "Želite samo da pretražujete?"
+
+#: website/templates/sign_up.html:65
+msgid "View available dogs unregistered"
+msgstr "Pogledajte dostupne pse bez registracije"
+
+#: website/templates/update_post.html:1
+msgid "Update post"
+msgstr "Ažuriranje objave"
+
+#: website/templates/update_post.html:68
+msgid "Updating dog info"
+msgstr "Ažuriranje informacija o psu"
+
+#: website/templates/update_post.html:81
+msgid "Change a picture"
+msgstr "Izmijenite fotografiju"
+
+#: website/templates/update_post.html:110
+msgid "{{ form.gender }}"
+msgstr ""
+
+#: website/templates/user.html:124
+msgid "Contact me"
+msgstr "Kontaktiraj me"
+
+#: website/templates/user.html:130
+msgid "Dogs in"
+msgstr "Psi čiji je hranitelj"
+
+#: website/templates/user.html:130
+msgid "'s foster"
+msgstr " "
+
+#: website/templates/user.html:131
+msgid "If you like some of these dogs, you should contact"
+msgstr "Ako Vam se sviđa neki od ovih pasa, kontaktirajte"
+
+#: website/templates/user.html:134
+msgid "Edit profile"
+msgstr "Uredi profil"
+
+
+
+#: website/templates/user.html:136
+msgid "Dogs in your foster"
+msgstr "Psi u Vašem hraniteljstvu"
+
+#: website/templates/user.html:138
+msgid ""
+"Please keep the dogs' information accurate and  in a timely manner remove"
+" all posts with dogs that have been adopted."
+msgstr ""
+"Molimo Vas održavajte informacije o psima tačnima i blagovremeno uklonite"
+" sve objave sa psima koji su udomljeni."
+
+#: website/templates/user.html:140
+msgid ""
+"It seems you haven't added any fostering dogs. Are you here just to adopt"
+" the dog?"
+msgstr ""
+"Izgleda da niste dodali nijednog psa iz Vašeg hraniteljstva. Da li samo "
+"želite da udomite psa?"
+
+#: website/templates/user.html:141
+msgid "Fill out the adoption preferences form to find your matches."
+msgstr ""
+"Popunite formu o preferencijama za udomljavanje kako bismo pronašli "
+"spojeve za Vas."
+
+#: website/templates/user.html:172
+msgid "Dogs that you've liked. Maybe to look more into some of them?"
+msgstr "Psi koji su Vam se svidjeli. Možda da pogledate više informacija o njima?"
+
+#: website/templates/user_info.html:199
+msgid ""
+"ould you like to find a dog that would probably be the best fit for you?\n"
+"      Give us some info about you so we can make a perfect match with our"
+" dogs."
+msgstr ""
+"Da li biste željeli da pronađete psa koji bi bio najpogodniji za Vas?\n"
+"      Dajte nam više informacija o Vama kako bismo napravili savršene "
+"spojeve sa našim psima."
+
+#: website/templates/user_preferences.html:17
+
+msgid "Your preferences"
+msgstr "Vaše preferencije"
+
+#: website/templates/user_preferences.html:36
+msgid "(breeds)"
+msgstr "rase"
+
+#: website/templates/user_preferences.html:38
+msgid "(size), with"
+msgstr "(veličine) pse, "
+
+#: website/templates/user_preferences.html:63
+msgid "are not open to adopting a dog with special needs"
+msgstr "niste otvoreni za udomljavnje psa sa posebnim potrebama"
+
+#: website/templates/user_preferences.html:67
+msgid "don't have a yard"
+msgstr "nemate dvorište"
+
+#: website/templates/welcome.html:6
+msgid "Welcome"
+msgstr "Dobrodošli"
+
+#: website/templates/welcome.html:135
+msgid "We are here to match dogs and people"
+msgstr "Mi smo tu da povežemo pse i ljude"
+
+#: website/templates/welcome.html:136
+msgid "and to make a dope connection!"
+msgstr "i da napravimo vrh spojeve!"
+
+#: website/templates/welcome.html:138
+msgid "Sign In"
+msgstr "Ulogujte se"
+
+#: website/templates/welcome.html:160
+msgid "Want to adopt a dog or to put a dog for adoption?"
+msgstr "Želite da udomite psa ili da stavite psa za udomljavanje?"
+
+#: website/templates/welcome.html:162
+msgid ""
+"We understand how hard it is to pick a dog in a shelter when you would "
+"rather bring all of them home with you, or how hard it is to give "
+"fostering dogs and wonder if they will be a good fit with the adopters."
+msgstr ""
+"Razumijemo koliko je teško izabrati samo jednog psa u skloništu kada "
+"biste radije poveli sve njih sa sobom, ili koliko je teško kao hranitelj "
+"dati psa i pitati se kako će se slagati sa udomiteljima."
+
+#: website/templates/welcome.html:163
+msgid ""
+"In a view of enhancing that, we came up with the solution of connecting "
+"dogs and people based on their traits and preferences. Let's try our luck"
+" today and make some lives better!"
+msgstr ""
+"U cilju poboljšanja ovih procesa, došli smo do rješenja povezivanjem pasa"
+" i ljudi na osnovu njihovih osobina i preferencija. Hajde da iskušamo "
+"sreću danas i da učinimo neke živote boljima!"
+
+#: website/templates/welcome.html:166
+msgid "View our dogs"
+msgstr "Pogledajte naše pse"
+
+msgid "Edit Account Info"
+msgstr "Izmijenite podatke o nalogu"
+
+msgid "Would you also like to fill out the adoption preferences form?"
+msgstr ""
+"Da li biste željeli i da popunite"
+" formu o preferencijama za udomljavanje?"
+
+msgid "Upload your picture"
+msgstr "Dodajte fotografiju"
+
+msgid "Your perfect matches still waiting to be found!"
+msgstr "Vaši savršeni spojevi i dalje čekaju da budu pronađeni!"
+
+msgid "Fill out the questionnaire again."
+msgstr "Popunite upitnik iznova."
+
+msgid "Your perfect matches waiting to be adopted!"
+msgstr "Vaši savršeni spojevi čekaju udomljavanje!"
+
+msgid "Do you want to change some of the preferences you gave to us"
+msgstr "Da li želite da promijenite neke od preferenci koje ste unijeli"
+
+msgid "Fill out the questionnaire again"
+msgstr "Popunite upitnik iznova."
+
+msgid "preferre pure breed"
+msgstr "preferirate rasnog psa"
+
+msgid "medium"
+msgstr "srednji"
+
+msgid "short"
+msgstr "kratke"
+
+msgid "long"
+msgstr "duge"
+
+msgid "low"
+msgstr "nizak"
+
+msgid "high"
+msgstr "visok"
+
+msgid "all"
+msgstr "bilo koje"
+
+msgid "black"
+msgstr "crne"
+
+msgid "brown"
+msgstr "smeđe"
+
+msgid "yellow"
+msgstr "žute"
+
+msgid "white"
+msgstr "bijele"
+
+msgid "puppy"
+msgstr "kuče"
+
+msgid "young"
+msgstr "mladi"
+
+msgid "adult"
+msgstr "odrastao"
+
+msgid "senior"
+msgstr "stari"
+
+msgid "small"
+msgstr "male"
+
+msgid "large"
+msgstr "velike"
+
+msgid "Male"
+msgstr "Muški"
+
+msgid "Female"
+msgstr "Ženski"
+
+msgid "Set up your profile"
+msgstr "Podesite Vaš nalog"
+
+msgid "Perfect matches"
+msgstr "Savršeni spojevi"
+
+msgid "Profile"
+msgstr "Profil"
+msgid "New Post"
+msgstr "Nova objava"
+msgid "Delete"
+msgstr "Obriši

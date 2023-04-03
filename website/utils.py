@@ -8,6 +8,7 @@ from flask_login import current_user
 from .tasks import send_mail
 from .models import Post
 from sqlalchemy import case
+from flask_babel import gettext
 
 
 def verification_mail(email, first_mail_adress = True):
@@ -133,22 +134,22 @@ def get_dog_info(dog):
     Returns:
     dict: A dictionary containing the formatted dog data
     """
-    d_compatibility = ['children' if dog.dog_with_children else '', 'dogs' if dog.dog_with_dogs else '', 'cats' if dog.dog_with_cats else '',\
-            'small animals' if dog.dog_with_sm_animals else '', 'big animals' if dog.dog_with_big_animals else '']
+    d_compatibility = [gettext('children') if dog.dog_with_children else '', gettext('dogs') if dog.dog_with_dogs else '', gettext('cats') if dog.dog_with_cats else '',\
+            gettext('small animals') if dog.dog_with_sm_animals else '', gettext('big animals') if dog.dog_with_big_animals else '']
     d_compatibility = [comp for comp in d_compatibility if comp != '']
     
 
     dog_info = {
         "d_mixed_breed" : dog.mixed_breed,
         "d_primary_breed" : dog.primary_breed,
-        "d_size" : dog.size,
-        "d_age" : dog.age,
-        "d_color" : dog.color,
-        "d_coat_length" : dog.coat_length,
+        "d_size" : gettext(dog.size),
+        "d_age" : gettext(dog.age),
+        "d_color" : gettext(dog.color),
+        "d_coat_length" : gettext(dog.coat_length),
         "d_spayed" : dog.spayed,
         "d_compatibility": d_compatibility,
         "d_special_need" : dog.special_need_dog,
-        "d_activity" : dog.activity_level,
+        "d_activity" : gettext(dog.activity_level),
     }
     return dog_info
 
@@ -195,22 +196,22 @@ def get_user_info(user):
     Returns:
     dict: A dictionary containing the formatted user data
     """
-    u_needs= ['children' if user.dog_with_children else '', 'dogs' if user.dog_with_dogs else '', 'cats' if user.dog_with_cats else '',\
-            'small animals' if user.dog_with_sm_animals else '', 'big animals' if user.dog_with_big_animals else '']
+    u_needs= [gettext('children') if user.dog_with_children else '', gettext('dogs') if user.dog_with_dogs else '', gettext('cats') if user.dog_with_cats else '',\
+            gettext('small animals') if user.dog_with_sm_animals else '', gettext('big animals') if user.dog_with_big_animals else '']
     u_needs = [need for need in u_needs if need != '']
     
     u_info = {
         "u_mixed_breed" : user.prefers_mixed_breed,
-        "u_prefered_breed" : user.prefered_breed['prefered_breed'][:],
-        "u_prefered_size" : user.size_preference['size_preference'][:],
-        "u_prefered_age" : user.age_preference['age_preference'][:],
-        "u_prefered_color" : user.color_preference['color_preference'][:],
-        "u_prefered_coat_length" : user.coat_length_preference,
+        "u_prefered_breed" : [gettext(breed) for breed in user.prefered_breed['prefered_breed'][:]],
+        "u_prefered_size" : [gettext(size) for size in user.size_preference['size_preference'][:]],
+        "u_prefered_age" : [gettext(age) for age in user.age_preference['age_preference'][:]],
+        "u_prefered_color" : [gettext(color) for color in user.color_preference['color_preference'][:]],
+        "u_prefered_coat_length" : gettext(user.coat_length_preference),
         "u_spay_needed" : user.spay_needed,
         "u_needs": u_needs,
         "u_special_need" : user.special_need_dog,
-        "u_activity" : user.activity_level,
-        "u_dog_in_house" : user.dog_in_house,
+        "u_activity" : gettext(user.activity_level),
+        "u_dog_in_house" : user.dog_in_house, 
         "u_yard": user.yard,
         "u_park": user.park
     }
@@ -239,7 +240,7 @@ def filtering(query_object, page):
         if saved_dogs:
             saved_posts = saved_dogs['saved']
             saved_posts = [int(id) for id in saved_posts]
-    genders = ['male','female']
+    genders = [gettext('male'), gettext('female')]
 
     chosen_cities=[]
     if request.method == "GET":

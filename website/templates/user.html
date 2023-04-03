@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Foster parent{% endblock %}
+{% extends "base.html" %} {% block title %}{{ _('Profile') }}{% endblock %}
     {% block content %}
       <style>
         .dog-card {
@@ -121,24 +121,24 @@
       <div class ="colored-strip">
         <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + author.image_file) }}" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid; border-color: whitesmoke; float: right; margin-top: -15px;">
         {% if author.id != current_user.id %}
-        <button id ="pop-up-button" class="btn contact-button m-2" style="float: right;">Contact me</button>
+        <button id ="pop-up-button" class="btn contact-button m-2" style="float: right;">{{ _('Contact me') }}</button>
         <div id="pop-up" style="display:none";>
           <iframe src="{{ url_for('contact_foster', foster_id = author.id) }}" width="100%" height="450px" style=" border-style:hidden ;border-radius: 8px"></iframe>
           <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">Close</button>
         </div>
        
-        <h4 text-align = "center">Dogs in {{ author.first_name }}'s foster</h4>
-        <h7 text-align = "center">If you like some of these dogs, you should contact {{ author.first_name }}. </h7>
+        <h4 text-align = "center">{{ _('Dogs in') }} {{ author.first_name }}{{ _('\'s foster') }}</h4>
+        <h7 text-align = "center">{{ _('If you like some of these dogs, you should contact') }} {{ author.first_name }}. </h7>
         
         {% else %}
-        <a href="/set-profile" class="btn contact-button m-2" style="float: right; ">Edit profile</a>
+        <a href="/set-profile" class="btn contact-button m-2" style="float: right; ">{{ _('Edit profile') }}</a>
         
-        <h4 text-align = "center">Dogs in your foster</h4>
+        <h4 text-align = "center">{{ _('Dogs in your foster') }}</h4>
           {%if posts.items%}
-            <h7 text-align = "center">Please keep the dogs' information accurate and  in a timely manner remove all posts with dogs that have been adopted. </h7>
+            <h7 text-align = "center">{{ _('Please keep the dogs\' information accurate and  in a timely manner remove all posts with dogs that have been adopted.') }} </h7>
           {% else %}
-            <h7 text-align = "center">It seems you haven't added any fostering dogs. Are you here just to adopt the dog?
-            <a href="\questionnaire" class="link">Fill out the adoption preferences form to find your matches.</a></h7>
+            <h7 text-align = "center">{{ _('It seems you haven\'t added any fostering dogs. Are you here just to adopt the dog?') }}
+            <a href="\questionnaire" class="link">{{ _('Fill out the adoption preferences form to find your matches.') }}</a></h7>
           {% endif %}
         {%endif%}
       </div>
@@ -161,7 +161,7 @@
           <div class="dog-card">
             <a href="{{ url_for('post', post_id = post.id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog"></a>
               <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
-              <p text-align="center"> {{ post.city }}, {{ post.gender }} </p>
+              <p text-align="center"> {{ post.city }}, {{ _(post.gender) }} </p>
               <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y')}}</small>
             </div>
           </div>
@@ -169,7 +169,7 @@
       </div>
       {%endif%}
       {% if saved %}
-      <div class="colored-strip1" style="margin-top: 100px;">Dogs that you've liked. Maybe to look more into some of them?</div>
+      <div class="colored-strip1" style="margin-top: 100px;">{{ _('Dogs that you\'ve liked. Maybe to look more into some of them?') }}</div>
       
       <div style="margin-top:150px">
       
@@ -179,8 +179,8 @@
             <div class="dog-card">
               <a href="{{ url_for('post', post_id = post.id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog" /></a>
                 <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
-                <p text-align="center"> {{ post.city }}, {{ post.gender }} </p>
-                <small class="text-muted">Foster parent: <a href="{{url_for('user', user_id = post.author.id)}}">{{ post.author.first_name }}</a></small>
+                <p text-align="center"> {{ post.city }}, {{ _(post.gender) }} </p>
+                <small class="text-muted">{{ _('Foster parent') }}: <a href="{{url_for('user', user_id = post.author.id)}}">{{ post.author.first_name }}</a></small>
               </div>
             </div>
           {% endfor %}

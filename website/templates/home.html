@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Dogs{% endblock %} {% block content
+{% extends "base.html" %} {% block title %}{{ _('Home') }}{% endblock %} {% block content
     %}
 
     <style>
@@ -120,9 +120,9 @@
 
     </style>
     <div class ="colored-strip" >
-      <h4 text-align = "center">Dogs for adoption</h4>
-      <h7 text-align = "center">Would you like to find a dog that would probably be the best fit for you?
-      <a class="link" href="{{ url_for('user_info')}}">Fill out the questionnaire and try our dope connection sistem.</a></h7>
+      <h4 text-align = "center">{{ _('Dogs for adoption') }}</h4>
+      <h7 text-align = "center">{{ _('Would you like to find a dog that would probably be the best fit for you?') }}
+      <a class="link" href="{{ url_for('user_info')}}">{{ _('Fill out the questionnaire and try our dope connection sistem.') }}</a></h7>
     </div>
     
     
@@ -142,8 +142,8 @@
         </div>
         <br>
         <div class="col-lg-3" style="margin-left: -15px;">
-          <button class="btn btn-secondary btn-sm" type="submit">Filter by city</button>&nbsp;&nbsp;&nbsp;&nbsp;
-          <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="city" value="all">Clear the filter</button>
+          <button class="btn btn-secondary btn-sm" type="submit">{{ _('Filter by city') }}</button>&nbsp;&nbsp;&nbsp;&nbsp;
+          <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="city" value="all">{{ _('Clear the filter') }}</button>
         </div>
       
         {% for gender in genders%}
@@ -151,8 +151,8 @@
         <label style="display: inline block;" style="margin-top: 20px;"  for="gender">{{gender}}</label> &nbsp
         {% endfor %}
         <div class="col-lg-3" style="margin-left: -15px;">
-          <button class="btn btn-secondary btn-sm" type="submit">Filter by gender</button>&nbsp;&nbsp;&nbsp;&nbsp;
-          <button onclick= "clearRememberedGender()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="gender" value="all">Clear the filter</button>
+          <button class="btn btn-secondary btn-sm" type="submit">{{ _('Filter by gender') }}</button>&nbsp;&nbsp;&nbsp;&nbsp;
+          <button onclick= "clearRememberedGender()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="gender" value="all">{{ _('Clear the filter') }}</button>
         </div>
       </form>
   
@@ -174,8 +174,9 @@
           {%endif%}
           <a href="{{ url_for('post', post_id = post.id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog"></a>
           <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
-          <p text-align="center"> {{ post.city }}, {{ post.gender }} </p>
-          <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
+          <p text-align="center"> {{ post.city }}, {{ _(post.gender) }}
+          </p>
+          <small class="text-muted">{{ _('Foster parent') }}: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
         </div>
       </div>
       {% endfor %}

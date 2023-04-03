@@ -80,8 +80,13 @@
       text-align: center;
       padding: 20px;
       border: 1px solid #888;
-      width: 80%; /* Could be more or less, depending on screen size */
+      width: 80%; 
     }
+
+    .modal {
+      text-align: center;
+    }
+
 
 
 
@@ -96,7 +101,7 @@
           z-index: 1;
           box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
         }
-
+        
         .post-card {
           width: 90%;
           text-align: center;
@@ -120,6 +125,9 @@
         .post-card p {
           font-size: 14px;
         }
+        .modal {
+      text-align: center;
+    }
       }
       
 
@@ -127,51 +135,51 @@
 <div style="display:flex; flex-direction: column;">
 
 <div class="post-card">
-    <h5>Meet {{ post.title }}!</h5>
+    <h5>{{ _('Meet') }} {{ post.title }}!</h5>
     <img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" class="post img"alt="dog">
     <br>
-    <h7 text-align="center"> {{ post.city }}, {{ post.gender }} </h7>
+    <h7 text-align="center"> {{ post.city }}, {{ _(post.gender) }} </h7>
     <legend class="border-bottom mb-4"></legend>
     <p>{{post.data}}</p>
 </div>
 
     {% if post.user_id == user.id %}
     <div class="button-container">
-        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
+        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">{{ _('Update') }}</a>
         <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">
-            Delete</button>
-        <button id ="pop-up-button" class="btn btn-secondary btn-sm mt-1 mb-1" style="float:right;" >Dog info</button>
+          {{ _('Delete') }}</button>
+        <button id ="pop-up-button" class="btn btn-secondary btn-sm mt-1 mb-1" style="float:right;" >{{ _('Dog info') }}</button>
     </div>
   </div>
       <div id="pop-up" style="display:none";>
         <iframe src="{{ url_for('dog_info', post_id=post.id) }}" width="100%" height="450" style=" border-style:hidden ;border-radius: 8px"></iframe>
-        <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">Close</button>
+        <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">{{ _('Close') }}</button>
       </div>
     
     {% else %}
     <div class="button-container" style="text-align: center;" >
-      <p style=" font-weight:bold;">Thinking about adopting {{post.title}}?</p>
-      <button id ="pop-up-button2"  class="btn btn-danger btn-sm m-1" style="float:left">Contact the foster parent</button>
-      <button id ="pop-up-button" class="btn btn-secondary btn-sm mt-1 mb-1" style="float:right">Check the fit</button>
+      <p style=" font-weight:bold;">{{ _('Thinking about adopting') }} {{post.title}}?</p>
+      <button id ="pop-up-button2"  class="btn btn-danger btn-sm m-1" style="float:left">{{ _('Contact the foster parent') }}</button>
+      <button id ="pop-up-button" class="btn btn-secondary btn-sm mt-1 mb-1" style="float:right">{{ _('Check the fit') }}</button>
     </div>
 
   </div>
     {% if user.user_info%}
     <div  id="pop-up" style="display:none";>
       <iframe src="{{ url_for('comparison', post_id=post.id) }}" width="100%" height="500" style=" border-style:hidden ;border-radius: 8px"></iframe>
-      <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">Close</button>
+      <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">{{ _('Close') }}</button>
     </div>
       {% else %}
     <div  id="pop-up" style="display:none"; class="modal-content" >
       <br>
-      You need to fill out the <a href="{{ url_for('user_info')}}">adoption preferences</a> in order to see the compatibility result.
-      <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">Close</button></div>
+      {{ _('You need to fill out the') }} <a href="{{ url_for('user_info')}}">{{ _('adoption preferences') }}</a> {{ _('in order to see the compatibility result.') }}
+      <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">{{ _('Close') }}</button></div>
     {% endif %}
     
     
     <div id="pop-up2" style="display:none";>
       <iframe src="{{ url_for('email_form', post_id=post.id) }}"  width="100%" height="450px" style=" border-style:hidden ;border-radius: 8px"></iframe>
-      <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up2').style.display='none';">Close</button>
+      <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up2').style.display='none';">{{ _('Close') }}</button>
     </div>
     {% endif %}
     <br>
@@ -188,18 +196,18 @@
     </script>
     
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-<div class="modal-dialog" role="document">
+<div class="modal-dialog modal-dialog-centered justify-content-center" role="document">
   <div class="modal-content">
     <div class="modal-header">
-      <h5 class="modal-title" id="deleteModalLabel">Delete Post?</h5>
+      <h5 class="modal-title" id="deleteModalLabel">{{ _('Delete Post?') }}</h5>
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
       <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
-        <input class="btn btn-danger btn-sm m-1" type="submit" value="Delete">
+        <input class="btn btn-danger btn-sm m-1" type="submit" value="{{_('Delete')}}">
       </form>
     </div>
   </div>

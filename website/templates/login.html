@@ -1,12 +1,12 @@
-{% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
+{% extends "base.html" %} {% block title %}{{ _('Login') }}{% endblock %} {% block content
     %}
     <br>
     <form method="POST">
       {{ form.csrf_token }}
-      <h3 text-align="center">Login</h3>
+      <h3 text-align="center">{{ _('Login') }}</h3>
       <br>
       <div class="form-group">
-        <label for="email">Email Address</label>
+        <label for="email">{{ _('Email Address') }}</label>
         {{ form.email(required=True, autofocus=True, class='form-control') }}
       </div>
       {% for error in form.email.errors %}
@@ -20,7 +20,7 @@
       </p>
       {% endfor %}
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="password">{{ _('Password') }}</label>
         {{ form.password(required=True, autofocus=True, class='form-control') }}
       </div>
       {% for error in form.password.errors %}
@@ -35,18 +35,20 @@
       {% endfor %}
       <br />
       <div class="form-group">
-      <button type="submit" class="btn btn-primary">Login</button>
+      <button type="submit" class="btn btn-primary">{{ _('Login') }}</button>
       </form>
       <small class="text-muted ml-2">
-          <a href="{{ url_for('reset_request') }}">Forgot Password?</a>
+          <a href="{{ url_for('reset_request') }}">{{ _('Forgot Password?') }}</a>
       </small>
       </div>
-      <small><a style="color:rgb(236, 66, 66);"  href="{{ url_for('resend_verification') }}">Send verification mail again</a>
+      <small><a style="color:rgb(236, 66, 66);"  href="{{ url_for('resend_verification') }}">{{ _('Send verification mail again') }}</a>
       </small>
     <div class="border-top pt-3">
       <small class="text-muted">
-          Need An Account? <a class="ml-2" href="{{ url_for('sign_up') }}">Sign Up Now</a>
+        {{ _('Need An Account?') }} <a class="ml-2" href="{{ url_for('sign_up') }}">{{ _('Sign Up Now') }}</a>
       </small>
     </div>
+  <br>
+  <br>
   <br>
     {% endblock %}

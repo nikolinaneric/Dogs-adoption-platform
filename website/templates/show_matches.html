@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Perfect matches{% endblock %}
+{% extends "base.html" %} {% block title %}{{ _('Perfect matches') }}{% endblock %}
     {% block content %}
       <style>
         .dog-card {
@@ -118,16 +118,18 @@
       </style> 
           {% if warning %}
           <div class="colored-strip">
-            <h4 text-align = "center">Your perfect matches still waiting to be found!</h1>
+            <h4 text-align = "center">{{ _('Your perfect matches still waiting to be found!') }}</h1>
             <h7 text-align = "center" style="display: inline-block;">{{warning}}</h7>
-            <a href="{{ url_for('edit_user_info')}}" class="link">Fill out the questionnaire again.</a>
+            <a href="{{ url_for('edit_user_info')}}" class="link">{{ _('Fill out the questionnaire again.') }}</a>
           </div>
           <br>
           <br>
           <br>
           <br>
           <br>
-          <div class="row text-center">
+          <br>
+          <br>
+          <div class="row text-center" >
             {%if alternative_posts%}
               {% for post in alternative_posts %}
               <div class="col-lg-3">
@@ -144,8 +146,8 @@
                   
                   <a href="{{ url_for('post', post_id = post[0].id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog"></a>
                   <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
-                  <p>{{ post[0].city }}, {{ post[0].gender }} </p>
-                  <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
+                  <p>{{ post[0].city }}, {{ _(post[0].gender) }} </p>
+                  <small class="text-muted">{{ _('Foster parent') }}: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
                 </div>
               </div>
               {% endfor %}
@@ -153,9 +155,9 @@
           </div>
           {% else %}
           <div class="colored-strip">
-            <h4 text-align = "center">Your perfect matches waiting to be adopted!</h1>
-            <h7 text-align = "center">Do you want to change some of the preferences you gave to us?
-            <a href="{{ url_for('edit_user_info')}}" class="link">Fill out the questionnaire again.</a></h6>
+            <h4 text-align = "center">{{ _('Your perfect matches waiting to be adopted!') }}</h1>
+            <h7 text-align = "center">{{ _('Do you want to change some of the preferences you gave to us') }}?
+            <a href="{{ url_for('edit_user_info')}}" class="link">{{ _('Fill out the questionnaire again') }}.</a></h6>
           </div>
           <div style="margin-top: 185px;">
             <form action="" method="GET">
@@ -173,8 +175,8 @@
               <br>
           
               <div class="col-lg-3" style="margin-left: -15px;">
-                <button class="btn btn-secondary btn-sm" type="submit">Filter by city</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="city" value="all">Clear the filter</button>
+                <button class="btn btn-secondary btn-sm" type="submit">{{ _('Filter by city') }}</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="city" value="all">{{ _('Clear the filter') }}</button>
               </div>
             
               {% for gender in genders%}
@@ -182,8 +184,8 @@
               <label style="display: inline block;" style="margin-top: 20px;"  for="gender">{{gender}}</label> &nbsp
               {% endfor %}
               <div class="col-lg-3" style="margin-left: -15px;">
-                <button class="btn btn-secondary btn-sm" type="submit">Filter by gender</button>&nbsp;&nbsp;&nbsp;&nbsp;
-                <button onclick= "clearRememberedGender()"id="clear-radio" class="btn btn-secondary btn-sm"name="gender" value="all">Clear the filter</button>
+                <button class="btn btn-secondary btn-sm" type="submit">{{ _('Filter by gender') }}</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                <button onclick= "clearRememberedGender()"id="clear-radio" class="btn btn-secondary btn-sm"name="gender" value="all">{{ _('Clear the filter') }}</button>
               </div>
             </form>
           </div>
@@ -203,8 +205,8 @@
                   {%endif%}
                   <a href="{{ url_for('post', post_id = post[0].id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog"></a>
                   <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
-                  <p text-align="center"> {{ post[0].city }}, {{ post[0].gender }} </p>
-                  <small class="text-muted">Foster parent: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
+                  <p text-align="center"> {{ post[0].city }}, {{ _(post[0].gender) }} </p>
+                  <small class="text-muted">{{ _('Foster parent') }}: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
                 </div>
               </div>
               {% endfor %}

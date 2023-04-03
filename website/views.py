@@ -11,7 +11,8 @@ from sqlalchemy import  update, and_, case, or_, func
 import jwt
 from .tasks import send_mail
 from .utils import verification_mail, email, save_picture, remove_none_values, send_reset_email, get_dog_data, get_dog_info, get_user_data, get_user_info, filtering
-
+from flask_babel import gettext, get_locale, get_translations
+import time
 
 def welcome():
     """
@@ -20,8 +21,14 @@ def welcome():
     """
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-    return render_template('welcome.html')
-
+    
+    response=make_response(render_template('welcome.html'))
+    language = request.args.get('lang')
+    if language:
+        response = make_response(redirect("/"))
+        response.set_cookie('lang', language, max_age = 604800)
+    return response
+    
 def sign_up():
     """
     Handles the sign-up process of a new user.
@@ -41,15 +48,18 @@ def sign_up():
 
         email_exists = User.query.filter_by(email = email).first()
         if email_exists:
-            flash('The email address you\'re trying to add has been registered with the account already.','error')
+            message1 = gettext('The email address you\'re trying to add has been registered with the account already.')
+            flash(message1,'error')
         else:
             if email:
                 verification_mail(email)
-                flash('Verification email sent! Please check your inbox.','info')
+                message2 = gettext('Verification email sent! Please check your inbox.')
+                flash(message2,'success')
                 new_user = User(email = email, first_name = first_name, password = generate_password_hash(password1, method = 'sha256'), image_file = image_file)
                 db.session.add(new_user)
                 db.session.commit()
-                flash('Account created!', category='success')
+                message3 = gettext('Account created!')
+                flash(message3,'success')
             return redirect(url_for('login'))
         
     return render_template("sign_up.html", user = current_user, form = form)
@@ -64,13 +74,15 @@ def verify_email(token):
     try:
         email = jwt.decode(token, secret_key, algorithms=['HS256'])['email']
     except:
-        flash('Your token is either invalid or expired.','warning')
+        message1 = gettext('Your token is either invalid or expired.')
+        flash(message1,'warning')
         return redirect(url_for('login'))
     if email:
         user = User.query.filter_by(email = email).first()
         user.is_verified = True
         db.session.commit()
-        flash('Your account has been verified. You may log in now.','success')
+        message2 = gettext('Your account has been verified. You may log in now.')
+        flash(message2,'success')
     return redirect(url_for('login'))
 
 def login():
@@ -89,16 +101,20 @@ def login():
         if user:
             if user.is_verified:
                 if check_password_hash(user.password, password):
-                    flash('Logged in successfully!', category = 'success') 
+                    message1 = gettext('Logged in successfully!')
+                    flash(message1, category = 'success') 
                     login_user(user, remember = True) 
                     next_page = request.args.get('next') 
                     return redirect(next_page) if next_page else redirect(url_for('home'))
                 else:
-                    flash('Incorrect password, try again', category = 'error')
+                    message2 = gettext('Incorrect password, try again')
+                    flash(message2, category = 'error')
             else:
-                flash('Email is not verified.', category = 'error')
+                message3 = gettext('Email is not verified.')
+                flash(message3, category = 'error')
         else:
-            flash('Account does not exist.', category = 'error')
+            message4 = gettext('Account does not exist.')
+            flash(message4, category = 'error')
   
     return render_template("login.html", user = current_user, form = form)
 
@@ -114,8 +130,10 @@ def resend_verification():
         email = form.email.data
         if User.query.filter_by(email = email).first():
                 verification_mail(email)
-                flash('Verification email sent! Please check your inbox.','success')
-    return render_template('reset_request.html', form = form, user = current_user, title = "Request verification mail")
+                message1 = gettext('Verification email sent! Please check your inbox.')
+                flash(message1,'success')
+                title = gettext("Request verification mail")
+    return render_template('reset_request.html', form = form, user = current_user, title = title)
 
 @login_required    
 def logout():
@@ -140,11 +158,13 @@ def set_profile():
     if form.validate_on_submit():
         if form.data['first_name'] != current_user.first_name:
             current_user.first_name = form.data['first_name']
-            flash('Your account has been updated!', 'success')
+            message1 = gettext('Your account has been updated!')
+            flash(message1, 'success')
         if form.data['email'] != current_user.email:
             email = form.data['email']
             verification_mail(email, first_mail_adress=False)
-            flash('Verification email sent! Please check your inbox.','success')
+            message2 = gettext('Verification email sent! Please check your inbox.')
+            flash(message2,'success')
             return redirect(url_for('my_profile'))
         if form.data['picture']:
             profile_pic = save_picture(form.picture.data)
@@ -152,7 +172,8 @@ def set_profile():
             current_user.image_file = profile_pic
             if previous_pic != "default.jpg":
                 os.remove(current_app.root_path + '/static/profile_pics/' + previous_pic)
-            flash('Your account has been updated!', 'success')
+            message3 = gettext('Your account has been updated!')
+            flash(message3, 'success')
         db.session.commit()
         return redirect(url_for('my_profile'))
 
@@ -176,13 +197,15 @@ def verify_new_email(token):
     try:
         email = jwt.decode(token, secret_key, algorithms=['HS256'])['email']
     except:
-        flash('Your token is either invalid or expired.','error')
+        message1 = gettext('Your token is either invalid or expired.')
+        flash(message1,'warning')
         return redirect(url_for('set_profile'))
     if email:
         current_user.email = email
         current_user.is_verified = True
         db.session.commit()
-        flash('Your new email has been verified.','success')
+        message2 = gettext('Your new email has been verified. You may log in now.')
+        flash(message2,'success')
         return redirect(url_for('my_profile'))
 
 def reset_request():
@@ -197,10 +220,12 @@ def reset_request():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         send_reset_email(user)
-        flash('An email has been sent with instructions to reset your password.', 'success')
+        message1 = gettext('An email has been sent with instructions to reset your password.')
+        flash(message1, 'success')
         return redirect(url_for('login'))
+    title = gettext('Request password reset')
    
-    return render_template('reset_request.html', form = form, user = current_user, title = "Request password reset")
+    return render_template('reset_request.html', form = form, user = current_user, title = title)
 
 
 def reset_token(token):
@@ -216,14 +241,16 @@ def reset_token(token):
         return redirect(url_for('home'))
     user = User.verify_reset_token(token)  
     if user is None:
-        flash('That is an invalid or expired token', 'warning')
+        message1 = gettext('Your token is either invalid or expired.')
+        flash(message1,'warning')
         return redirect(url_for('reset_request'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password1.data, method = 'sha256')
         user.password = hashed_password
         db.session.commit()
-        flash('Your password has been updated! You are now able to log in', 'success')
+        message2 = gettext('Your password has been updated! You are now able to log in')
+        flash(message2,'success')
         return redirect(url_for('login'))
     
     return render_template('reset_password.html', form=form, user = current_user)
@@ -278,7 +305,8 @@ def contact_foster(foster_id):
     
     if request.method == 'POST':
         email()
-        flash('Your email has been sent!','success')
+        message1 = gettext('Your email has been sent!')
+        flash(message1,'success')
         
     return render_template('email_form.html', foster_parent = foster_parent)
 
@@ -360,7 +388,8 @@ def update_post(post_id):
             post.image_file = save_picture(photo)
         db.session.add(post)
         db.session.commit()
-        flash('Your adoption post has been updated!', 'success')
+        message1 = gettext('Your adoption post has been updated!')
+        flash(message1, 'success')
 
         response = request.form
         dog_data = get_dog_data(response, post)
@@ -393,7 +422,8 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.delete(dog)
     db.session.commit()
-    flash('Your adoption post has been removed!', 'success')
+    message1 = gettext('Your adoption post has been removed!')
+    flash(message1, 'success')
     return redirect(url_for('home'))
 
 def comparison(post_id):
@@ -426,7 +456,8 @@ def email_form(post_id):
     post = Post.query.filter(Post.id == post_id).first()
     if request.method == 'POST':
         email()
-        flash('Your email has been sent!','success')
+        message1 = gettext('Your email has been sent!')
+        flash(message1,'success')
         
     return render_template('email_form.html', user = current_user, post = post)
     
@@ -455,16 +486,18 @@ def user_info():
     if request.method == 'GET':
         posts = Post.query.filter(Post.user_id != current_user.id).order_by(Post.date_posted.asc()).limit(10).all()
         breeds = set()
-        for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != ('unknown' or 'Unknown')).distinct():
-            breeds.add((dog.primary_breed).lower())
+        for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != ('unknown' and 'Unknown' and 'Nepoznata' and 'nepoznata')).distinct():
+            breeds.add((dog.primary_breed).capitalize())
         info = UserInfo.query.filter_by(user_id = current_user.id).first()
         if info:
-            flash('You have already filled out the questionnaire.','warning')
+            message1 = gettext('You have already filled out the questionnaire.')
+            flash(message1,'warning')
             return redirect(url_for('show_matches'))
     if request.method == 'POST':
         response = request.form
         user_data = get_user_data(response)
-        flash('You successfully submited your answers. Here are your matches!', 'success')
+        message2 = gettext('You successfully submited your answers. Here are your matches!')
+        flash(message2, 'success')
     
         info = UserInfo(**user_data)
         db.session.add(info)
@@ -490,11 +523,12 @@ def edit_user_info():
         posts = Post.query.filter(Post.user_id != current_user.id).order_by(Post.date_posted.asc()).limit(8).all()
         breeds = set()
         for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != ('unknown' or 'Unknown')).distinct():
-            breeds.add((dog.primary_breed).lower())
+            breeds.add((dog.primary_breed).capitalize())
     if request.method == 'POST':
         response = request.form
         user_update_data = get_user_data(response)
-        flash('You successfully submited your new answers. Here are your matches!', 'success')
+        message2 = gettext('You successfully submited your new answers. Here are your matches!')
+        flash(message2, 'success')
         
         user_update_data = remove_none_values(user_update_data)
         user_update_data = {k:v for k,v in user_update_data.items() if v != {}}
@@ -566,16 +600,18 @@ def show_matches(page = 1):
     warning = None
     result1 = result.order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
     if not result1.items:
-        flash('Oops, it seems there aren\'t matches for your preferences...', category='error')
-        warning = "Check if there are preferences that can be modified or take a look at some of the our random choices."
+        message1 = gettext('Oops, it seems there aren\'t matches for your preferences...')
+        flash(message1, category='error')
+        warning = gettext("Check if there are preferences that can be modified or take a look at some of the our random choices.")
     else:   
         result1, warning = result.filter(case((and_(UserInfo.dog_in_house == False, UserInfo.yard == False), False), else_=True))\
         .order_by(Post.date_posted.desc()).paginate(page=page, per_page=8), None
         
         if not result1.items:
-            warning = "If you would not keep a dog in the house and if there is no yard, then where would the dog live?\
-            Please check your answers."
-            flash('Oops, it seems there aren\'t matches for your preferences...', category='error')
+            warning = gettext("If you would not keep a dog in the house and if there is no yard, then where would the dog live?\
+            Please check your answers.")
+            message2 = gettext('Oops, it seems there aren\'t matches for your preferences...')
+            flash(message2, category='error')
     
     alternative_results = db.session.query(Post, DogInfo, UserInfo).join(DogInfo, Post.id == DogInfo.post_id)\
             .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\

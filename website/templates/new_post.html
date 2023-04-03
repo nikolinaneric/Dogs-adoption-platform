@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}{{ title}}{% endblock %} 
+{% extends "base.html" %} {% block title %} {{ _('New Post') }}{% endblock %} 
 {% block content %}
 <script>
   const input = document.querySelector('#input');
@@ -94,8 +94,8 @@
         }
 </style>
 <div class ="colored-strip">
-  <h4 text-align = "center">Adding a dog for adoption</h4>
-  <h7 text-align = "center">Please try to provide accurate information to make adopting more successful.
+  <h4 text-align = "center">{{ _('Adding a dog for adoption') }}</h4>
+  <h7 text-align = "center">{{ _('Please try to provide accurate information to make adopting more successful.') }}
 </div>
 <br>
 <br>
@@ -107,13 +107,13 @@
   <form method="POST" action="" enctype="multipart/form-data" onsubmit="return validateForm();">    
     {{ form.hidden_tag() }}
     <div class="form-group">
-      <label for="picture">Upload your picture</label>
+      <label for="picture">{{ _('Upload a picture') }}</label>
       {{ form.picture( required = True, autofocus=True, class="form-control") }} 
     </div>
       <fieldset class="form-group">
         <legend class="border-bottom mb-4"></legend>
           <div class="form-group">
-              {{ form.title.label(class="form-control-label") }}
+              <p class="form-control-label" style="font-weight: bold;">{{ _('Name') }}</p>
               {% if form.title.errors %}
                   {{ form.title(class="form-control form-control-lg is-invalid") }}
                   <div class="invalid-feedback">
@@ -127,7 +127,7 @@
           </div>
           <legend class="border-bottom mb-4"></legend>
           <div class="form-group">
-            {{ form.gender.label(class="form-control-label") }}
+            <p class="form-control-label" style="font-weight: bold;">{{ _('Gender') }}</p>
             {% if form.gender.errors %}
                 {{ form.gender(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
@@ -136,12 +136,12 @@
                     {% endfor %}
                 </div>
             {% else %}
-                {{ form.gender }}
+            <p style="list-style:none;">{{ _(form.gender) }}</p>
             {% endif %}
           </div>
           <legend class="border-bottom mb-4"></legend>
           <div class="form-group">
-            {{ form.city.label(class="form-control-label") }}
+            <p class="form-control-label" style="font-weight: bold;">{{ _('City') }}</p>
             {% if form.city.errors %}
                 {{ form.city(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
@@ -155,7 +155,7 @@
         </div>
         <legend class="border-bottom mb-4"></legend>
           <div class="form-group">
-              {{ form.data.label(class="form-control-label") }}
+            <p class="form-control-label" style="font-weight: bold;">{{ _('Description') }}</p>
               {% if form.data.errors %}
                   {{ form.data(class="form-control form-control-lg is-invalid") }}
                   <div class="invalid-feedback">
@@ -170,119 +170,119 @@
       </fieldset>
       <legend class="border-bottom mb-4"></legend>
       <div>
-        <h6 text-align = "center">Give us some details about your dogs in foster, so we can find a perfect human for them!</h6>
+        <h6 text-align = "center">{{ _('Give us some details about your dogs in foster, so we can find a perfect human for them!') }}</h6>
         <div class="questionnaire" >
             <form method="POST" action=""  onsubmit="return validateForm();">
             <div class="question">
-                <label for="a1">1. What is dog's primary breed? 'Unknown' is valid answer also. </label>
+                <label for="a1">1. {{ _('What is dog\'s primary breed? \'Unknown\' is valid answer also. ') }}</label>
                 <br>
-                <input type="text" id="a1" name="a1" placeholder="Enter your answer"> 
+                <input type="text" id="a1" name="a1" placeholder="{{ _('Enter your answer') }}"> 
             </div>
             <div class="question">
-                <label for="a2">2. Is dog in your foster a mixed-breed dog?</label>
+                <label for="a2">2. {{ _('Is dog in your foster a mixed-breed dog?') }}</label>
                 <br>
-                <input type="radio" id="a2" name="a2" value=1>Yes &nbsp &nbsp 
-                <input type="radio" id="a2" name="a2" value=0>No 
+                <input type="radio" id="a2" name="a2" value=1>{{ _('Yes') }} &nbsp &nbsp 
+                <input type="radio" id="a2" name="a2" value=0>{{ _('No') }} 
             </div>
 
             <div class="question">
-                <label for="a3">3. What is the dog's age?</label>
+                <label for="a3">3. {{ _('What is the dog\'s age?') }}</label>
                 <br>
-                <input type="radio" id="a3" name="a3" value="puppy">puppy &nbsp &nbsp 
-                <input type="radio" id="a3" name="a3" value="young">young &nbsp &nbsp 
-                <input type="radio" id="a3" name="a3" value="adult">adult &nbsp &nbsp  
-                <input type="radio" id="a3" name="a3" value="senior">senior &nbsp &nbsp
+                <input type="radio" id="a3" name="a3" value="puppy">{{ _('Puppy') }} &nbsp &nbsp 
+                <input type="radio" id="a3" name="a3" value="young">{{ _('Young') }} &nbsp &nbsp 
+                <input type="radio" id="a3" name="a3" value="adult">{{ _('Adult') }} &nbsp &nbsp  
+                <input type="radio" id="a3" name="a3" value="senior">{{ _('Senior') }} &nbsp &nbsp
                  
             </div>
 
             <div class="question">
-                <label for="a4">4. What is the dog's estimated adult size?</label>
+                <label for="a4">4. {{ _('What is the dog\'s estimated adult size?') }}</label>
                 <br>
-                <input type="radio" id="a4" name="a4" value="small">small &nbsp &nbsp 
-                <input type="radio" id="a4" name="a4" value="medium">medium &nbsp &nbsp  
-                <input type="radio" id="a4" name="a4" value="large">large &nbsp &nbsp
+                <input type="radio" id="a4" name="a4" value="small">{{ _('Small') }} &nbsp &nbsp 
+                <input type="radio" id="a4" name="a4" value="medium">{{ _('Medium') }} &nbsp &nbsp  
+                <input type="radio" id="a4" name="a4" value="large">{{ _('Large') }} &nbsp &nbsp
                  
             </div>
 
               <div class="question">
-                <label for="a5">5. What is the primary color of the dog's coat?</label>
+                <label for="a5">5. {{ _('What is the primary color of the dog\'s coat?') }}</label>
                 <br>
-                <input type="radio" id="a5" name="a5" value="white">white &nbsp &nbsp 
-                <input type="radio" id="a5" name="a5" value="yellow">yellow &nbsp &nbsp
-                <input type="radio" id="a5" name="a5" value="brown">brown &nbsp &nbsp 
-                <input type="radio" id="a5" name="a5" value="gray">gray &nbsp &nbsp
-                <input type="radio" id="a5" name="a5" value="black">black &nbsp &nbsp  
+                <input type="radio" id="a5" name="a5" value="white">{{ _('White') }} &nbsp &nbsp 
+                <input type="radio" id="a5" name="a5" value="yellow">{{ _('Yellow') }} &nbsp &nbsp
+                <input type="radio" id="a5" name="a5" value="brown">{{ _('Brown') }} &nbsp &nbsp 
+                <input type="radio" id="a5" name="a5" value="gray">{{ _('Gray') }} &nbsp &nbsp
+                <input type="radio" id="a5" name="a5" value="black">{{ _('Black') }} &nbsp &nbsp  
             </div>
 
             <div class="question">
-              <label for="a6">6. Is this dog neutered/spayed?</label>
+              <label for="a6">6. {{ _('Is this dog neutered/spayed?') }}</label>
               <br>
-              <input type="radio" id="a6" name="a6" value=1>Yes &nbsp &nbsp 
-              <input type="radio" id="a6" name="a6" value=0>No &nbsp &nbsp
+              <input type="radio" id="a6" name="a6" value=1>{{ _('Yes') }} &nbsp &nbsp 
+              <input type="radio" id="a6" name="a6" value=0>{{ _('No') }} &nbsp &nbsp
           </div>
 
           <div class="question">
-            <label for="a7">7. What is the dog's coat lenght? </label>
+            <label for="a7">7. {{ _('What is the dog\'s coat length?') }} </label>
             <br>
-            <input type="radio" id="a7" name="a7" value="short">short-haired  &nbsp &nbsp 
-            <input type="radio" id="a7" name="a7" value="long">long-haired &nbsp &nbsp
+            <input type="radio" id="a7" name="a7" value="short">{{ _('Short-haired') }}  &nbsp &nbsp 
+            <input type="radio" id="a7" name="a7" value="long">{{ _('Long-haired') }} &nbsp &nbsp
           </div>
 
           <div class="question">
-            <label for="a8">8. Is this dog known to be good with children? </label>
+            <label for="a8">8. {{ _('Is this dog known to be good with children?') }} </label>
             <br>
-            <input type="radio" id="a8" name="a8" value=1>Yes &nbsp &nbsp 
-            <input type="radio" id="a8" name="a8" value=0>No &nbsp &nbsp
-            <input type="radio" id="a8" name="a8" value=0>Unknown &nbsp &nbsp
+            <input type="radio" id="a8" name="a8" value=1>{{ _('Yes') }} &nbsp &nbsp 
+            <input type="radio" id="a8" name="a8" value=0>{{ _('No') }} &nbsp &nbsp
+            <input type="radio" id="a8" name="a8" value=0>{{ _('Unknown') }} &nbsp &nbsp
           </div>
 
           <div class="question">
-            <label for="a9">9. Is this dog known to be good with other dogs? </label>
+            <label for="a9">9. {{ _('Is this dog known to be good with other dogs?') }} </label>
             <br>
-            <input type="radio" id="a9" name="a9" value=1>Yes &nbsp &nbsp 
-            <input type="radio" id="a9" name="a9" value=0>No &nbsp &nbsp 
-            <input type="radio" id="a9" name="a9" value=0>Unknown &nbsp &nbsp
+            <input type="radio" id="a9" name="a9" value=1>{{ _('Yes') }} &nbsp &nbsp 
+            <input type="radio" id="a9" name="a9" value=0>{{ _('No') }} &nbsp &nbsp 
+            <input type="radio" id="a9" name="a9" value=0>{{ _('Unknown') }} &nbsp &nbsp
           </div>
 
           <div class="question">
-            <label for="a10">10. Is this dog known to be good with cats?</label>
+            <label for="a10">{{ _('10. Is this dog known to be good with cats?') }}</label>
             <br>
-            <input type="radio" id="a10" name="a10" value=1>Yes &nbsp &nbsp 
-            <input type="radio" id="a10" name="a10" value=0>No &nbsp &nbsp
-            <input type="radio" id="a10" name="a10" value=0>Unknown &nbsp &nbsp
+            <input type="radio" id="a10" name="a10" value=1>{{ _('Yes') }} &nbsp &nbsp 
+            <input type="radio" id="a10" name="a10" value=0>{{ _('No') }} &nbsp &nbsp
+            <input type="radio" id="a10" name="a10" value=0>{{ _('Unknown') }} &nbsp &nbsp
           </div>
 
           <div class="question">
-            <label for="a11">11. Is this dog known to be good with small animals such as a hamster, rabbit, etc? </label>
+            <label for="a11">11. {{ _('Is this dog known to be good with small animals such as a hamster, rabbit, etc?') }} </label>
             <br>
-            <input type="radio" id="a11" name="a11" value=1>Yes &nbsp &nbsp 
-            <input type="radio" id="a11" name="a11" value=0>No &nbsp &nbsp
-            <input type="radio" id="a11" name="a11" value=0>Unknown &nbsp &nbsp
+            <input type="radio" id="a11" name="a11" value=1>{{ _('Yes') }} &nbsp &nbsp 
+            <input type="radio" id="a11" name="a11" value=0>{{ _('No') }} &nbsp &nbsp
+            <input type="radio" id="a11" name="a11" value=0>{{ _('Unknown') }} &nbsp &nbsp
           </div>
 
           <div class="question">
-            <label for="a12">Is this dog known to be good with big animals such as cows, pigs, etc? </label>
+            <label for="a12">{{ _('Is this dog known to be good with big animals such as cows, pigs, etc?') }} </label>
             <br>
-            <input type="radio" id="a12" name="a12" value=1>Yes &nbsp &nbsp 
-            <input type="radio" id="a12" name="a12" value=0>No &nbsp &nbsp
-            <input type="radio" id="a12" name="a12" value=0>Unknown &nbsp &nbsp
+            <input type="radio" id="a12" name="a12" value=1>{{ _('Yes') }} &nbsp &nbsp 
+            <input type="radio" id="a12" name="a12" value=0>{{ _('No') }} &nbsp &nbsp
+            <input type="radio" id="a12" name="a12" value=0>{{ _('Unknown') }} &nbsp &nbsp
           </div>
 
           <div class="question">
-            <label for="13">13. Which level of activity does this dog need to have? </label>
+            <label for="13">13. {{ _('Which level of activity does this dog need to have?') }} </label>
             <br>
-            <input type="radio" id="a13" name="a13" value="low">Low &nbsp &nbsp 
-            <input type="radio" id="a13" name="a13" value="medium">Medium &nbsp &nbsp
-            <input type="radio" id="a13" name="a13" value="high">High &nbsp &nbsp
+            <input type="radio" id="a13" name="a13" value="low">{{ _('Low') }} &nbsp &nbsp 
+            <input type="radio" id="a13" name="a13" value="medium">{{ _('Medium') }} &nbsp &nbsp
+            <input type="radio" id="a13" name="a13" value="high">{{ _('High') }} &nbsp &nbsp
           </div>
 
           <div class="question">
-            <label for="14">14. Is this dog a special-needs dog? </label>
+            <label for="14">14. {{ _('Is this dog a special-needs dog?') }} </label>
             <br>
-            <input type="radio" id="a14" name="a14" value=1>Yes &nbsp &nbsp 
-            <input type="radio" id="a14" name="a14" value=0>No &nbsp &nbsp
+            <input type="radio" id="a14" name="a14" value=1>{{ _('Yes') }} &nbsp &nbsp 
+            <input type="radio" id="a14" name="a14" value=0>{{ _('No') }} &nbsp &nbsp
           </div>
-          <input type="submit" value="Post">
+          <input type="submit" value="{{ _('Post') }}">
       </div>
   </form>
 </div>

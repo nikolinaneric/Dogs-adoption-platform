@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_login import LoginManager
@@ -8,6 +8,8 @@ from sqlalchemy.orm import sessionmaker
 from .models import db
 from .celery import make_celery
 from flask_migrate import Migrate
+from flask_babel import Babel, get_locale
+
 
 DB_NAME = "database.db"
 
@@ -16,6 +18,18 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 engine = create_engine('sqlite:///' + os.path.join(basedir, DB_NAME), connect_args={'check_same_thread': False})
 Session = sessionmaker(bind=engine)
 session = Session()
+
+
+
+def get_locale():
+    # if a user is logged in, use the locale from the user settings
+
+    # otherwise try to guess the language from the user accept
+    # header the browser transmits.  We support de/fr/en in this
+    # example.  The best match wins.
+    language = request.cookies.get('lang')
+    print(language)
+    return language
 
 def create_app():
     app = Flask(__name__)
@@ -27,7 +41,27 @@ def create_app():
     celery = make_celery(app)
     celery.set_default()
     migrate = Migrate(app, db)
+    babel = Babel(app, locale_selector=get_locale)
+    babel.translations_path = 'translations'
+    app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'C:/Users/Nikolina/Desktop/za deploy/translations'
+
     
+    app.config['LANGUAGES'] = {
+    'en': 'English',
+    'sr': 'Serbian'
+    }
+    #app.config['BABEL_DEFAULT_LOCALE'] = 'sr'
+
+    babel.init_app(app, default_locale="en", locale_selector=get_locale)
+
+
+    
+    # def get_locale():
+    #     # If not, return the browser's language if it is available and supported
+    #      return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+    # babel.init_app(app, locale_selector=get_locale)
+
    
 
     from . import views
@@ -59,6 +93,8 @@ def create_app():
     app.add_url_rule("/saved", view_func = views.saved, methods=['POST'])
     app.add_url_rule("/reverification", view_func = views.resend_verification, methods=['GET','POST'])
     app.add_url_rule("/user-info/<int:user_id>", view_func=views.user_preferences)
+    #app.add_url_rule("/change-lang", view_func=views.change_language)
+
 
     create_dabatase(app)
 

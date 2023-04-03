@@ -99,21 +99,21 @@
       <div class="collapse navbar-collapse" id="navbar" style>
         <div class="navbar-nav">
           {% if user.is_authenticated %}    
-          <a class="nav-item nav-link" id="home" href="/home">Home</a>
-          <a class="nav-item nav-link" id="profile" href="/profile">My profile</a>
-          <a class="nav-item nav-link" id="new_post" href="/post/new">Add a dog for adoption</a>
-          <a class="nav-item nav-link" id="matches" href="/matches">Find a dog to adopt</a>
+          <a class="nav-item nav-link" id="home" href="/home">{{ _('Home') }}</a>
+          <a class="nav-item nav-link" id="profile" href="/profile">{{ _('My profile') }}</a>
+          <a class="nav-item nav-link" id="new_post" href="/post/new">{{ _('Add a dog for adoption') }}</a>
+          <a class="nav-item nav-link" id="matches" href="/matches">{{ _('Find a dog to adopt') }}</a>
           
 
           {% else %}
-          <a class="nav-item nav-link" id="home" href="/home">Home</a>
-          <a class="nav-item nav-link" id="login" href="/login">Login</a>
-          <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
+          <a class="nav-item nav-link" id="home" href="/home">{{ _('Home') }}</a>
+          <a class="nav-item nav-link" id="login" href="/login">{{ _('Login') }}</a>
+          <a class="nav-item nav-link" id="signUp" href="/sign-up">{{ _('Sign Up') }}</a>
           {% endif %}
         </div>
       </div>
       {% if user.is_authenticated %}
-      <a class="nav-item nav-link" id="logout" href="/logout" style="right:0 ;position:flex;">Logout</a>
+      <a class="nav-item nav-link" id="logout" href="/logout" style="right:0 ;position:flex;">{{ _('Logout') }}</a>
       {% endif %}
     </nav>
 

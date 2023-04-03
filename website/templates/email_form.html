@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Email Form</title>
+	<title>{{ _('Email Form') }}</title>
 	<style>
 		body {
 			font-family: sans-serif;
@@ -72,16 +72,16 @@
 		<div>	
 		</div>
 	<form method="post" action="">
-		<label for="recipient">To {% if post %} {{ post.author.first_name }} {% else %} {{ foster_parent.first_name}} {%endif%}</label>
+		<label for="recipient">{{ _('To') }} {% if post %} {{ post.author.first_name }} {% else %} {{ foster_parent.first_name}} {%endif%}</label>
 		<input type="email" id="recipient" name="recipient" value ="{% if post %} {{ post.author.email }} {% else %} {{foster_parent.email}} {%endif%}" required>
 
-		<label for="subject"> Subject </label>
-		<input type="text" id="subject" name="subject" value="About adopting {% if post %}{{ post.title }}{%endif%}" required>
+		<label for="subject"> {{ _('Subject') }} </label>
+		<input type="text" id="subject" name="subject" value="{{ _('About adopting ') }} {% if post %}{{ post.title }}{%endif%}" required>
 
-		<label for="message">Message:</label>
-		<textarea id="message" name="message" placeholder="Type your message here..." required></textarea>
+		<label for="message">{{ _('Message') }}:</label>
+		<textarea id="message" name="message" placeholder="{{ _('Type your message here') }}..." required></textarea>
 		<br>
-		<button type="submit">Send</button>
+		<button type="submit">{{ _('Send') }}</button>
 	</form>
 </body>
 </html>

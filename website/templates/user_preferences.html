@@ -14,63 +14,65 @@
             }
     </style>
     
-    <title>Comparison</title>
+    <title>{{ _('Your preferences') }}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
   </head>
   <body>
     <br>
     <table>
         <tr class="border-bottom mb-4">
-          <td >You</td>
+          <td >{{ _('You') }}</td>
         </tr>
         <tr class="border-bottom mb-4">
           <td >{% if u_info['u_mixed_breed'] %}
-                                    are fine with mixed breed dogs
+                                  {{ _('are fine with mixed breed dogs') }}
                                   {% else %}
-                                    preferre pure breed {%endif%}</td>
+                                  {{ _('prefer pure breed') }} {%endif%}
+                                  
+                                </td>
           
         </tr>
         <tr class="border-bottom mb-4">
-            <td >prefer {% for breed in u_info['u_prefered_breed'][:-1]%} {{ breed }}, {% endfor %}{{u_info['u_prefered_breed'][-1]}} breed/s, 
-              {% for age in u_info['u_prefered_age'][:-1]%} {{ age }}, {% endfor %}{{u_info['u_prefered_age'][-1]}} age/s and 
-              {% for size in u_info['u_prefered_size'][:-1]%} {{ size }}, {% endfor %}{{u_info['u_prefered_size'][-1]}} size dogs, with 
-              {% for color in u_info['u_prefered_color'][:-1]%} {{ color }}, {% endfor %}{{u_info['u_prefered_color'][-1]}} color/s and 
-              {{ u_info['u_prefered_coat_length'] }} coat length
+            <td >{{ _('prefer') }} {% for breed in u_info['u_prefered_breed'][:-1]%} {{ breed }}, {% endfor %}{{u_info['u_prefered_breed'][-1]}} {{ _('(breeds)') }}, 
+              {% for age in u_info['u_prefered_age'][:-1]%} {{ age }}, {% endfor %}{{u_info['u_prefered_age'][-1]}} {{ _('(age)') }} {{ _('and') }}
+              {% for size in u_info['u_prefered_size'][:-1]%} {{ size }}, {% endfor %}{{u_info['u_prefered_size'][-1]}} {{ _('(size), with') }}
+              {% for color in u_info['u_prefered_color'][:-1]%} {{ color }}, {% endfor %}{{u_info['u_prefered_color'][-1]}} {{ _('(color) and') }}
+              {{ u_info['u_prefered_coat_length'] }} {{ _('coat length') }}
         </tr> 
         <tr class="border-bottom mb-4">
           <td >{% if u_info['u_spay_needed'] %}
-                                    need already spayed/neutered dog
+                                  {{ _('need already spayed/neutered dog') }}
                                   {% else %}
-                                  can take care of spaying/neutering
-                                  <p> (Note that this is an obligatory procedure as soon as the dog is mature enough!)</p>
+                                  {{ _('can take care of spaying/neutering') }}
+                                  <p> {{ _('(Note that this is an obligatory procedure as soon as the dog is mature enough!)') }}</p>
                                   {% endif %} </td>
         </tr>
         <tr class="border-bottom mb-4">
           <td >  {% if u_info['u_needs'] %}
-                                      your dog would be around 
-                                      {% for being in u_info['u_needs'][:-1]%} {{ being }}, {% endfor %}{{u_info['u_needs'][-1]}}
-                                    {% else %}
-                                      don't need dog to be adapted to children or other animals
-                                    {%endif%} 
+                                  {{ _('your dog would be around') }}
+                                  {% for being in u_info['u_needs'][:-1]%} {{ being }}, {% endfor %}{{u_info['u_needs'][-1]}}
+                                  {% else %}
+                                  {{ _('don\'t need dog to be adapted to children or other animals') }}
+                                  {%endif%} 
           </td>
         </tr>
         <tr class="border-bottom mb-4">
           <td >  {% if u_info['u_special_need'] %}
-                                        are open to adopting a dog with special needs 
-                                    {% else %}
-                                      are not open to adopting a dog with special need  
-                                    {%endif%} 
+                                  {{ _('are open to adopting a dog with special needs') }} 
+                                  {% else %}
+                                  {{ _('are not open to adopting a dog with special needs') }} 
+                                  {%endif%} 
           </td>
         <tr class="border mb-4">
-          <td >  could provide a {{ u_info['u_activity'] }} level of activity{% if u_info['u_yard'] %}, have a yard {%else %}, don't have a yard{% endif %}{% if u_info['u_park'] %}, have a park nearby {%else %}, don't have a park nearby {% endif %}
+          <td >  {{ _('could provide a') }} {{ u_info['u_activity'] }} {{ _('level of activity') }} {% if u_info['u_yard'] %}, {{ _('have a yard') }} {%else %}, {{ _('don\'t have a yard') }}{% endif %}{% if u_info['u_park'] %}, {{ _('have a park nearby') }} {%else %}, {{ _('don\'t have a park nearby') }} {% endif %}
           </td>
         </tr>
         <tr class="border-bottom mb-4">
           <td >   {% if u_info['u_dog_in_house'] %}
-                                        would keep a dog in a house if needed
-                                     {% else %}
-                                        wouldn't keep a dog in a house 
-                                     {%endif%}
+                                  {{ _('would keep a dog in a house if needed') }}
+                                  {% else %}
+                                  {{ _('wouldn\'t keep a dog in a house') }}
+                                  {%endif%}
           </td>
         </tr>
       </table>

@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %}Set up your profile{% endblock %} 
+{% extends "base.html" %} {% block title %}{{ _('Set up your profile') }}{% endblock %} 
 
 {% block content %}
 <style>
@@ -26,8 +26,8 @@
 </style>
 
 <div class ="colored-strip">
-  <h4 text-align = "center">Edit Account Info</h4>
-  <h7 text-align = "center"><a href="\questionnaire" class="link">Would you also like to fill out the adoption preferences form?</a></h7>
+  <h4 text-align = "center">{{ _('Edit Account Info') }}</h4>
+  <h7 text-align = "center"><a href="\questionnaire" class="link">{{ _('Would you also like to fill out the adoption preferences form?') }}</a></h7>
 </div>
 <br>
 <br>
@@ -46,7 +46,7 @@
         <fieldset class="form-group">
           <legend class="border-bottom mb-4"></legend>
         <div class="form-group">
-          <label for="email">Email Address</label>
+          <label for="email">{{ _('Email Address') }}</label>
           {{ form.email(autofocus=True, class='form-control') }}
         </div>
         {% for error in form.email.errors %}
@@ -60,7 +60,7 @@
         </p>
         {% endfor %}
         <div class="form-group">
-          <label for="first_name">First Name</label>
+          <label for="first_name">{{ _('First Name') }}</label>
           {{ form.first_name(autofocus=True, class='form-control') }}
         </div>
         {% for error in form.first_name.errors %}
@@ -69,7 +69,7 @@
         </p>
         {% endfor %}
         <div class="form-group">
-          <label for="picture">Upload your picture</label>
+          <label for="picture">{{ _('Upload your picture') }}</label>
           {{ form.picture(autofocus=True, class="form-control") }} 
         </div>
         {% for error in form.picture.errors %}
@@ -81,7 +81,7 @@
             </div>
         {% endfor %}
         <br />
-        <button  type="submit" class="btn btn-primary">Submit</button>
+        <button  type="submit" class="btn btn-primary">{{ _('Submit') }}</button>
       </form>
       <br>
       <br>

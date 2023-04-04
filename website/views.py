@@ -132,7 +132,10 @@ def resend_verification():
                 verification_mail(email)
                 message1 = gettext('Verification email sent! Please check your inbox.')
                 flash(message1,'success')
-                title = gettext("Request verification mail")
+        else:
+            flash('Account doesn\'t exist.', 'warning')
+
+    title = gettext("Request verification mail")
     return render_template('reset_request.html', form = form, user = current_user, title = title)
 
 @login_required    

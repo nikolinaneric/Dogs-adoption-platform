@@ -111,7 +111,7 @@
                                     {{ _('wouldn\'t keep a dog in a house') }}
                                     {%endif%}
           </td>
-          <td class="right-column"> {%if  comparison['d_age'] == "{{ _('puppy') }}"  or  comparison['d_size'] == "{{ _('small') }}" %}
+          <td class="right-column"> {%if  comparison['d_age'] in ["puppy", "kuče"]  or  comparison['d_size'] in ["small","male"] %}
                                     {{ _('needs to live inside') }}
                                     {% else %}
                                     {{ _('doesn\'t need to live inside') }}

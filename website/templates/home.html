@@ -142,7 +142,7 @@
         </div>
         <br>
         <div class="col-lg-3" style="margin-left: -15px;">
-          <button class="btn btn-secondary btn-sm" type="submit">{{ _('Filter by city') }}</button>&nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="btn btn-secondary btn-sm" type="submit" style="margin-right:5%">{{ _('Filter by city') }}</button>
           <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="city" value="all">{{ _('Clear the filter') }}</button>
         </div>
       
@@ -151,7 +151,7 @@
         <label style="display: inline block;" style="margin-top: 20px;"  for="gender">{{gender}}</label> &nbsp
         {% endfor %}
         <div class="col-lg-3" style="margin-left: -15px;">
-          <button class="btn btn-secondary btn-sm" type="submit">{{ _('Filter by gender') }}</button>&nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="btn btn-secondary btn-sm" type="submit" style="margin-right:5%">{{ _('Filter by gender') }}</button>
           <button onclick= "clearRememberedGender()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="gender" value="all">{{ _('Clear the filter') }}</button>
         </div>
       </form>

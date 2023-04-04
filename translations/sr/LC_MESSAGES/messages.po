@@ -1260,4 +1260,7 @@ msgstr "Profil"
 msgid "New Post"
 msgstr "Nova objava"
 msgid "Delete"
-msgstr "Obriši
+msgstr "Obriši"
+
+msgid "You can reanswer just the questions which answer you want to change."
+msgstr "Potrebno je da ponovo odgovorite samo na pitanja na koja dajete izmijenjen odgovor."

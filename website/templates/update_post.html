@@ -141,7 +141,7 @@
       </fieldset>
       <legend class="border-bottom mb-4"></legend>
       <div>
-        <h6 text-align = "center">{{ _('Give us some details about your dogs in foster, so we can find a perfect human for them!') }}</h6>
+        <h6 text-align = "center">{{ _('You can reanswer just the questions which answer you want to change.') }}</h6>
         <div class="questionnaire" >
           <form method="POST" action=""  onsubmit="return validateForm();">
           <div class="question">
@@ -157,13 +157,14 @@
           </div>
 
           <div class="question">
-              <label for="a3">3. {{ _('What is the dog\'s age?') }}</label>
-              <br>
-              <input type="radio" id="a3" name="a3" value="puppy">{{ _('Puppy') }} &nbsp &nbsp 
-              <input type="radio" id="a3" name="a3" value="young">{{ _('Young') }} &nbsp &nbsp 
-              <input type="radio" id="a3" name="a3" value="adult">{{ _('Adult') }} &nbsp &nbsp  
-              <input type="radio" id="a3" name="a3" value="senior">{{ _('Senior') }} &nbsp &nbsp
-               
+            <label for="a3">3. {{ _('What is the dog\'s age?') }}</label>
+            <br>
+            <input type="radio" id="a3" name="a3" value="puppy">{{ _('Puppy') }} &nbsp &nbsp 
+            <input type="radio" id="a3" name="a3" value="young">{{ _('Young') }} &nbsp &nbsp 
+            <br>
+            <input type="radio" id="a3" name="a3" value="adult">{{ _('Adult') }}&nbsp &nbsp &nbsp 
+            <input type="radio" id="a3" name="a3" value="senior">{{ _('Senior') }} &nbsp &nbsp
+             
           </div>
 
           <div class="question">
@@ -172,7 +173,7 @@
               <input type="radio" id="a4" name="a4" value="small">{{ _('Small') }} &nbsp &nbsp 
               <input type="radio" id="a4" name="a4" value="medium">{{ _('Medium') }} &nbsp &nbsp  
               <input type="radio" id="a4" name="a4" value="large">{{ _('Large') }} &nbsp &nbsp
-               
+              
           </div>
 
             <div class="question">
@@ -181,7 +182,8 @@
               <input type="radio" id="a5" name="a5" value="white">{{ _('White') }} &nbsp &nbsp 
               <input type="radio" id="a5" name="a5" value="yellow">{{ _('Yellow') }} &nbsp &nbsp
               <input type="radio" id="a5" name="a5" value="brown">{{ _('Brown') }} &nbsp &nbsp 
-              <input type="radio" id="a5" name="a5" value="gray">{{ _('Gray') }} &nbsp &nbsp
+              <br>
+              <input type="radio" id="a5" name="a5" value="gray">{{ _('Gray') }} &nbsp &nbsp &nbsp
               <input type="radio" id="a5" name="a5" value="black">{{ _('Black') }} &nbsp &nbsp  
           </div>
 

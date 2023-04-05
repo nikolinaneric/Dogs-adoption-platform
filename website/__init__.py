@@ -22,11 +22,6 @@ session = Session()
 
 
 def get_locale():
-    # if a user is logged in, use the locale from the user settings
-
-    # otherwise try to guess the language from the user accept
-    # header the browser transmits.  We support de/fr/en in this
-    # example.  The best match wins.
     language = request.cookies.get('lang')
     print(language)
     return language
@@ -50,18 +45,12 @@ def create_app():
     'en': 'English',
     'sr': 'Serbian'
     }
-    #app.config['BABEL_DEFAULT_LOCALE'] = 'sr'
+
 
     babel.init_app(app, default_locale="en", locale_selector=get_locale)
 
 
     
-    # def get_locale():
-    #     # If not, return the browser's language if it is available and supported
-    #      return request.accept_languages.best_match(app.config['LANGUAGES'])
-
-    # babel.init_app(app, locale_selector=get_locale)
-
    
 
     from . import views
@@ -93,7 +82,7 @@ def create_app():
     app.add_url_rule("/saved", view_func = views.saved, methods=['POST'])
     app.add_url_rule("/reverification", view_func = views.resend_verification, methods=['GET','POST'])
     app.add_url_rule("/user-info/<int:user_id>", view_func=views.user_preferences)
-    #app.add_url_rule("/change-lang", view_func=views.change_language)
+
 
 
     create_dabatase(app)

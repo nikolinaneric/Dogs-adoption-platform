@@ -6,9 +6,10 @@ import secrets
 from flask import request, url_for, current_app
 from flask_login import current_user
 from .tasks import send_mail
-from .models import Post
+from .models import Post, DogInfo
 from sqlalchemy import case
 from flask_babel import gettext
+from . import session
 
 
 def verification_mail(email, first_mail_adress = True):
@@ -107,17 +108,17 @@ def get_dog_data(response, post):
     dog_data = {
         "primary_breed" : (response.get('a1')).lower() if response.get('a1') else None,
         "mixed_breed" : bool(int(response.get('a2'))) if response.get('a2') is not None else None,
-        "age" : response.get('a3'),
-        "size" : response.get('a4'),
-        "color" : response.get('a5'),
-        "spayed" : bool(int(response.get('a6'))),
-        "coat_length" : response.get('a7'),
+        "age" : response.get('a3') if response.get('a3') else None,
+        "size" : response.get('a4') if response.get('a4') else None,
+        "color" : response.get('a5') if response.get('a5') else None,
+        "spayed" : bool(int(response.get('a6'))) if response.get('a6') else None,
+        "coat_length" : response.get('a7') if response.get('a7') else None,
         "dog_with_children" : bool(int(response.get('a8'))) if response.get('a8') is not None else None ,
         "dog_with_dogs" : bool(int(response.get('a9'))) if response.get('a9') is not None else None,
         "dog_with_cats" : bool(int(response.get('a10'))) if response.get('a10') is not None else None,
         "dog_with_sm_animals" : bool(int(response.get('a11'))) if response.get('a11') is not None else None,
         "dog_with_big_animals" : bool(int(response.get('a12'))) if response.get('a12') is not None else None,
-        "activity_level" : response.get('a13'),
+        "activity_level" : response.get('a13') if response.get('a13') else None,
         "special_need_dog" : bool(int(response.get('a14'))) if response.get('a14') is not None else None,
         "post_id": post.id
         }
@@ -141,7 +142,7 @@ def get_dog_info(dog):
 
     dog_info = {
         "d_mixed_breed" : dog.mixed_breed,
-        "d_primary_breed" : dog.primary_breed,
+        "d_primary_breed" : gettext(dog.primary_breed),
         "d_size" : gettext(dog.size),
         "d_age" : gettext(dog.age),
         "d_color" : gettext(dog.color),
@@ -202,7 +203,7 @@ def get_user_info(user):
     
     u_info = {
         "u_mixed_breed" : user.prefers_mixed_breed,
-        "u_prefered_breed" : [gettext(breed) for breed in user.prefered_breed['prefered_breed'][:]],
+        "u_prefered_breed" : [gettext(breed).lower() for breed in user.prefered_breed['prefered_breed'][:]],
         "u_prefered_size" : [gettext(size) for size in user.size_preference['size_preference'][:]],
         "u_prefered_age" : [gettext(age) for age in user.age_preference['age_preference'][:]],
         "u_prefered_color" : [gettext(color) for color in user.color_preference['color_preference'][:]],
@@ -222,6 +223,12 @@ def remove_none_values(dictionary):
     Recursively removes all key-value pairs in a dictionary where the value is None or an empty list.
     """
     return {key: remove_none_values(value) if isinstance(value, dict) else value for key, value in dictionary.items() if value is not None and value != [] }
+
+def querying_breeds():
+    breeds = set()
+    for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != 'unknown').distinct():
+        breeds.add((dog.primary_breed).capitalize())
+    return breeds
 
 def filtering(query_object, page):
     """
@@ -246,6 +253,12 @@ def filtering(query_object, page):
     if request.method == "GET":
         chosen_cities = request.args.getlist('city') if request.args.getlist('city') else []
         chosen_gender = request.args.get('gender') if request.args.get('gender') else None
+        if chosen_gender == 'ženski':
+            chosen_gender = 'female'
+        if chosen_gender == 'muški':
+            chosen_gender = 'male'
+
+        print(chosen_gender)
         
         if chosen_cities and chosen_gender:
             filtered_posts = query_object.filter(case(('all' not in chosen_cities, Post.city.in_(chosen_cities)), else_= True))\

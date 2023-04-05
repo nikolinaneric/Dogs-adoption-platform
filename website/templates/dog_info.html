@@ -71,7 +71,7 @@
         </tr>
         <tr class="border-bottom mb-4">
           
-          <td > if dog_info['d_age'] in ["puppy", "kuče"] or dog_info['d_size'] in ["small", "male"]:
+          <td > {% if dog_info['d_age'] in ["puppy", "kuče"] or dog_info['d_size'] in ["small", "male"]%}
                                     {{ _('needs to live inside') }}
                                     {% else %}
                                     {{ _('doesn\'t need to live inside') }}

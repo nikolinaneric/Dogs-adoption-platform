@@ -14,6 +14,10 @@
           width: 200px;
           margin: 2%;
         }
+
+        .question {
+          font-size: 0.9rem
+        }
        
       }
   
@@ -207,7 +211,7 @@
         <h4 text-align = "center">{{ _('Adoption preferences') }}</h4>
         <h7 text-align = "center">{{ _('Would you like to change some preferences to enhance the chance of finding the best fit for you?
         You can reanswer just the questions which answer you want to change.') }}</h7>
-        <button id ="pop-up-button" class="btn btn-outline-info btn-outline-info m-2" style="float: right;">{{ _('Check your submited preferences') }}</button>
+        <button id ="pop-up-button" class="btn btn-outline-info btn-outline-info btn-sm" style="float: left; margin-top: 1%">{{ _('Check your submited preferences') }}</button>
         <div id="pop-up" style="display:none; z-index: 10;">
           <iframe src="{{ url_for('user_preferences', user_id = user.id) }}" width="100%" height="450"style=" border-style:hidden ;border-radius: 8px ; z-index: 10;"></iframe>
           <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">{{ _('Close') }}</button>
@@ -278,7 +282,7 @@
                 <input type="checkbox" id="q5" name="q5" value="brown">{{ _('Brown') }} &nbsp &nbsp &nbsp 
                 <br>
                 <input type="checkbox" id="q5" name="q5" value="gray">{{ _('Gray') }} &nbsp &nbsp &nbsp
-                <input type="checkbox" id="q5" name="q5" value="black">{{ _('Black') }} &nbsp &nbsp &nbsp  
+                <input type="checkbox" id="q5" name="q5" value="black">{{ _('Black') }} &nbsp &nbsp 
                 <input type="checkbox" id="q5" name="q5" value="all">{{ _('No preference') }}
               </div>
   

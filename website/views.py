@@ -10,9 +10,10 @@ from . import session
 from sqlalchemy import  update, and_, case, or_, func
 import jwt
 from .tasks import send_mail
-from .utils import verification_mail, email, save_picture, remove_none_values, send_reset_email, get_dog_data, get_dog_info, get_user_data, get_user_info, filtering
-from flask_babel import gettext, get_locale, get_translations
-import time
+from .utils import verification_mail, email, save_picture, remove_none_values, send_reset_email, get_dog_data,\
+                    get_dog_info, get_user_data, get_user_info, querying_breeds, filtering
+from flask_babel import gettext
+
 
 def welcome():
     """
@@ -133,7 +134,8 @@ def resend_verification():
                 message1 = gettext('Verification email sent! Please check your inbox.')
                 flash(message1,'success')
         else:
-            flash('Account doesn\'t exist.', 'warning')
+            message2 = gettext('Account does not exist.')
+            flash(message2, 'warning')
 
     title = gettext("Request verification mail")
     return render_template('reset_request.html', form = form, user = current_user, title = title)
@@ -342,6 +344,7 @@ def new_post():
     View function for creating a new adoption post.
     """
     form = PostForm()
+    breeds = querying_breeds()
     if form.validate_on_submit():
         photo = form.picture.data
         image_name = save_picture(photo)
@@ -359,7 +362,7 @@ def new_post():
         db.session.commit()
 
         return redirect(url_for('home'))
-    return render_template('new_post.html', user = current_user, form = form)
+    return render_template('new_post.html', user = current_user, form = form, breeds = sorted(breeds))
 
 def post(post_id):
     """
@@ -376,6 +379,7 @@ def update_post(post_id):
     View function for updating an existing adoption post with given post_id.
     """ 
     post = Post.query.get_or_404(post_id)
+    breeds = querying_breeds()
     if post.user_id != current_user.id:
         abort(403)
     form1 = PostForm()
@@ -409,7 +413,7 @@ def update_post(post_id):
         form1.city.data = post.city
         form1.gender.data = post.gender
         form1.picture.data = image_file
-    return render_template('update_post.html', form = form1, user = current_user)
+    return render_template('update_post.html', form = form1, user = current_user, breeds = sorted(breeds))
 
 @login_required
 def delete_post(post_id):
@@ -488,9 +492,7 @@ def user_info():
     """
     if request.method == 'GET':
         posts = Post.query.filter(Post.user_id != current_user.id).order_by(Post.date_posted.asc()).limit(10).all()
-        breeds = set()
-        for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != ('unknown' and 'Unknown' and 'Nepoznata' and 'nepoznata')).distinct():
-            breeds.add((dog.primary_breed).capitalize())
+        breeds = querying_breeds()
         info = UserInfo.query.filter_by(user_id = current_user.id).first()
         if info:
             message1 = gettext('You have already filled out the questionnaire.')
@@ -524,9 +526,7 @@ def edit_user_info():
         if not info:
             abort(403)
         posts = Post.query.filter(Post.user_id != current_user.id).order_by(Post.date_posted.asc()).limit(8).all()
-        breeds = set()
-        for dog in session.query(DogInfo.primary_breed).filter(DogInfo.primary_breed != ('unknown' or 'Unknown')).distinct():
-            breeds.add((dog.primary_breed).capitalize())
+        breeds = querying_breeds()
     if request.method == 'POST':
         response = request.form
         user_update_data = get_user_data(response)

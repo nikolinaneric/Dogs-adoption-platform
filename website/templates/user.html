@@ -38,9 +38,10 @@
         .pagination {
           display: flex;
           justify-content: center;
-          position:fixed;
+          position: fixed;
           bottom: 0;
-          left: 50%
+          left: 0;
+          width: 100%;
         }
   
         .page-number {
@@ -121,9 +122,10 @@
       <div class ="colored-strip">
         <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + author.image_file) }}" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid; border-color: whitesmoke; float: right; margin-top: -15px;">
         {% if author.id != current_user.id %}
-        <button id ="pop-up-button" class="btn contact-button m-2" style="float: right;">{{ _('Contact me') }}</button>
+        <button id ="pop-up-button" class="btn contact-button btn-sm" style="float: right; margin-right: 0.5rem; margin-top: 0.5rem;">{{ _('Contact me') }}</button>
         <div id="pop-up" style="display:none";>
-          <iframe src="{{ url_for('contact_foster', foster_id = author.id) }}" width="100%" height="450px" style=" border-style:hidden ;border-radius: 8px"></iframe>
+          <iframe id="i-frame" src="{{ url_for('contact_foster', foster_id = author.id) }}" width="100%" height="450px" style=" border-style:hidden ;border-radius: 8px"></iframe>
+          <button id="full-screen" style="position:fixed; top:2px ;right:90px" class="btn btn-secondary" data-dismiss="modal" style="color:white">Full screen</button>
           <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">Close</button>
         </div>
        
@@ -131,7 +133,7 @@
         <h7 text-align = "center">{{ _('If you like some of these dogs, you should contact') }} {{ author.first_name }}. </h7>
         
         {% else %}
-        <a href="/set-profile" class="btn contact-button m-2" style="float: right; ">{{ _('Edit profile') }}</a>
+        <a href="/set-profile" class="btn contact-button btn-sm" style="float: right; margin-right: 0.5rem; margin-top: 0.5rem;">{{ _('Edit profile') }}</a>
         
         <h4 text-align = "center">{{ _('Dogs in your foster') }}</h4>
           {%if posts.items%}
@@ -147,6 +149,13 @@
         document.getElementById("pop-up-button").addEventListener("click", function() {
           document.getElementById("pop-up").style.display = "block";
         });
+        var iframe = document.getElementById('i-frame');
+        var fullScreen = document.getElementById("full-screen")
+        fullScreen.addEventListener('click', function() {
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        window.location.href = iframe.src;
+      });
       </script>
       <br>
       <br>
@@ -169,9 +178,9 @@
       </div>
       {%endif%}
       {% if saved %}
-      <div class="colored-strip1" style="margin-top: 100px;">{{ _('Dogs that you\'ve liked. Maybe to look more into some of them?') }}</div>
+      <div class="colored-strip1" style="margin-top: 8rem;">{{ _('Dogs that you\'ve liked. Maybe to look more into some of them?') }}</div>
       
-      <div style="margin-top:150px">
+      <div style="margin-top:12rem">
       
         <div class="row text-center">
           {% for post in saved %}

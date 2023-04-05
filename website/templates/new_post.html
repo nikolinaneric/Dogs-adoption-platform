@@ -1,12 +1,6 @@
 {% extends "base.html" %} {% block title %} {{ _('New Post') }}{% endblock %} 
 {% block content %}
 <script>
-  const input = document.querySelector('#input');
-  const submitBtn = document.querySelector('#a1');
-  
-  input.addEventListener('input', (event) => {
-    submitBtn.value = event.target.value;
-  });
 
   function validateForm() {
     var submitfield = document.querySelectorAll('input[type="text"][name="a1"]');
@@ -92,6 +86,57 @@
           color:#f2f2f2
         
         }
+
+        @media only screen and (max-width: 768px) {
+
+        .question {
+          font-size: 0.9rem
+        }
+        h6 {
+          font-size: 0.9rem;
+          }
+        
+        p {
+          font-size: 0.9rem;
+        }
+      }
+
+      .dropdown {
+			position: relative;
+			display: inline-block;
+			margin: 5px;
+			background-color: #fff;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			
+			cursor: pointer;
+			font-size: 16px;
+			user-select: none;
+      width: 90%;
+      margin-bottom:1rem
+		}
+		.dropdown-content {
+			position: absolute;
+			z-index: 1;
+			top: 100%;
+			left: 0;
+			right: 0;
+			background-color: #fff;
+			border: 1px solid #ccc;
+			border-top: none;
+			border-radius: 0 0 4px 4px;
+      max-height: 40px;
+      overflow: auto;
+		}
+		.checkbox {
+			display: block;
+			padding: 5px;
+		}
+		.checkbox label {
+			display: inline-block;
+			margin: 0 5px 0 0;
+      font-weight: 400;
+		}
 </style>
 <div class ="colored-strip">
   <h4 text-align = "center">{{ _('Adding a dog for adoption') }}</h4>
@@ -103,11 +148,11 @@
 <br>
 <br>
 <br>
-<div class="content-section">
+<div class="content-section" style="margin-top: 3rem;">
   <form method="POST" action="" enctype="multipart/form-data" onsubmit="return validateForm();">    
     {{ form.hidden_tag() }}
     <div class="form-group">
-      <label for="picture">{{ _('Upload a picture') }}</label>
+      <p><label for="picture">{{ _('Upload a picture') }}</label></p>
       {{ form.picture( required = True, autofocus=True, class="form-control") }} 
     </div>
       <fieldset class="form-group">
@@ -174,10 +219,59 @@
         <div class="questionnaire" >
             <form method="POST" action=""  onsubmit="return validateForm();">
             <div class="question">
-                <label for="a1">1. {{ _('What is dog\'s primary breed? \'Unknown\' is valid answer also. ') }}</label>
-                <br>
-                <input type="text" id="a1" name="a1" placeholder="{{ _('Enter your answer') }}"> 
+                <label for="a1">1. {{ _('What is dog\'s primary breed?') }}</label>
+                <div class="dropdown">
+                  <div class="dropdown-content">
+                    {% for breed in breeds %}
+                    <div class="checkbox">
+                      <input type="radio" id="a1" name="a1" value="{{ breed }}">
+                      <label for="a1">{{ breed }}</label>
+                    </div>
+                    {%endfor%}
+                    <div class="checkbox">
+                      <input type="radio" id="a1" name="a1" value="unknown"> 
+                      <label for="a1">{{ _('Unknown')}}</label>
+                    </div>
+                    <div class="checkbox">
+                      <input type="radio" id="a1-other" name="a1" value="{{ Other }}">
+                      <label id ="a1-other-label" for="a1-other">{{ _('Other') }}</label>
+                      <input type="text" id="a1-text" name="a1" placeholder="{{ _('Enter your answer') }}" style="display: none;"> 
+                    </div>
+                  </div>
             </div>
+
+            <script>
+
+              const otherRadio = document.getElementById("a1-other");
+              const otherRadioLabel = document.getElementById("a1-other-label");
+              const otherInput = document.getElementById("a1-text");
+              const regularRadios = document.querySelectorAll('input[type="radio"][name="a1"]:not(#a1-other)');
+              const a1Input = document.querySelector('input[name="a1"]');
+              
+              otherInput.addEventListener("input", function() {
+                otherRadio.value = this.value;
+              });
+              otherRadio.addEventListener("change", function() {
+                if (this.checked) {
+                  otherInput.style.display = "block";
+                  otherRadio.style.display = "none"; 
+                  otherRadioLabel.style.display = "none";
+                  a1Input.value = otherInput.value;
+                } else {
+                  otherInput.style.display = "none";
+                  otherRadio.style.display = "block"; 
+                }
+              });
+
+            
+              regularRadios.forEach(function(radio) {
+                radio.addEventListener("change", function() {
+                  otherRadio.style.display = "inline-block";
+                  otherInput.style.display = "none";
+                  otherRadioLabel.style.display = "inline-block"; 
+                });
+              });
+            </script>
             <div class="question">
                 <label for="a2">2. {{ _('Is dog in your foster a mixed-breed dog?') }}</label>
                 <br>

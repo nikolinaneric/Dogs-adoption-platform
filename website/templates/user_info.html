@@ -365,11 +365,11 @@
         <div class="row" style="justify-content: center;">
         {% for post in posts %}
         <div class="dog-card">
-          <a href="{{ url_for('post', post_id = post.id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog"></a>
-          <h2><a href="{{ url_for('post', post_id = post.id )}}">{{ post.title }} </a></h2>
+          <a href="{{ url_for('posts.post', post_id = post.id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post.image_file) }}" alt="dog"></a>
+          <h2><a href="{{ url_for('posts.post', post_id = post.id )}}">{{ post.title }} </a></h2>
           <p>{{ post.city }}, {{ _(post.gender) }} </p>
           <small class="text-muted">{{ post.date_posted.strftime('%d-%m-%Y') }}</small>
-          <small class="text-muted">{{ _('Foster parent') }}: <a href="{{ url_for('user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
+          <small class="text-muted">{{ _('Foster parent') }}: <a href="{{ url_for('users.user', user_id = post.author.id )}}">{{ post.author.first_name }}</a></small>
         </div>
         {% endfor %}
         </div>

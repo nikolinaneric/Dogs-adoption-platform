@@ -875,8 +875,8 @@ msgstr ""
 "savršene ljude za njih!"
 
 #: website/templates/new_post.html:177 website/templates/update_post.html:148
-msgid "What is dog's primary breed? 'Unknown' is valid answer also. "
-msgstr "Koja je primarna rasa psa? 'Nepoznata' je takođe validan odgovor."
+msgid "What is dog's primary breed?"
+msgstr "Koja je primarna rasa psa?"
 
 #: website/templates/new_post.html:179 website/templates/update_post.html:150
 msgid "Enter your answer"

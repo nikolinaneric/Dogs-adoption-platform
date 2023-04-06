@@ -145,14 +145,14 @@
 
     {% if post.user_id == user.id %}
     <div class="button-container">
-        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('update_post', post_id=post.id) }}">{{ _('Update') }}</a>
+        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('posts.update_post', post_id=post.id) }}">{{ _('Update') }}</a>
         <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">
           {{ _('Delete') }}</button>
         <button id ="pop-up-button" class="btn btn-secondary btn-sm mt-1 mb-1" style="float:right;" >{{ _('Dog info') }}</button>
     </div>
   </div>
       <div id="pop-up" style="display:none";>
-        <iframe src="{{ url_for('dog_info', post_id=post.id) }}" width="100%" height="450" style=" border-style:hidden ;border-radius: 8px"></iframe>
+        <iframe src="{{ url_for('posts.dog_info', post_id=post.id) }}" width="100%" height="450" style=" border-style:hidden ;border-radius: 8px"></iframe>
         <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">{{ _('Close') }}</button>
       </div>
     
@@ -166,19 +166,20 @@
   </div>
     {% if user.user_info%}
     <div  id="pop-up" style="display:none";>
-      <iframe src="{{ url_for('comparison', post_id=post.id) }}" width="100%" height="500" style=" border-style:hidden ;border-radius: 8px"></iframe>
+      <iframe src="{{ url_for('main.comparison', post_id=post.id) }}" width="100%" height="500" style=" border-style:hidden ;border-radius: 8px"></iframe>
       <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">{{ _('Close') }}</button>
     </div>
       {% else %}
     <div  id="pop-up" style="display:none"; class="modal-content" >
       <br>
-      {{ _('You need to fill out the') }} <a href="{{ url_for('user_info')}}">{{ _('adoption preferences') }}</a> {{ _('in order to see the compatibility result.') }}
+      {{ _('You need to fill out the') }} <a href="{{ url_for('users.user_info')}}">{{ _('adoption preferences') }}</a> {{ _('in order to see the compatibility result.') }}
       <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up').style.display='none';">{{ _('Close') }}</button></div>
     {% endif %}
     
     
     <div id="pop-up2" style="display:none";>
-      <iframe src="{{ url_for('email_form', post_id=post.id) }}"  width="100%" height="450px" style=" border-style:hidden ;border-radius: 8px"></iframe>
+      <iframe id="i-frame" src="{{ url_for('main.email_form', post_id=post.id) }}"  width="100%" height="450px" style=" border-style:hidden ;border-radius: 8px"></iframe>
+      <button id="full-screen" style="position:fixed; top:2px ;right:90px" class="btn btn-secondary" data-dismiss="modal" style="color:white">Full screen</button>
       <button style="position:fixed; top:2px ;right:20px" class="btn btn-secondary btn-danger" data-dismiss="modal" onclick="document.getElementById('pop-up2').style.display='none';">{{ _('Close') }}</button>
     </div>
     {% endif %}
@@ -193,6 +194,13 @@
       document.getElementById("pop-up-button2").addEventListener("click", function() {
         document.getElementById("pop-up2").style.display = "block";
       });
+      var iframe = document.getElementById('i-frame');
+        var fullScreen = document.getElementById("full-screen")
+        fullScreen.addEventListener('click', function() {
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        window.location.href = iframe.src;
+      });
     </script>
     
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -206,7 +214,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
-      <form action="{{ url_for('delete_post', post_id=post.id) }}" method="POST">
+      <form action="{{ url_for('posts.delete_post', post_id=post.id) }}" method="POST">
         <input class="btn btn-danger btn-sm m-1" type="submit" value="{{_('Delete')}}">
       </form>
     </div>

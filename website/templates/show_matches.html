@@ -120,7 +120,7 @@
           <div class="colored-strip">
             <h4 text-align = "center">{{ _('Your perfect matches still waiting to be found!') }}</h1>
             <h7 text-align = "center" style="display: inline-block;">{{warning}}</h7>
-            <a href="{{ url_for('edit_user_info')}}" class="link"><h7>{{ _('Fill out the questionnaire again.') }}</h7></a>
+            <a href="{{ url_for('users.edit_user_info')}}" class="link"><h7>{{ _('Fill out the questionnaire again.') }}</h7></a>
           </div>
           <br>
           <br>
@@ -144,10 +144,10 @@
                     </div>
                   {%endif%}
                   
-                  <a href="{{ url_for('post', post_id = post[0].id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog"></a>
-                  <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
+                  <a href="{{ url_for('posts.post', post_id = post[0].id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog"></a>
+                  <h2><a href="{{ url_for('posts.post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
                   <p>{{ post[0].city }}, {{ _(post[0].gender) }} </p>
-                  <small class="text-muted">{{ _('Foster parent') }}: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
+                  <small class="text-muted">{{ _('Foster parent') }}: <a href="{{ url_for('users.user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
                 </div>
               </div>
               {% endfor %}
@@ -157,7 +157,7 @@
           <div class="colored-strip">
             <h4 text-align = "center">{{ _('Your perfect matches waiting to be adopted!') }}</h1>
             <h7 text-align = "center">{{ _('Do you want to change some of the preferences you gave to us') }}?
-            <a href="{{ url_for('edit_user_info')}}" class="link">{{ _('Fill out the questionnaire again') }}.</a></h6>
+            <a href="{{ url_for('users.edit_user_info')}}" class="link">{{ _('Fill out the questionnaire again') }}.</a></h6>
           </div>
           <div style="margin-top: 185px;">
             <form action="" method="GET">
@@ -203,10 +203,10 @@
                       {% endif %}
                     </div>
                   {%endif%}
-                  <a href="{{ url_for('post', post_id = post[0].id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog"></a>
-                  <h2><a href="{{ url_for('post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
+                  <a href="{{ url_for('posts.post', post_id = post[0].id )}}"><img src="{{ url_for('static', filename='profile_pics/' + post[0].image_file) }}" alt="dog"></a>
+                  <h2><a href="{{ url_for('posts.post', post_id = post[0].id )}}">{{ post[0].title }} </a></h2>
                   <p text-align="center"> {{ post[0].city }}, {{ _(post[0].gender) }} </p>
-                  <small class="text-muted">{{ _('Foster parent') }}: <a href="{{ url_for('user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
+                  <small class="text-muted">{{ _('Foster parent') }}: <a href="{{ url_for('users.user', user_id = post[0].author.id )}}">{{ post[0].author.first_name }}</a></small>
                 </div>
               </div>
               {% endfor %}
@@ -218,9 +218,9 @@
             {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
               {% if page_num %}
                 {% if posts.page == page_num %}
-                  <a class="btn btn-info mb-4" style="margin: 4px"; href="{{ url_for('show_matches', page=page_num) }}">{{ page_num }}</a>
+                  <a class="btn btn-info mb-4" style="margin: 4px"; href="{{ url_for('main.show_matches', page=page_num) }}">{{ page_num }}</a>
                 {% else %}
-                  <a class="btn btn-outline-info mb-4" href="{{ url_for('show_matches', page=page_num) }}">{{ page_num }}</a>
+                  <a class="btn btn-outline-info mb-4" href="{{ url_for('main.show_matches', page=page_num) }}">{{ page_num }}</a>
                 {% endif %}
               {% else %}
                 ...

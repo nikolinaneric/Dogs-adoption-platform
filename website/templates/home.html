@@ -84,42 +84,42 @@
       .dropdown {
         position: relative;
         display: inline-block;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        margin-bottom: 3rem;
-        cursor: pointer;
-        font-size: 16px;
-        user-select: none;
-        width: 13.5rem;
       }
-      .dropdown-content {
+
+      .dropdown::after {
+        content: "\25BC"; 
         position: absolute;
-        z-index: 1;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-top: none;
-        border-radius: 0 0 4px 4px;
-        max-height: 40px;
-        overflow: auto;
+        top: 50%;
+        transform: translateY(-50%);
       }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        padding: 12px 16px;
+        z-index: 1;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+
       .checkbox {
         display: block;
         padding: 5px;
       }
+
       .checkbox label {
         display: inline-block;
         margin: 0 5px 0 0;
         font-weight: 400;
       }
-          
-        
-
 
     </style>
+
     <div class ="colored-strip" >
       <h4 text-align = "center">{{ _('Dogs for adoption') }}</h4>
       <h7 text-align = "center">{{ _('Would you like to find a dog that would probably be the best fit for you?') }}
@@ -132,6 +132,7 @@
       <form action="" method="GET">
 
         <div class="dropdown">
+          <span style="font-weight: 400; font-size: 0.9rem;">{{_('Select the city')}} </span>
           <div class="dropdown-content">
             {% for city in cities%}
             <div class="checkbox">
@@ -142,16 +143,23 @@
           </div>
         </div>
         <br>
-        <div class="col-lg-3" style="margin-left: -15px;">
+        <div class="col-lg-3" style="margin-left: -15px; margin-top: 0.5rem;">
           <button class="btn btn-secondary btn-sm" type="submit" style="margin-right:5%">{{ _('Filter by city') }}</button>
           <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="city" value="all">{{ _('Clear the filter') }}</button>
         </div>
       
-        {% for gender in genders%}
-        <input type="radio" id="remember-radio" name="gender" value="{{ gender }}"{% if chosen_gender == gender  %} checked {% endif %} style="margin-top: 20px;"> 
-        <label style="display: inline block;" style="margin-top: 20px;"  for="gender">{{gender}}</label> &nbsp
-        {% endfor %}
-        <div class="col-lg-3" style="margin-left: -15px;">
+        
+        <div class="dropdown">
+          <span style="font-weight: 400; font-size: 0.9rem;">{{_('Select the gender')}} </span>
+          <div class="dropdown-content">
+          {% for gender in genders%}
+          <div class="checkbox"><input type="radio" id="remember-radio" name="gender" value="{{ gender }}"{% if chosen_gender == gender  %} checked {% endif %} style="margin-top: 20px;"> 
+          <label style="display: inline block;" style="margin-top: 20px;"  for="gender">{{gender}}</label></div>
+          {% endfor %}
+          </div>
+        </div>
+        
+        <div class="col-lg-3" style="margin-left: -15px;margin-top: 0.5rem;">
           <button class="btn btn-secondary btn-sm" type="submit" style="margin-right:5%">{{ _('Filter by gender') }}</button>
           <button onclick= "clearRememberedGender()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="gender" value="all">{{ _('Clear the filter') }}</button>
         </div>

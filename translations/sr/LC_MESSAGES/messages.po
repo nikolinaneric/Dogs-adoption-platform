@@ -1273,3 +1273,12 @@ msgstr "Drugo"
 
 msgid "unknown"
 msgstr "nepoznata"
+
+msgid "Select the answer"
+msgstr "Selektujte odgovor"
+
+msgid "Select the city"
+msgstr "Selektujte grad"
+
+msgid "Select the gender"
+msgstr "Selektujte pol"

@@ -79,41 +79,42 @@
         }
 
         .dropdown {
-          position: relative;
-          display: inline-block;
-          background-color: #fff;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          margin-bottom: 3rem;
-          cursor: pointer;
-          font-size: 16px;
-          user-select: none;
-          width: 13.5rem;
-        }
-        .dropdown-content {
-          position: absolute;
-          z-index: 1;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background-color: #fff;
-          border: 1px solid #ccc;
-          border-top: none;
-          border-radius: 0 0 4px 4px;
-          max-height: 40px;
-          overflow: auto;
-        }
-        .checkbox {
-          display: block;
-          padding: 5px;
-        }
-        .checkbox label {
-          display: inline-block;
-          margin: 0 5px 0 0;
-          font-weight: 400;
-        }
-            
-        
+        position: relative;
+        display: inline-block;
+      }
+
+      .dropdown::after {
+        content: "\25BC"; 
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        padding: 12px 16px;
+        z-index: 1;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+
+      .checkbox {
+        display: block;
+        padding: 5px;
+      }
+
+      .checkbox label {
+        display: inline-block;
+        margin: 0 5px 0 0;
+        font-weight: 400;
+      }
+
 
       </style> 
           {% if warning %}
@@ -159,10 +160,11 @@
             <h7 text-align = "center">{{ _('Do you want to change some of the preferences you gave to us') }}?
             <a href="{{ url_for('users.edit_user_info')}}" class="link">{{ _('Fill out the questionnaire again') }}.</a></h6>
           </div>
-          <div style="margin-top: 185px;">
+          <div style="margin-top: 13rem;">
             <form action="" method="GET">
         
               <div class="dropdown">
+                <span style="font-weight: 400; font-size: 0.9rem;">{{_('Select the city')}}  <label>
                 <div class="dropdown-content">
                   {% for city in cities%}
                   <div class="checkbox">
@@ -174,16 +176,21 @@
               </div>
               <br>
           
-              <div class="col-lg-3" style="margin-left: -15px;">
+              <div class="col-lg-3" style="margin-left: -15px; margin-top: 0.5rem;">
                 <button class="btn btn-secondary btn-sm" type="submit" style="margin-right:5%">{{ _('Filter by city') }}</button>
                 <button onclick= "clearRememberedCheckboxes()"id="clear-checkboxes" class="btn btn-secondary btn-sm"name="city" value="all">{{ _('Clear the filter') }}</button>
               </div>
-            
+              
+              <div class="dropdown">
+                <span style="font-weight: 400; font-size: 0.9rem;">{{_('Select the gender')}} <label>
+                <div class="dropdown-content">
               {% for gender in genders%}
-              <input type="radio" id="remember-radio" name="gender" value="{{ gender }}"{% if chosen_gender == gender  %} checked {% endif %} style="margin-top: 20px;"> 
-              <label style="display: inline block;" style="margin-top: 20px;"  for="gender">{{gender}}</label> &nbsp
+              <div class="checkbox"><input type="radio" id="remember-radio" name="gender" value="{{ gender }}"{% if chosen_gender == gender  %} checked {% endif %} style="margin-top: 20px;"> 
+              <label style="display: inline block;" style="margin-top: 20px;"  for="gender">{{gender}}</label> </div>
               {% endfor %}
-              <div class="col-lg-3" style="margin-left: -15px;">
+                </div>
+              </div>
+              <div class="col-lg-3" style="margin-left: -15px; margin-top: 0.5rem;">
                 <button class="btn btn-secondary btn-sm" type="submit" style="margin-right:5%">{{ _('Filter by gender') }}</button>
                 <button onclick= "clearRememberedGender()"id="clear-radio" class="btn btn-secondary btn-sm"name="gender" value="all">{{ _('Clear the filter') }}</button>
               </div>

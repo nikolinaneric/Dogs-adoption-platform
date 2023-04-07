@@ -39,7 +39,8 @@ def create_app():
     migrate = Migrate(app, db)
     babel = Babel(app, locale_selector=get_locale)
     babel.translations_path = 'translations'
-    app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'C:/Users/Nikolina/Desktop/za deploy/translations'
+    app.config['BABEL_TRANSLATION_DIRECTORIES'] = os.environ.get('translations_path')
+    
 
     
     app.config['LANGUAGES'] = {
@@ -57,6 +58,9 @@ def create_app():
     app.register_blueprint(main)
     app.register_blueprint(users)
     app.register_blueprint(posts)
+
+    from website.api_v1_0.posts import api as api_1_0_blueprint
+    app.register_blueprint(api_1_0_blueprint, url_prefix='/api/v1.0')
     
     create_dabatase(app)
 

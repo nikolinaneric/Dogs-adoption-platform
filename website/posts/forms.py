@@ -7,7 +7,7 @@ from flask_babel import gettext
 class PostForm(FlaskForm):
     title = StringField(gettext('Name'), validators=[DataRequired()])
     city =  StringField(gettext('City'), validators=[DataRequired()])
-    gender =  RadioField(gettext('Gender'), choices = [('male','male'),('female', 'female')])
+    gender =  RadioField(gettext('Gender'), choices = [('male','male'),('female', 'female')], render_kw={'class': 'form-radio'})
     data = TextAreaField(gettext('Description'), validators=[DataRequired(), Length(max=300)])
     picture = FileField(gettext('Add a picture'), validators=[FileAllowed(['jpg','png','jpeg'])])
 

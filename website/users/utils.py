@@ -44,7 +44,7 @@ def send_reset_email(user):
     user (User): The user to whom the password reset email is to be sent.
     """
  
-    token = user.get_reset_token()
+    token = user.get_token()
     subject = 'Password Reset Request'
     recipients=[user.email]
     message_body = f'''To reset your password, visit the following link:

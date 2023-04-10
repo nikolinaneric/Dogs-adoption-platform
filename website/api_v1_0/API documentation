@@ -1,0 +1,134 @@
+Login
+URL: users/login/
+Method: POST
+Content-Type: application/json
+Request Parameters (Body -> raw ):
+email (required): email address of the user
+password (required): password of the user
+Response:
+200 OK: The login was successful, and the response body contains an access token and the user's profile info.
+401 Unauthorized: The login failed because of incorrect credentials.
+404 Not Found: The email address doesn't exist in the database.
+
+Get User
+URL: /users/<id>
+Method: GET
+Authorization: Bearer access token
+Request Parameters:
+id: required, ID of the user
+Response:
+200 OK: The response body contains the user data.
+404 Not Found: The user with the given ID doesn't exist in the database.
+403 Forbidden: The request was made by a user who is not the requested user or an admin.
+
+Get Users
+URL: /users/
+Method: GET
+Request Parameters:
+page: optional, page number for paginated results (default is 1)
+Response:
+200 OK: The response body contains a list of users and pagination metadata.
+403 Forbidden: The request was made by a non-admin user.
+
+Delete a User
+URL: /users/<int:id>
+Method: DELETE
+Authorization: Bearer access token
+Request Parameters:
+id (integer): ID of the user to be deleted
+Response:
+200 OK: User was successfully deleted
+403 Forbidden: Requesting user is not authorized to delete this user.
+404 Not Found: User with the specified ID does not exist.
+
+Get Post
+URL: /posts/<id>
+Method: GET
+Request Parameters:
+id: required, ID of the post
+Response:
+200 OK: The response body contains the post data.
+404 Not Found: the post with the given ID doesn't exist in the database.
+
+Get Posts
+URL: /posts/
+Method: GET
+Request Parameters:
+page: optional, page number for paginated results (default is 1)
+Response:
+200 OK: The response body contains a list of posts and pagination metadata.
+
+
+Get Dog Info
+URL: /dog-info/<id>
+Method: GET
+Request Parameters:
+id: required, ID of the post
+Response:
+200 OK: The response body contains the dog info data.
+404 Not Found: The dog info with the given post ID doesn't exist in the database.
+
+
+Get User Posts
+URL: /users/posts/<id>
+Method: GET
+Request Parameters:
+id: required, ID of the user
+page: optional, page number for paginated results (default is 1)
+Response:
+200 OK: The response body contains a list of posts and pagination metadata.
+404 Not Found: There are no posts for the given user ID.
+
+Get User Saved Posts
+URL: /users/<id>/saved-posts
+Method: GET
+Authorization: Bearer access token
+Request Parameters:
+id: required, ID of the user
+page: optional, page number for paginated results (default is 1)
+Response:
+200 OK: The response body contains a list of saved posts and pagination metadata.
+404 Not Found: There are no saved posts for the given user ID.
+403 Forbidden: Requesting user is not authorized to see saved posts of this user.
+
+Create Post
+URL: /posts/
+Method: POST
+Authorization: Bearer {access token}
+Content-Type: application/json
+Request Parameters(Body -> raw):
+json dict:
+dog name, ->  string
+gender, ->  string (male/female)
+city, -> str
+description, -> str
+primary breed, -> str
+mixed breed, -> int (0 - False, 1 - True)
+age, -> str (puppy/young/adult/senior)
+size, -> str (small/medium/large)
+color, -> str (white/yellow/brown/black/gray)
+spayed, -> int (0 - False, 1 - True)
+coat length, -> str (short/long)
+dog with children, -> int (0 - False, 1 - True)
+dog with dogs, -> int (0 - False, 1 - True)
+dog with cats, -> int (0 - False, 1 - True)
+dog with small animals, -> int (0 - False, 1 - True)
+dog with big animals, -> int (0 - False, 1 - True)
+activity level, -> str (low/medium/high)
+special need dog -> int (0 - False, 1 - True)
+Response:
+201 Created: The post was created successfully, and the response body contains url for new post.
+400 Bad request: Something is wrong with the body parameters or authorization or content-type is missing/inadequate.
+401 Unauthorized: Something is wrong with the authentication credentials.
+
+Delete a Post
+URL: /posts/<int:id>
+Method: DELETE
+Authorization: Bearer access token
+Request Parameters:
+id (integer): ID of the post to be deleted
+Response:
+200 OK: Post was successfully deleted.
+403 Forbidden: Requesting user is not authorized to delete the post.
+404 Not Found: Post with the specified ID does not exist.
+

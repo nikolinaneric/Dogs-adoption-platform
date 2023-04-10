@@ -31,6 +31,7 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object("settings")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, DB_NAME)
+    print(app.config['SQLALCHEMY_DATABASE_URI'])
     db.init_app(app)
     app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
     app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
@@ -59,8 +60,10 @@ def create_app():
     app.register_blueprint(users)
     app.register_blueprint(posts)
 
-    from website.api_v1_0.posts import api as api_1_0_blueprint
-    app.register_blueprint(api_1_0_blueprint, url_prefix='/api/v1.0')
+    from website.api_v1_0.users_endpoints import api_users as api_1_0_blueprint_users
+    app.register_blueprint(api_1_0_blueprint_users, url_prefix='/api/v1.0/users')
+    from website.api_v1_0.posts_endpoints import api_posts as api_1_0_blueprint_posts
+    app.register_blueprint(api_1_0_blueprint_posts, url_prefix='/api/v1.0/posts')
     
     create_dabatase(app)
 

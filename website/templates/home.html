@@ -71,6 +71,7 @@
 
       .link:hover {
         color: #f47b1e;
+        text-decoration: none;
       }
 
 
@@ -116,6 +117,11 @@
         display: inline-block;
         margin: 0 5px 0 0;
         font-weight: 400;
+        font-size:0.9rem
+      }
+
+      a:hover{
+        text-decoration: none;
       }
 
     </style>
@@ -233,7 +239,13 @@
           {% if page_num %}
             {% if posts.page == page_num %}
               <a class="btn btn-info mb-4" style="margin: 4px;" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
-            {% else %}
+            {% elif chosen_cities %}
+              <a class="btn btn-outline-info mb-4" href="{{ url_for('main.home', page=page_num, city=chosen_cities) }}">{{ page_num }}</a>
+            {% elif chosen_gender %}
+              <a class="btn btn-outline-info mb-4" href="{{ url_for('main.home', page=page_num, gender=chosen_gender) }}">{{ page_num }}</a>
+            {% elif chosen_gender and chosen_cities%}
+              <a class="btn btn-outline-info mb-4" href="{{ url_for('main.home', page=page_num, city=chose_cities, gender=chosen_gender) }}">{{ page_num }}</a>
+            {% else%}
               <a class="btn btn-outline-info mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
             {% endif %}
           {% else %}

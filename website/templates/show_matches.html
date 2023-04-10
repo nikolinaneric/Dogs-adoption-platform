@@ -69,7 +69,11 @@
 
         .link:hover {
           color: #f47b1e;
+          text-decoration: none;
         }
+        a:hover{
+        text-decoration: none;
+      }
 
         .saved {
          
@@ -113,6 +117,7 @@
         display: inline-block;
         margin: 0 5px 0 0;
         font-weight: 400;
+        font-size:0.9rem
       }
 
 
@@ -160,7 +165,7 @@
             <h7 text-align = "center">{{ _('Do you want to change some of the preferences you gave to us') }}?
             <a href="{{ url_for('users.edit_user_info')}}" class="link">{{ _('Fill out the questionnaire again') }}.</a></h6>
           </div>
-          <div style="margin-top: 13rem;">
+          <div style="margin-top: 12.5rem;">
             <form action="" method="GET">
         
               <div class="dropdown">

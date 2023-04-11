@@ -234,22 +234,22 @@
         }
       </script>
 
-      <div class="pagination" >
-        {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+      <div class="pagination" style="margin-bottom: 2rem;">
+        {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
           {% if page_num %}
             {% if posts.page == page_num %}
-              <a class="btn btn-info mb-4" style="margin: 4px;" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
-            {% elif chosen_cities %}
-              <a class="btn btn-outline-info mb-4" href="{{ url_for('main.home', page=page_num, city=chosen_cities) }}">{{ page_num }}</a>
-            {% elif chosen_gender %}
-              <a class="btn btn-outline-info mb-4" href="{{ url_for('main.home', page=page_num, gender=chosen_gender) }}">{{ page_num }}</a>
+              <a class="btn btn-info btn-sm" style="margin:2px ;" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
             {% elif chosen_gender and chosen_cities%}
-              <a class="btn btn-outline-info mb-4" href="{{ url_for('main.home', page=page_num, city=chose_cities, gender=chosen_gender) }}">{{ page_num }}</a>
+              <a class="btn btn-outline-info btn-sm" style="margin:2px"  href="{{ url_for('main.home', page=page_num, city=chosen_cities, gender=chosen_gender) }}">{{ page_num }}</a>
+            {% elif chosen_cities %}
+              <a class="btn btn-outline-info btn-sm" style="margin:2px" href="{{ url_for('main.home', page=page_num, city=chosen_cities) }}">{{ page_num }}</a>
+            {% elif chosen_gender %}
+              <a class="btn btn-outline-info btn-sm" style="margin:2px"  href="{{ url_for('main.home', page=page_num, gender=chosen_gender) }}">{{ page_num }}</a>
             {% else%}
-              <a class="btn btn-outline-info mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
+              <a class="btn btn-outline-info btn-sm" style="margin:2px"  href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
             {% endif %}
           {% else %}
-            ...
+            <span style="margin-top: 0.5rem;">...</span>
           {% endif %}
         {% endfor %}
         

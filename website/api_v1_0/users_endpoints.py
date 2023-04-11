@@ -9,7 +9,7 @@ from werkzeug.security import check_password_hash
 
 api_users = Blueprint('api_users', __name__)
 
-@api_users.route('/login/', methods=["POST"])
+@api_users.route('/login/')
 def login():
     parser = reqparse.RequestParser()
     parser.add_argument('email', type=str, required=True, help='Email address is required.')

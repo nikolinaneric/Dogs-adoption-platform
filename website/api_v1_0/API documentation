@@ -1,6 +1,6 @@
 Login
 URL: users/login/
-Method: POST
+Method: GET
 Content-Type: application/json
 Request Parameters (Body -> raw ):
 email (required): email address of the user

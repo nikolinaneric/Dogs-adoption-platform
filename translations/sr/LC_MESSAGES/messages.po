@@ -714,7 +714,7 @@ msgstr "Da li imate druge male životinje poput hrčka, zeca, i sl?"
 #: website/templates/edit_user_info.html:326
 #: website/templates/user_info.html:307
 msgid "12. Do you own big animals such as cows, pigs, etc?"
-msgstr "Da li imate velike životinje poput krava, svinja, i sl?"
+msgstr "12. Da li imate velike životinje poput krava, svinja, i sl?"
 
 #: website/templates/edit_user_info.html:333
 #: website/templates/user_info.html:314
@@ -926,7 +926,7 @@ msgstr "Da li je ovaj pas dobar sa drugim psima?"
 
 #: website/templates/new_post.html:248 website/templates/update_post.html:219
 msgid "10. Is this dog known to be good with cats?"
-msgstr "Da li je ovaj pas dobar sa mačkama?"
+msgstr "10. Da li je ovaj pas dobar sa mačkama?"
 
 #: website/templates/new_post.html:256 website/templates/update_post.html:227
 msgid ""
@@ -1282,3 +1282,10 @@ msgstr "Selektujte grad"
 
 msgid "Select the gender"
 msgstr "Selektujte pol"
+
+msgid "None"
+msgstr "nepoznata"
+
+msgid "(because it's a puppy or small sized)"
+msgstr "(zato što je kuče ili mali rastom)"
+

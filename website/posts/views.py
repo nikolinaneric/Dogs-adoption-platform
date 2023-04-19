@@ -2,11 +2,12 @@ import os
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app, abort
 from flask_login import login_required, current_user
 from website.models import db
+from website import session
 from website.models import Post, DogInfo
 from website.posts.forms import  PostForm
 from website.tasks import send_mail
 from website.posts.utils import save_picture, get_dog_data,\
-                    get_dog_info, querying_breeds, remove_none_values
+                    get_dog_info, querying_breeds, remove_none_values, query_cities
 from flask_babel import gettext
 
 posts = Blueprint('posts', __name__)

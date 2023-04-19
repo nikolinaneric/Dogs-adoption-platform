@@ -1,7 +1,7 @@
 from website.models import db
 from website.models import Post, User
 from flask import request, jsonify, url_for, Blueprint
-from .utils import pagination_data, is_admin, credentials_check
+from .utils import pagination_data, is_admin, credentials_check, get_object_or_404
 from flask_restful import reqparse
 from werkzeug.security import check_password_hash
 
@@ -46,16 +46,16 @@ def get_users():
         users = pagination_data(pagination, page, name)
         return jsonify(users)
     else:
-        message = f"Method not allowed."
+        message = f"You don't have permissions for this action."
         return jsonify(message), 403
 
 
 @api_users.route('/<int:id>')
 def get_user(id):
-    user = User.query.filter_by(id=id).first()
+    user = get_object_or_404(User, id)
+    if isinstance(user, tuple):  
+        return user
     logged_user, admin = credentials_check()
-    if not user:
-        return jsonify(f"User not found for id {id}"), 404
     if user == logged_user or admin:
         return jsonify(user.to_json())
     else:
@@ -65,9 +65,9 @@ def get_user(id):
 
 @api_users.route('/<int:id>', methods = ['DELETE'])
 def delete_user(id):
-    user = User.query.filter_by(id=id).first()
-    if not user:
-        return jsonify(f"User not found for id {id}"), 404
+    user = get_object_or_404(User, id)
+    if isinstance(user, tuple):  
+        return user
     logged_user, admin = credentials_check()
     if user == logged_user or admin:
         db.session.delete(user)
@@ -75,7 +75,7 @@ def delete_user(id):
         message = f"Successfully deleted user {user.first_name}."
         return jsonify(message),201
     else:
-        message = f"Method not allowed."
+        message = f"You don't have permissions for this action."
         return jsonify(message), 403
 
 @api_users.route('/posts/<int:id>')
@@ -89,9 +89,9 @@ def get_user_posts(id):
     
 @api_users.route('/<int:id>/saved-posts')
 def get_user_saved_posts(id):
-    user = User.query.filter_by(id=id).first()
-    if not user:
-        return jsonify(f"User not found for id {id}"), 404
+    user = get_object_or_404(User,id)
+    if isinstance(user, tuple):  
+        return user
     logged_user, admin = credentials_check()
     if user == logged_user or admin:
         saved_posts_ids = [int(id) for id in user.saved_dogs['saved'] if id]
@@ -101,5 +101,5 @@ def get_user_saved_posts(id):
         posts = pagination_data(pagination, page, name)
         return jsonify(posts)
     else:
-        message = f"Method not allowed."
+        message = f"You don't have permissions for this action."
         return jsonify(message), 403

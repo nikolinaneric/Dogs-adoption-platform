@@ -38,7 +38,6 @@
         .pagination {
           display: flex;
           justify-content: center;
-          position: fixed;
           bottom: 0;
           left: 0;
           width: 100%;
@@ -204,7 +203,7 @@
       </div>
 
       
-        <div class="pagination" style="margin-bottom: 2rem;">
+        <div class="pagination" style="margin-bottom: 2rem; margin-top: 3rem;">
           {% if author.id != current_user.id %}
             {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
               {% if page_num %}
@@ -231,8 +230,5 @@
             {% endfor %}
           {% endif %}
         </div>
-        <br>
-        <br>
-        <br>
-        <br>
+      
     {% endblock %}

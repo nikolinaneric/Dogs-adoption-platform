@@ -43,7 +43,6 @@
       .pagination {
         display: flex;
         justify-content: center;
-        position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
@@ -87,18 +86,12 @@
         display: inline-block;
       }
 
-      .dropdown::after {
-        content: "\25BC"; 
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-      }
 
       .dropdown-content {
         display: none;
         position: absolute;
         background-color: #f9f9f9;
-        min-width: 160px;
+        min-width: max-content;
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
         padding: 12px 16px;
         z-index: 1;
@@ -138,7 +131,7 @@
       <form action="" method="GET">
 
         <div class="dropdown">
-          <span style="font-weight: 400; font-size: 0.9rem;">{{_('Select the city')}} </span>
+          <span style="font-weight: 400; font-size: 0.9rem;">{{_('Select the city')}}&#x25BC </span>
           <div class="dropdown-content">
             {% for city in cities%}
             <div class="checkbox">
@@ -156,7 +149,7 @@
       
         
         <div class="dropdown">
-          <span style="font-weight: 400; font-size: 0.9rem;">{{_('Select the gender')}} </span>
+          <span style="font-weight: 400; font-size: 0.9rem;">{{_('Select the gender')}}&#x25BC </span>
           <div class="dropdown-content">
           {% for gender in genders%}
           <div class="checkbox"><input type="radio" id="remember-radio" name="gender" value="{{ gender }}"{% if chosen_gender == gender  %} checked {% endif %} style="margin-top: 20px;"> 
@@ -234,7 +227,7 @@
         }
       </script>
 
-      <div class="pagination" style="margin-bottom: 2rem;">
+      <div class="pagination" style="margin-bottom: 2rem; margin-top: 3rem">
         {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
           {% if page_num %}
             {% if posts.page == page_num %}
@@ -254,10 +247,7 @@
         {% endfor %}
         
       </div>
-      <br>
-      <br>
-      <br>
-      <br>
+    
 
   <script>
         
@@ -306,7 +296,6 @@
       localStorage.removeItem('selectedGender');
     }
 
-
   </script>
-    
+  
     {% endblock %}

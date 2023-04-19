@@ -2,34 +2,25 @@
 {% block content %}
 <script>
 
-  function validateForm() {
-    var submitfield = document.querySelectorAll('input[type="text"][name="a1"]');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a2"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a3"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a4"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a5"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a6"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a7"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a8"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a9"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a10"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a11"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a12"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a13"]:checked');
-    var radioBtns = document.querySelectorAll('input[type="radio"][name="a14"]:checked');
-      
+var questionNames = ["a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "a10", "a11", "a12", "a13", "a14"];
 
-
-    if (radioBtns.length === 0) {
-      alert("Please answer all the questions.");
-      return false;
+function validateForm() {
+  var valid = true;
+  questionNames.forEach(function(name) {
+    var elements = document.querySelectorAll('input[type="radio"][name="' + name + '"]:checked');
+  if (elements.length === 0) {
+    valid = false;
     }
-    if (submitfield.length === 0) {
-      alert("Please answer all the questions.");
-      return false;
-    }
-    return true;
+  });
+  if (otherRadio.checked && otherInput.value.trim() === '') {
+    valid = false;}
+  if (!valid) {
+    alert("Please answer all the questions.");
   }
+
+  return valid;
+
+}
 </script>
 <style>
   .questionnaire {
@@ -104,13 +95,6 @@
       .dropdown {
         position: relative;
         display: inline-block;
-      }
-
-      .dropdown::after {
-        content: "\25BC"; 
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
       }
 
       .dropdown-content {
@@ -240,7 +224,7 @@
                 <label for="a1">1. {{ _('What is dog\'s primary breed?') }}</label>
                 <br>
                 <div class="dropdown">
-                  <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+                  <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
                   <div class="dropdown-content">
                     {% for breed in breeds %}
                     <div class="checkbox">
@@ -296,7 +280,7 @@
                 <label for="a2">2. {{ _('Is dog in your foster a mixed-breed dog?') }}</label>
                 <br>
                 <div class="dropdown">
-                  <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+                  <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
                 <div class="dropdown-content">
                   <div class="checkbox"><input type="radio" id="a2" name="a2" value=1>{{ _('Yes') }}</div>
                   <div class="checkbox"><input type="radio" id="a2" name="a2" value=0>{{ _('No') }}</div>
@@ -308,7 +292,7 @@
                 <label for="a3">3. {{ _('What is the dog\'s age?') }}</label>
                 <br>
                 <div class="dropdown">
-                  <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+                  <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
                   <div class="dropdown-content">
                   <div class="checkbox"><input type="radio" id="a3" name="a3" value="puppy">{{ _('Puppy') }} </div>
                   <div class="checkbox"><input type="radio" id="a3" name="a3" value="young">{{ _('Young') }} </div> 
@@ -322,7 +306,7 @@
                 <label for="a4">4. {{ _('What is the dog\'s estimated adult size?') }}</label>
                 <br>
                 <div class="dropdown">
-                  <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+                  <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
                   <div class="dropdown-content">
                   <div class="checkbox"><input type="radio" id="a4" name="a4" value="small">{{ _('Small') }}</div>
                   <div class="checkbox"><input type="radio" id="a4" name="a4" value="medium">{{ _('Medium') }} </div> 
@@ -335,7 +319,7 @@
                 <label for="a5">5. {{ _('What is the primary color of the dog\'s coat?') }}</label>
                 <br>
                 <div class="dropdown">
-                  <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+                  <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
                   <div class="dropdown-content">
                   <div class="checkbox"><input type="radio" id="a5" name="a5" value="white">{{ _('White') }} </div> 
                   <div class="checkbox"><input type="radio" id="a5" name="a5" value="yellow">{{ _('Yellow') }} </div>
@@ -350,7 +334,7 @@
               <label for="a6">6. {{ _('Is this dog neutered/spayed?') }}</label>
               <br>
               <div class="dropdown">
-                <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+                <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
                 <div class="dropdown-content">
                 <div class="checkbox"><input type="radio" id="a6" name="a6" value=1>{{ _('Yes') }}</div>
                 <div class="checkbox"><input type="radio" id="a6" name="a6" value=0>{{ _('No') }}</div>
@@ -362,7 +346,7 @@
             <label for="a7">7. {{ _('What is the dog\'s coat length?') }} </label>
             <br>
             <div class="dropdown">
-              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
               <div class="dropdown-content">
               <div class="checkbox"><input type="radio" id="a7" name="a7" value="short">{{ _('Short-haired') }}</div> 
               <div class="checkbox"><input type="radio" id="a7" name="a7" value="long">{{ _('Long-haired') }}</div>
@@ -374,7 +358,7 @@
             <label for="a8">8. {{ _('Is this dog known to be good with children?') }} </label>
             <br>
             <div class="dropdown">
-              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
               <div class="dropdown-content">
               <div class="checkbox"><input type="radio" id="a8" name="a8" value=1>{{ _('Yes') }}</div>
               <div class="checkbox"><input type="radio" id="a8" name="a8" value=0>{{ _('No') }} </div>
@@ -387,7 +371,7 @@
             <label for="a9">9. {{ _('Is this dog known to be good with other dogs?') }} </label>
             <br>
             <div class="dropdown">
-              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
               <div class="dropdown-content">
               <div class="checkbox"><input type="radio" id="a9" name="a9" value=1>{{ _('Yes') }}</div>
               <div class="checkbox"><input type="radio" id="a9" name="a9" value=0>{{ _('No') }} </div>
@@ -400,7 +384,7 @@
             <label for="a10">{{ _('10. Is this dog known to be good with cats?') }}</label>
             <br>
             <div class="dropdown">
-              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
               <div class="dropdown-content">
               <div class="checkbox"><input type="radio" id="a10" name="a10" value=1>{{ _('Yes') }} </div> 
               <div class="checkbox"><input type="radio" id="a10" name="a10" value=0>{{ _('No') }} </div>
@@ -413,7 +397,7 @@
             <label for="a11">11. {{ _('Is this dog known to be good with small animals such as a hamster, rabbit, etc?') }} </label>
             <br>
             <div class="dropdown">
-              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
               <div class="dropdown-content">
               <div class="checkbox"><input type="radio" id="a11" name="a11" value=1>{{ _('Yes') }}</div>
               <div class="checkbox"><input type="radio" id="a11" name="a11" value=0>{{ _('No') }}</div>
@@ -423,10 +407,10 @@
           </div>
 
           <div class="question">
-            <label for="a12">{{ _('Is this dog known to be good with big animals such as cows, pigs, etc?') }} </label>
+            <label for="a12">12. {{ _('Is this dog known to be good with big animals such as cows, pigs, etc?') }} </label>
             <br>
             <div class="dropdown">
-              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
               <div class="dropdown-content">
               <div class="checkbox"><input type="radio" id="a12" name="a12" value=1>{{ _('Yes') }}</div>
               <div class="checkbox"><input type="radio" id="a12" name="a12" value=0>{{ _('No') }} </div>
@@ -439,7 +423,7 @@
             <label for="13">13. {{ _('Which level of activity does this dog need to have?') }} </label>
             <br>
             <div class="dropdown">
-              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
               <div class="dropdown-content">
               <div class="checkbox"><input type="radio" id="a13" name="a13" value="low">{{ _('Low') }} </div>
               <div class="checkbox"><input type="radio" id="a13" name="a13" value="medium">{{ _('Medium') }} </div>
@@ -452,7 +436,7 @@
             <label for="14">14. {{ _('Is this dog a special-needs dog?') }} </label>
             <br>
             <div class="dropdown">
-              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}</span>
+              <span style="font-weight: 400; margin-left: 1.5rem;">{{_('Select the answer')}}&#x25BC</span>
               <div class="dropdown-content">
               <div class="checkbox"><input type="radio" id="a14" name="a14" value=1>{{ _('Yes') }}</div> 
               <div class="checkbox"><input type="radio" id="a14" name="a14" value=0>{{ _('No') }}</div>

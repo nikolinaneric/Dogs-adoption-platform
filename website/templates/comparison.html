@@ -112,7 +112,8 @@
                                     {%endif%}
           </td>
           <td class="right-column"> {%if  comparison['d_age'] in ["puppy", "kuče"]  or  comparison['d_size'] in ["small","male"] %}
-                                    {{ _('needs to live inside') }}
+                                    {{ _('needs to live inside') }}<br>
+                                    {{ _('(because it\'s a puppy or small sized)') }}
                                     {% else %}
                                     {{ _('doesn\'t need to live inside') }}
                                     {% endif %}

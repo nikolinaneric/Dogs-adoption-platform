@@ -122,3 +122,9 @@ def get_user_info(user):
         "u_park": user.park
     }
     return u_info
+
+def query_cities(query):
+        cities = set()
+        for post in query(Post.city).distinct():
+            cities.add(post.city)
+        return cities

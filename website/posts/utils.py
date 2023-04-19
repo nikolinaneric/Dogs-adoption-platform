@@ -2,7 +2,7 @@ import os
 from PIL import Image
 import secrets
 from flask import current_app
-from website.models import DogInfo
+from website.models import DogInfo, Post
 from flask_babel import gettext
 from website import session
 
@@ -111,3 +111,8 @@ def remove_none_values(dictionary):
     """
     return {key: remove_none_values(value) if isinstance(value, dict) else value for key, value in dictionary.items() if value is not None and value != [] }
 
+def query_cities(query):
+        cities = set()
+        for post in query(Post.city).distinct():
+            cities.add(post.city)
+        return cities

@@ -26,6 +26,8 @@ class User(db.Model, UserMixin):
         'url': url_for('api_users.get_user', id=self.id, _external=True),
         'email': self.email,
         'username': self.first_name,
+        'is verified': self.is_verified,
+        'user info': bool(self.user_info),
         'image' : f'{request.host_url}{images_path}{self.image_file}',
         'posts': url_for('api_users.get_user_posts', id=self.id, _external=True),
         'saved_posts': url_for('api_users.get_user_saved_posts', id=self.id, _external=True)
@@ -106,6 +108,26 @@ class Post(db.Model):
                 }
         
                 return Post(**post_data)
+            except:
+                return jsonify('Post info not provided.'), 400
+    
+    @staticmethod
+    def update_from_json(json_post):
+        body = json_post
+        if not body:
+            return jsonify('Request body is empty'), 400
+        
+        else:
+            try:
+                post_update_data = {
+                "title": body.get('dog name'),
+                "gender" : body.get('gender'),
+                "city" : body.get('city'),
+                "data" : body.get('description'),
+                "image_file" : "defaultdog.jpg"
+                }
+        
+                return post_update_data
             except:
                 return jsonify('Post info not provided.'), 400
             
@@ -197,13 +219,40 @@ class DogInfo(db.Model):
                 'dog_with_dogs' : bool(body['dog with dogs']),
                 'dog_with_cats': bool(body['dog with cats']),
                 'dog_with_sm_animals': bool(body['dog with small animals']),
-                'dog_with_big_animals': bool(['dog with big animals']),
+                'dog_with_big_animals': bool(body['dog with big animals']),
                 'activity_level': body['activity level'],
                 'special_need_dog': bool(body['special need dog'])
                 }
             except:
-                return jsonify('Dog info not provided.'), 400
+                return jsonify('Valid dog info not provided.'), 400
         if dog_info:
             return DogInfo(**dog_info)
+        
+    @staticmethod
+    def update_from_json(json_post):
+        body = json_post
+        if body is None or body == {}:
+            return jsonify('Request body is empty'), 400
+        else:
+            try:
+                dog_update_info = {
+                'primary_breed': body.get('primary breed'),
+                'mixed_breed': bool(body.get('mixed breed')),
+                'age': body.get('age'),
+                'size': body.get('size'),
+                'color' : body.get('color'),
+                'spayed': bool(body.get('spayed')),
+                'coat_length': body.get('coat length'),
+                'dog_with_children': bool(body.get('dog with children')),
+                'dog_with_dogs' : bool(body.get('dog with dogs')),
+                'dog_with_cats': bool(body.get('dog with cats')),
+                'dog_with_sm_animals': bool(body.get('dog with small animals')),
+                'dog_with_big_animals': bool(body.get('dog with big animals')),
+                'activity_level': body.get('activity level'),
+                'special_need_dog': bool(body.get('special need dog'))
+                }
+            except:
+                return jsonify('Valid dog info not provided.'), 400
+            return dog_update_info
     
     

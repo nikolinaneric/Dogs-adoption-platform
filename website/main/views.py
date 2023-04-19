@@ -5,7 +5,7 @@ from website.models import User, Post, UserInfo, DogInfo
 from website import session
 from sqlalchemy import and_, case, or_, func
 from website.tasks import send_mail
-from website.main.utils import  email, get_dog_info, get_user_info, filtering
+from website.main.utils import  email, get_dog_info, get_user_info, filtering, query_cities
 from flask_babel import gettext
 
 main = Blueprint('main', __name__)
@@ -44,7 +44,6 @@ def contact_foster(foster_id):
         
     return render_template('email_form.html', foster_parent = foster_parent)
 
-
 @main.route("/home", methods = ['GET', 'POST'])
 def home(page = 1):
     """
@@ -55,10 +54,7 @@ def home(page = 1):
     """
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=8)
-    
-    cities = set()
-    for post in session.query(Post.city).distinct():
-        cities.add(post.city)
+    cities = query_cities(session.query)
 
     query_object = Post.query 
     saved_posts, genders, filtered_posts, chosen_cities, chosen_gender = filtering(query_object, page)
@@ -170,11 +166,9 @@ def show_matches(page = 1):
     alternative_results = db.session.query(Post, DogInfo, UserInfo).join(DogInfo, Post.id == DogInfo.post_id)\
             .join(UserInfo, UserInfo.user_id == current_user.id, isouter=True)\
             .filter(Post.user_id != current_user.id).order_by(func.random()).limit(8)
+    
+    cities = query_cities(result.with_entities)
 
-    city_query = result.with_entities(Post.city).distinct()
-    cities = set()
-    for post in city_query:
-        cities.add(post.city)
     saved_posts, genders, filtered_result1, chosen_cities, chosen_gender = filtering(result, page)
          
     return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = filtered_result1 if filtered_result1 else result1, cities = sorted(cities), genders = genders, chosen_cities = chosen_cities, chosen_gender = chosen_gender, saved_posts = saved_posts )

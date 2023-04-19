@@ -17,7 +17,23 @@
         font-family: Arial, sans-serif;
         color: white;
         text-align: center;
+        
       }
+
+      main {
+        flex: 1;
+        position: relative;
+      }
+
+      footer {
+        margin-top: auto;
+        height: 50px; 
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        padding: 2rem;
+      }
+
       .col-md-6 {
         margin-top: 8rem;
       }
@@ -108,9 +124,31 @@
   
       }
     </style>
-  
+  <script>
+     
+     document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+          link.addEventListener('click', function() {
+            console.log('clicked');
+            var urlLink = this.href;
+            var urlTitle = this.textContent;
+            var linkClick = {url: urlLink, title: urlTitle};
+            fetch("/analytics", {
+              method: "POST",
+              body: JSON.stringify({linkClick}),
+              cache : "no-cache",
+              headers : new Headers({
+                "content-type": "application/json"
+              })
+            });
+          });
+        });
+      });
+  </script>
   </head>
   <body>
+  <main>
     <div class="container">
       <div class="row">
         <form method="GET" action="">
@@ -132,18 +170,15 @@
           <p class="text-light">{{ _('We understand how hard it is to pick a dog in a shelter when you would rather bring all of them home with you, or how hard it is to give fostering dogs and wonder if they will be a good fit with the adopters.') }}</p>
           <p class="text-light">{{ _('In a view of enhancing that, we came up with the solution of connecting dogs and people based on their traits and preferences. Let\'s try our luck today and make some lives better!') }}
           </p>
-          <div class="text-center">
+          <div class="text-center" style="margin-bottom: 2rem;">
             <a href="/home" class="btn btn-outline-info btn-outline-info m-2;">{{ _('View our dogs') }}</a>
           </div> 
-          <br>
-          <br>
+        <br>
         </div>
-      <footer style="position: fixed;
-      bottom: 5px;
-      right: 10px;
-      padding: 8px;">
+      <footer>
          <small><a class="text-muted" href="https://github.com/nikolinaneric/Dogs-adoption-platform">&copy; dope.connect 2023, Nikolina Nerić</a></small>
       </footer>
+    </main>
     </div>
   </body>
 </html>

@@ -83,7 +83,7 @@ def login():
         return redirect(url_for('main.home'))
     form = UserFormLogIn()
     if form.validate_on_submit():
-        email = form.email.data
+        email = form.email.data.lower()
         password = form.password.data
         user = User.query.filter_by(email=email).first()
         if user:
@@ -301,7 +301,7 @@ def user_info():
     Also includes a list of dogs waiting for adoption the longest.
     """
     if request.method == 'GET':
-        posts = Post.query.filter(Post.user_id != current_user.id).order_by(Post.date_posted.asc()).limit(10).all()
+        posts = Post.query.filter(Post.user_id != current_user.id).order_by(Post.date_posted.asc()).limit(8).all()
         breeds = querying_breeds()
         info = UserInfo.query.filter_by(user_id = current_user.id).first()
         if info:

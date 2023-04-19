@@ -1,6 +1,6 @@
-from flask import url_for, request
+from flask import url_for, request, jsonify
 import os
-from website.models import User
+from website.models import User, Post
 
 def pagination_data(pagination, page, name):
     items = pagination.items
@@ -39,3 +39,9 @@ def credentials_check():
     else:
         admin = False
     return user, admin
+
+def get_object_or_404(model,id):
+    obj = model.query.filter_by(id=id).first()
+    if obj is None:
+        return jsonify( f'{model.__name__} not found.'), 404
+    return obj

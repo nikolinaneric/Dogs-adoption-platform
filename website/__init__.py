@@ -65,6 +65,9 @@ def create_app():
     from website.api_v1_0.posts_endpoints import api_posts as api_1_0_blueprint_posts
     app.register_blueprint(api_1_0_blueprint_posts, url_prefix='/api/v1.0/posts')
     
+    from website.analytics.analytics import analytics as analytics_bp
+    app.register_blueprint(analytics_bp)
+
     create_dabatase(app)
 
     

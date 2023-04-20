@@ -1,7 +1,9 @@
 The project is an interactive platform where one can browse dogs without making a profile, or make a profile, be able to crud the posts with dogs,
 or fill out the questionnaire that will lead to perfect matches for adoption.
 Matches can also be checked with comparison and contacting foster parents and can be saved on the user profile for a later reminder. 
-The platform is responsive for different screens.
+The platform is responsive for different screens and it supports English and Serbian translation. 
+
+API endpoints developed for admin control and also integrated data analytics to track the website traffic.
 
 ![Landing page](https://user-images.githubusercontent.com/118138407/233460432-060b4ef7-ea32-4474-bd01-c37ebba1f393.png)
 ![Home page](https://user-images.githubusercontent.com/118138407/233460446-c89405c7-70e1-4387-b0b1-88220198ec1c.png)
@@ -12,3 +14,4 @@ The platform is responsive for different screens.
 ![Post page](https://user-images.githubusercontent.com/118138407/233460590-abf88345-86c3-4901-9e9a-3ec5a6625881.png)
 ![Comparison modal](https://user-images.githubusercontent.com/118138407/233460602-474ae31d-2b3e-48a5-a1c0-ae984b39980a.png)
 ![Profile page](https://user-images.githubusercontent.com/118138407/233460641-d171ffd9-9c69-46c5-ae2d-13aeffb7e385.png)
+![Analytics](https://user-images.githubusercontent.com/118138407/233461623-28c3f8a3-caaa-45f5-be66-79a36de8eddb.png)

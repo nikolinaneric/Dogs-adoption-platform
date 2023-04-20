@@ -71,14 +71,18 @@ def update_post(id):
         try:
             update_post = {k:v for k,v in update_post.items() if v != None}
             update_post_info = {k:v for k,v in update_post_info.items() if v != None}
-            db.session.query(Post).filter(Post.id==id).update(update_post)
-            db.session.query(DogInfo).filter(DogInfo.post_id==id).update(update_post_info)
+            print(update_post_info)
+            if update_post:
+                db.session.query(Post).filter(Post.id==id).update(update_post)
+            if update_post_info:
+                db.session.query(DogInfo).filter(DogInfo.post_id==id).update(update_post_info)
             db.session.commit()
             json_post = post.to_json()
             response = json_post, \
             {'Location': url_for('api_posts.get_post', id=post.id, _external=True)}
             return jsonify(response), 201
-        except:
+        except Exception as e:
+            print(e)
             message = "Bad request."
             return jsonify(message), 400
     return jsonify('You must have valid access token for this action.'), 401

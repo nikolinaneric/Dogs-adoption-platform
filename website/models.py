@@ -72,7 +72,7 @@ class Post(db.Model):
     gender = db.Column(db.String(150))
     city = db.Column(db.String(150))
     data = db.Column(db.String(10000))
-    image_file = db.Column(db.String(150), nullable=False)
+    image_file = db.Column(db.String(150), nullable=False, default = "defaultdog.jpg")
     date_posted = db.Column(db.DateTime(timezone = True), default = func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     dog_info = db.relationship('DogInfo', backref = 'dog', uselist = False, cascade="all, delete-orphan")
@@ -123,8 +123,7 @@ class Post(db.Model):
                 "title": body.get('dog name'),
                 "gender" : body.get('gender'),
                 "city" : body.get('city'),
-                "data" : body.get('description'),
-                "image_file" : "defaultdog.jpg"
+                "data" : body.get('description')
                 }
         
                 return post_update_data
@@ -237,19 +236,19 @@ class DogInfo(db.Model):
             try:
                 dog_update_info = {
                 'primary_breed': body.get('primary breed'),
-                'mixed_breed': bool(body.get('mixed breed')),
+                'mixed_breed': (bool(body.get('mixed breed')) if body.get('mixed breed')!= None else None),
                 'age': body.get('age'),
                 'size': body.get('size'),
                 'color' : body.get('color'),
-                'spayed': bool(body.get('spayed')),
+                'spayed': (bool(body.get('spayed')) if body.get('spayed')!= None else None),
                 'coat_length': body.get('coat length'),
-                'dog_with_children': bool(body.get('dog with children')),
-                'dog_with_dogs' : bool(body.get('dog with dogs')),
-                'dog_with_cats': bool(body.get('dog with cats')),
-                'dog_with_sm_animals': bool(body.get('dog with small animals')),
-                'dog_with_big_animals': bool(body.get('dog with big animals')),
+                'dog_with_children': (bool(body.get('dog with children'))) if body.get('dog with children')!= None else None,
+                'dog_with_dogs' : (bool(body.get('dog with dogs')) if body.get('dog with dogs')!= None else None),
+                'dog_with_cats': (bool(body.get('dog with cats')) if body.get('dog with cats')!= None else None),
+                'dog_with_sm_animals': (bool(body.get('dog with small animals')) if body.get('dog with small animals')!= None else None),
+                'dog_with_big_animals': (bool(body.get('dog with big animals')) if body.get('dog with big animals')!= None else None),
                 'activity_level': body.get('activity level'),
-                'special_need_dog': bool(body.get('special need dog'))
+                'special_need_dog': (bool(body.get('special need dog')) if body.get('special need dog')!= None else None)
                 }
             except:
                 return jsonify('Valid dog info not provided.'), 400

@@ -171,7 +171,9 @@ def show_matches(page = 1):
 
     saved_posts, genders, filtered_result1, chosen_cities, chosen_gender = filtering(result, page)
          
-    return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user, posts = filtered_result1 if filtered_result1 else result1, cities = sorted(cities), genders = genders, chosen_cities = chosen_cities, chosen_gender = chosen_gender, saved_posts = saved_posts )
+    return render_template('show_matches.html', alternative_posts = alternative_results,warning = warning ,user = current_user,\
+                           posts = filtered_result1 if filtered_result1 else result1, cities = sorted(cities), genders = genders,\
+                           chosen_cities = chosen_cities, chosen_gender = chosen_gender, saved_posts = saved_posts )
 
 @main.route("/saved", methods = ['POST'])
 def saved():
